@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1C1C24">
+  <meta name="description" content="コスメバズ - 毎日更新の美容トレンドダッシュボード">
+  <title>コスメバズ | CosmeBuzz</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+      background-color: #1C1C24;
+      color: #E8E8EC;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== VARIABLES ===== */
+    :root {
+      --bg-primary: #1C1C24;
+      --bg-card: #282830;
+      --bg-card-inner: #32323C;
+      --accent-rose: #DC8C9E;
+      --accent-rose-dim: rgba(220, 140, 158, 0.15);
+      --accent-rose-glow: rgba(220, 140, 158, 0.25);
+      --color-ec: #FF9500;
+      --color-petitpra: #6BCB77;
+      --color-depacos: #FF6B6B;
+      --color-ingredient: #4ECDC4;
+      --color-trend: #A78BFA;
+      --text-primary: #E8E8EC;
+      --text-secondary: #9999A8;
+      --text-dim: #66667A;
+      --radius-card: 16px;
+      --radius-inner: 10px;
+      --radius-badge: 6px;
+      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.2);
+      --shadow-inner: 0 2px 8px rgba(0, 0, 0, 0.2);
+      --spacing-page: 16px;
+      --spacing-card: 20px;
+    }
+
+    /* ===== LAYOUT ===== */
+    .page-wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: var(--spacing-page);
+      padding-bottom: 40px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      text-align: center;
+      padding: 28px var(--spacing-page) 24px;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent-rose), transparent);
+      margin: 16px auto 0;
+      border-radius: 2px;
+    }
+
+    .header-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, var(--accent-rose), #F0B0C0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-date {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-card);
+      padding: var(--spacing-card);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .section-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .section-subtitle {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    /* ===== EC SALE SECTION ===== */
+    .ec-item {
+      background: var(--bg-card-inner);
+      border-radius: var(--radius-inner);
+      padding: 14px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-inner);
+      transition: transform 0.15s ease;
+    }
+
+    .ec-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .ec-item:active {
+      transform: scale(0.985);
+    }
+
+    .ec-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .ec-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: var(--radius-badge);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .ec-badge-rakuten {
+      background: rgba(191, 0, 0, 0.2);
+      color: #FF5252;
+      border: 1px solid rgba(191, 0, 0, 0.3);
+    }
+
+    .ec-badge-amazon {
+      background: rgba(255, 153, 0, 0.15);
+      color: #FFB347;
+      border: 1px solid rgba(255, 153, 0, 0.3);
+    }
+
+    .ec-badge-qoo10 {
+      background: rgba(233, 30, 99, 0.15);
+      color: #FF6B9D;
+      border: 1px solid rgba(233, 30, 99, 0.3);
+    }
+
+    .ec-discount {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-ec);
+      background: rgba(255, 149, 0, 0.12);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .ec-product-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .ec-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .ec-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-ec);
+    }
+
+    .ec-original-price {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-decoration: line-through;
+    }
+
+    /* ===== INGREDIENT COMPARISON SECTION ===== */
+    .ingredient-pair {
+      background: var(--bg-card-inner);
+      border-radius: var(--radius-inner);
+      padding: 14px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-inner);
+    }
+
+    .ingredient-pair:last-child {
+      margin-bottom: 0;
+    }
+
+    .ingredient-category {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-ingredient);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ingredient-category::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 12px;
+      background: var(--color-ingredient);
+      border-radius: 2px;
+    }
+
+    .ingredient-vs-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .ingredient-product {
+      text-align: center;
+    }
+
+    .ingredient-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .label-petitpra {
+      background: rgba(107, 203, 119, 0.15);
+      color: var(--color-petitpra);
+      border: 1px solid rgba(107, 203, 119, 0.25);
+    }
+
+    .label-depacos {
+      background: rgba(255, 107, 107, 0.15);
+      color: var(--color-depacos);
+      border: 1px solid rgba(255, 107, 107, 0.25);
+    }
+
+    .ingredient-product-name {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+      line-height: 1.3;
+    }
+
+    .ingredient-product-price {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .price-petitpra {
+      color: var(--color-petitpra);
+    }
+
+    .price-depacos {
+      color: var(--color-depacos);
+    }
+
+    .ingredient-product-rating {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .ingredient-product-rating .star {
+      color: #FFCC00;
+      font-size: 0.75rem;
+    }
+
+    .ingredient-vs-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 20px;
+    }
+
+    .vs-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg-primary);
+      border: 2px solid var(--color-ingredient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--color-ingredient);
+    }
+
+    .ingredient-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .ingredient-tag {
+      font-size: 0.6rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(78, 205, 196, 0.1);
+      color: var(--color-ingredient);
+      border: 1px solid rgba(78, 205, 196, 0.15);
+    }
+
+    .ingredient-summary {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding: 8px 10px;
+      background: rgba(78, 205, 196, 0.05);
+      border-radius: 6px;
+      border-left: 2px solid rgba(78, 205, 196, 0.3);
+    }
+
+    /* ===== GOOGLE TRENDS SECTION ===== */
+    .trend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .trend-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .trend-item:first-child {
+      padding-top: 0;
+    }
+
+    .trend-rank {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-trend);
+      min-width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .trend-rank-1 {
+      font-size: 1.15rem;
+      background: linear-gradient(135deg, var(--color-trend), #C4B5FD);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .trend-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .trend-keyword {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .trend-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(167, 139, 250, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .trend-bar {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--color-trend), #C4B5FD);
+      transition: width 0.6s ease;
+    }
+
+    .trend-score {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-trend);
+      flex-shrink: 0;
+      min-width: 32px;
+      text-align: right;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      text-align: center;
+      padding: 24px var(--spacing-page) 16px;
+    }
+
+    .footer-brand {
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent-rose), #F0B0C0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+
+    .footer-update {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .footer-divider {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-rose-dim), transparent);
+      margin: 12px auto;
+      border-radius: 1px;
+    }
+
+    /* ===== LOADING SHIMMER (for future dynamic loading) ===== */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-card-inner) 25%, rgba(255,255,255,0.05) 50%, var(--bg-card-inner) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+
+    /* ===== RESPONSIVE FINE-TUNING ===== */
+    @media (max-width: 360px) {
+      :root {
+        --spacing-page: 12px;
+        --spacing-card: 16px;
+      }
+
+      .header-title {
+        font-size: 1.5rem;
+      }
+
+      .ingredient-vs-grid {
+        gap: 4px;
+      }
+
+      .ingredient-product-name {
+        font-size: 0.72rem;
+      }
+    }
+
+    @media (min-width: 481px) {
+      .page-wrapper {
+        padding: 20px;
+      }
+    }
+
+    /* ===== SAFE AREA (for notched phones) ===== */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .page-wrapper {
+        padding-bottom: calc(40px + env(safe-area-inset-bottom));
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ========================================== -->
+  <!-- HEADER -->
+  <!-- ========================================== -->
+  <header class="header">
+    <div class="header-title" id="site-title">&#x1F484; コスメバズ</div>
+    <!-- [DYNAMIC: date] Updated by Python script -->
+    <div class="header-date" id="report-date" data-date="2026-03-04">2026年3月4日（火）のトレンド</div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- SECTION 1: EC SALE INFO -->
+  <!-- [DYNAMIC: ec-sale-section] -->
+  <!-- Data injected by Python script from JSON -->
+  <!-- ========================================== -->
+  <section class="card" id="ec-sale-section" data-section="ec-sale">
+    <div class="section-header">
+      <span class="section-icon">&#x1F6CD;&#xFE0F;</span>
+      <span class="section-title" style="color: var(--color-ec);">ECセール情報</span>
+      <span class="section-subtitle">プラットフォーム別TOP1</span>
+    </div>
+
+    <!-- [DYNAMIC: ec-items] Start -->
+    <div id="ec-items">
+
+      <div class="ec-item" data-platform="rakuten">
+        <div class="ec-item-header">
+          <span class="ec-badge ec-badge-rakuten">楽天市場</span>
+          <span class="ec-discount">-42% OFF</span>
+        </div>
+        <div class="ec-product-name">CANMAKE クリーミータッチライナー 限定色セット</div>
+        <div class="ec-price-row">
+          <span class="ec-price">&yen;1,280</span>
+          <span class="ec-original-price">&yen;2,200</span>
+        </div>
+      </div>
+
+      <div class="ec-item" data-platform="amazon">
+        <div class="ec-item-header">
+          <span class="ec-badge ec-badge-amazon">Amazon</span>
+          <span class="ec-discount">-35% OFF</span>
+        </div>
+        <div class="ec-product-name">rom&amp;nd ジューシーラスティングティント #09 リッチアップル</div>
+        <div class="ec-price-row">
+          <span class="ec-price">&yen;980</span>
+          <span class="ec-original-price">&yen;1,500</span>
+        </div>
+      </div>
+
+      <div class="ec-item" data-platform="qoo10">
+        <div class="ec-item-header">
+          <span class="ec-badge ec-badge-qoo10">Qoo10</span>
+          <span class="ec-discount">-50% OFF</span>
+        </div>
+        <div class="ec-product-name">TIRTIR マスクフィットクッション ミニサイズ 2個セット</div>
+        <div class="ec-price-row">
+          <span class="ec-price">&yen;1,490</span>
+          <span class="ec-original-price">&yen;2,980</span>
+        </div>
+      </div>
+
+    </div>
+    <!-- [DYNAMIC: ec-items] End -->
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 2: INGREDIENT COMPARISON -->
+  <!-- [DYNAMIC: ingredient-section] -->
+  <!-- Data injected by Python script from JSON -->
+  <!-- ========================================== -->
+  <section class="card" id="ingredient-section" data-section="ingredient">
+    <div class="section-header">
+      <span class="section-icon">&#x1F9EC;</span>
+      <span class="section-title" style="color: var(--color-ingredient);">成分比較 プチプラvsデパコス</span>
+    </div>
+
+    <!-- [DYNAMIC: ingredient-items] Start -->
+    <div id="ingredient-items">
+
+      <!-- Pair 1: ファンデーション -->
+      <div class="ingredient-pair" data-category="foundation">
+        <div class="ingredient-category">ファンデーション</div>
+        <div class="ingredient-vs-grid">
+          <div class="ingredient-product">
+            <span class="ingredient-label label-petitpra">プチプラ</span>
+            <div class="ingredient-product-name">CANMAKE<br>クリーミーファンデーションスティック</div>
+            <div class="ingredient-product-price price-petitpra">&yen;1,034</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> 4.2 / @cosme</div>
+          </div>
+          <div class="ingredient-vs-divider">
+            <div class="vs-circle">VS</div>
+          </div>
+          <div class="ingredient-product">
+            <span class="ingredient-label label-depacos">デパコス</span>
+            <div class="ingredient-product-name">SUQQU<br>ザ リクイド ファンデーション</div>
+            <div class="ingredient-product-price price-depacos">&yen;8,800</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> 5.1 / @cosme</div>
+          </div>
+        </div>
+        <div class="ingredient-tags">
+          <span class="ingredient-tag">ヒアルロン酸</span>
+          <span class="ingredient-tag">セラミド</span>
+          <span class="ingredient-tag">スクワラン</span>
+          <span class="ingredient-tag">酸化チタン</span>
+        </div>
+        <div class="ingredient-summary">
+          プチプラでもヒアルロン酸Na配合で保湿力は十分。デパコスはセラミド複合体とスクワラン配合でスキンケア効果に優位性あり。カバー力は同等レベル。
+        </div>
+      </div>
+
+      <!-- Pair 2: リップ -->
+      <div class="ingredient-pair" data-category="lip">
+        <div class="ingredient-category">リップ</div>
+        <div class="ingredient-vs-grid">
+          <div class="ingredient-product">
+            <span class="ingredient-label label-petitpra">プチプラ</span>
+            <div class="ingredient-product-name">CEZANNE<br>ウォータリーティントリップ</div>
+            <div class="ingredient-product-price price-petitpra">&yen;660</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> 4.8 / @cosme</div>
+          </div>
+          <div class="ingredient-vs-divider">
+            <div class="vs-circle">VS</div>
+          </div>
+          <div class="ingredient-product">
+            <span class="ingredient-label label-depacos">デパコス</span>
+            <div class="ingredient-product-name">Dior<br>アディクト リップ マキシマイザー</div>
+            <div class="ingredient-product-price price-depacos">&yen;4,620</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> 5.4 / @cosme</div>
+          </div>
+        </div>
+        <div class="ingredient-tags">
+          <span class="ingredient-tag">ヒアルロン酸</span>
+          <span class="ingredient-tag">コラーゲン</span>
+          <span class="ingredient-tag">シア脂</span>
+          <span class="ingredient-tag">ビタミンE</span>
+        </div>
+        <div class="ingredient-summary">
+          セザンヌは水溶性コラーゲン配合で保湿力が高くコスパ最強。Diorはヒアルロン酸＋唐辛子エキスのプランプ効果が特徴的。発色の持ちはDiorが優勢。
+        </div>
+      </div>
+
+      <!-- Pair 3: アイシャドウ -->
+      <div class="ingredient-pair" data-category="eyeshadow">
+        <div class="ingredient-category">アイシャドウ</div>
+        <div class="ingredient-vs-grid">
+          <div class="ingredient-product">
+            <span class="ingredient-label label-petitpra">プチプラ</span>
+            <div class="ingredient-product-name">excel<br>スキニーリッチシャドウ SR06</div>
+            <div class="ingredient-product-price price-petitpra">&yen;1,650</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> 4.6 / @cosme</div>
+          </div>
+          <div class="ingredient-vs-divider">
+            <div class="vs-circle">VS</div>
+          </div>
+          <div class="ingredient-product">
+            <span class="ingredient-label label-depacos">デパコス</span>
+            <div class="ingredient-product-name">LUNASOL<br>スキンモデリングアイズ 02</div>
+            <div class="ingredient-product-price price-depacos">&yen;5,500</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> 5.0 / @cosme</div>
+          </div>
+        </div>
+        <div class="ingredient-tags">
+          <span class="ingredient-tag">スクワラン</span>
+          <span class="ingredient-tag">ホホバ種子油</span>
+          <span class="ingredient-tag">マイカ</span>
+          <span class="ingredient-tag">トコフェロール</span>
+        </div>
+        <div class="ingredient-summary">
+          excelはスクワラン配合でしっとり密着。ルナソルはホホバ油＋植物エキスの贅沢処方。粉質の細かさとグラデのしやすさはルナソルが一歩リード。
+        </div>
+      </div>
+
+    </div>
+    <!-- [DYNAMIC: ingredient-items] End -->
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 3: GOOGLE TRENDS -->
+  <!-- [DYNAMIC: trends-section] -->
+  <!-- Data injected by Python script from JSON -->
+  <!-- ========================================== -->
+  <section class="card" id="trends-section" data-section="trends">
+    <div class="section-header">
+      <span class="section-icon">&#x1F50D;</span>
+      <span class="section-title" style="color: var(--color-trend);">Google検索 急上昇ワード</span>
+    </div>
+
+    <!-- [DYNAMIC: trend-items] Start -->
+    <div id="trend-items">
+
+      <div class="trend-item" data-rank="1">
+        <span class="trend-rank trend-rank-1">1</span>
+        <div class="trend-content">
+          <div class="trend-keyword">コスメデコルテ リポソーム 新作</div>
+          <div class="trend-bar-container">
+            <div class="trend-bar" style="width: 100%;"></div>
+          </div>
+        </div>
+        <span class="trend-score">100</span>
+      </div>
+
+      <div class="trend-item" data-rank="2">
+        <span class="trend-rank">2</span>
+        <div class="trend-content">
+          <div class="trend-keyword">日焼け止め 2026 ランキング</div>
+          <div class="trend-bar-container">
+            <div class="trend-bar" style="width: 87%;"></div>
+          </div>
+        </div>
+        <span class="trend-score">87</span>
+      </div>
+
+      <div class="trend-item" data-rank="3">
+        <span class="trend-rank">3</span>
+        <div class="trend-content">
+          <div class="trend-keyword">イエベ春 リップ プチプラ</div>
+          <div class="trend-bar-container">
+            <div class="trend-bar" style="width: 72%;"></div>
+          </div>
+        </div>
+        <span class="trend-score">72</span>
+      </div>
+
+      <div class="trend-item" data-rank="4">
+        <span class="trend-rank">4</span>
+        <div class="trend-content">
+          <div class="trend-keyword">TIRTIR クッションファンデ 色選び</div>
+          <div class="trend-bar-container">
+            <div class="trend-bar" style="width: 58%;"></div>
+          </div>
+        </div>
+        <span class="trend-score">58</span>
+      </div>
+
+      <div class="trend-item" data-rank="5">
+        <span class="trend-rank">5</span>
+        <div class="trend-content">
+          <div class="trend-keyword">ブルベ冬 アイシャドウ デパコス</div>
+          <div class="trend-bar-container">
+            <div class="trend-bar" style="width: 43%;"></div>
+          </div>
+        </div>
+        <span class="trend-score">43</span>
+      </div>
+
+    </div>
+    <!-- [DYNAMIC: trend-items] End -->
+  </section>
+
+  <!-- ========================================== -->
+  <!-- FOOTER -->
+  <!-- ========================================== -->
+  <footer class="footer">
+    <div class="footer-brand">&#x1F484; コスメバズ | CosmeBuzz</div>
+    <div class="footer-divider"></div>
+    <div class="footer-update" id="footer-update">データは毎日12:00に更新されます</div>
+  </footer>
+
+</div>
+
+</body>
+</html>
