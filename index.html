@@ -705,7 +705,100 @@
     <!-- [DYNAMIC: ingredient-items] Start -->
     <div id="ingredient-items">
 
-      <div class="ingredient-pair"><div class="ingredient-summary" style="text-align: center;">本日の成分比較データはありません</div></div>
+      <div class="ingredient-pair" data-category="ハイライト">
+        <div class="ingredient-category">ハイライト</div>
+        <div class="ingredient-vs-grid">
+          <div class="ingredient-product">
+            <span class="ingredient-label label-petitpra">プチプラ</span>
+            <div class="ingredient-product-name">CEZANNE トーンフィルターハイライト</div>
+            <div class="ingredient-product-price price-petitpra">&yen;748</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> ★4.6</div>
+          </div>
+          <div class="ingredient-vs-divider">
+            <div class="vs-circle">VS</div>
+          </div>
+          <div class="ingredient-product">
+            <span class="ingredient-label label-depacos">デパコス</span>
+            <div class="ingredient-product-name">Dior ディオールスキン フォーエヴァー ルミナイザー</div>
+            <div class="ingredient-product-price price-depacos">&yen;8,000</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> ★4.8</div>
+          </div>
+        </div>
+        <div class="ingredient-tags">
+          <span class="ingredient-tag">ダイヤモンドパウダー</span>
+          <span class="ingredient-tag">シリカ</span>
+          <span class="ingredient-tag">ヒアルロン酸</span>
+          <span class="ingredient-tag">グリセリン</span>
+          <span class="ingredient-tag">パールエキス</span>
+          <span class="ingredient-tag">セラミド</span>
+        </div>
+        <div class="ingredient-summary">
+          透明感あるツヤと粒子サイズが激似で、プチプラがデパコスに匹敵する代替可能。
+        </div>
+      </div>
+
+      <div class="ingredient-pair" data-category="リップ">
+        <div class="ingredient-category">リップ</div>
+        <div class="ingredient-vs-grid">
+          <div class="ingredient-product">
+            <span class="ingredient-label label-petitpra">プチプラ</span>
+            <div class="ingredient-product-name">KATE リップモンスター クリスタルポッド</div>
+            <div class="ingredient-product-price price-petitpra">&yen;990</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> ★4.7</div>
+          </div>
+          <div class="ingredient-vs-divider">
+            <div class="vs-circle">VS</div>
+          </div>
+          <div class="ingredient-product">
+            <span class="ingredient-label label-depacos">デパコス</span>
+            <div class="ingredient-product-name">Dior アディクト リップ マキシマイザー</div>
+            <div class="ingredient-product-price price-depacos">&yen;5,500</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> ★4.9</div>
+          </div>
+        </div>
+        <div class="ingredient-tags">
+          <span class="ingredient-tag">コラーゲン</span>
+          <span class="ingredient-tag">オイル</span>
+          <span class="ingredient-tag">ヒアルロン酸</span>
+          <span class="ingredient-tag">メンソール</span>
+          <span class="ingredient-tag">ペプチド</span>
+        </div>
+        <div class="ingredient-summary">
+          ぷるぷるボリューム感と保湿力が共通、日常使いでプチプラが優秀なデュープ。
+        </div>
+      </div>
+
+      <div class="ingredient-pair" data-category="チーク">
+        <div class="ingredient-category">チーク</div>
+        <div class="ingredient-vs-grid">
+          <div class="ingredient-product">
+            <span class="ingredient-label label-petitpra">プチプラ</span>
+            <div class="ingredient-product-name">CANMAKE クリームチーク</div>
+            <div class="ingredient-product-price price-petitpra">&yen;770</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> ★4.5</div>
+          </div>
+          <div class="ingredient-vs-divider">
+            <div class="vs-circle">VS</div>
+          </div>
+          <div class="ingredient-product">
+            <span class="ingredient-label label-depacos">デパコス</span>
+            <div class="ingredient-product-name">SUQQU ピュアカラーブラッシュ</div>
+            <div class="ingredient-product-price price-depacos">&yen;11,000</div>
+            <div class="ingredient-product-rating"><span class="star">&#x2605;</span> ★4.8</div>
+          </div>
+        </div>
+        <div class="ingredient-tags">
+          <span class="ingredient-tag">スクワラン</span>
+          <span class="ingredient-tag">シアバター</span>
+          <span class="ingredient-tag">植物エキス</span>
+          <span class="ingredient-tag">ヒアルロン酸</span>
+          <span class="ingredient-tag">ビタミンE</span>
+          <span class="ingredient-tag">シルクパウダー</span>
+        </div>
+        <div class="ingredient-summary">
+          自然な血色感と密着度が似通い、プチプラでデパコスのような仕上がりを実現。
+        </div>
+      </div>
 
     </div>
     <!-- [DYNAMIC: ingredient-items] End -->
@@ -786,7 +879,8 @@
     </div>
     <!-- [DYNAMIC: trend-items] End -->
     <div class="source-note">
-      <span class="source-badge source-badge-api">API</span> <a href="https://trends.google.co.jp/" target="_blank" rel="noopener">Google Trends</a> 美容カテゴリの検索ボリュームを毎日取得
+      <span class="source-badge source-badge-api">API</span> <a href="https://trends.google.co.jp/" target="_blank" rel="noopener">Google Trends</a> 美容カテゴリの検索ボリュームを毎日取得<br>
+      右の数値は<strong style="color: var(--text-secondary);">検索人気度</strong>（0〜100）。期間内で最も検索されたワードを100とした相対スコアです。
     </div>
   </section>
 
