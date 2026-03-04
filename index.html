@@ -364,30 +364,189 @@
       color: var(--color-ingredient);
     }
 
+    .ingredient-pair-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .ingredient-pair-header .ingredient-category {
+      margin-bottom: 0;
+    }
+
+    /* 類似度バー */
+    .ingredient-similarity {
+      margin-bottom: 10px;
+    }
+
+    .similarity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .similarity-label {
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+
+    .similarity-score {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .similarity-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .similarity-bar {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    /* 代替可能性バッジ */
+    .replace-badge {
+      font-size: 0.58rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .replace-high {
+      background: rgba(107, 203, 119, 0.15);
+      color: #6BCB77;
+      border: 1px solid rgba(107, 203, 119, 0.3);
+    }
+
+    .replace-mid {
+      background: rgba(255, 204, 0, 0.12);
+      color: #FFCC00;
+      border: 1px solid rgba(255, 204, 0, 0.25);
+    }
+
+    .replace-low {
+      background: rgba(255, 107, 107, 0.12);
+      color: #FF6B6B;
+      border: 1px solid rgba(255, 107, 107, 0.25);
+    }
+
+    /* 成分タグセクション */
+    .ingredient-tags-section {
+      margin-bottom: 6px;
+    }
+
+    .tags-label {
+      font-size: 0.58rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+
     .ingredient-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 4px;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .ingredient-tag {
       font-size: 0.6rem;
       padding: 2px 7px;
       border-radius: 4px;
-      background: rgba(78, 205, 196, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tag-shared {
+      background: rgba(78, 205, 196, 0.12);
       color: var(--color-ingredient);
-      border: 1px solid rgba(78, 205, 196, 0.15);
+      border: 1px solid rgba(78, 205, 196, 0.2);
+    }
+
+    .tag-role {
+      font-size: 0.52rem;
+      color: var(--text-secondary);
+      opacity: 0.8;
+    }
+
+    .tag-petitpra {
+      background: rgba(107, 203, 119, 0.1);
+      color: var(--color-petitpra);
+      border: 1px solid rgba(107, 203, 119, 0.2);
+    }
+
+    .tag-depacos {
+      background: rgba(255, 107, 107, 0.1);
+      color: var(--color-depacos);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+    }
+
+    /* 固有成分行 */
+    .ingredient-unique-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .unique-group {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .unique-label {
+      font-size: 0.5rem;
+      font-weight: 600;
+      padding: 1px 5px;
+      border-radius: 3px;
+      letter-spacing: 0.05em;
+    }
+
+    /* 成分解説 */
+    .ingredient-analysis {
+      margin-bottom: 8px;
+      padding: 8px 10px;
+      background: rgba(78, 205, 196, 0.04);
+      border-radius: 6px;
+      border: 1px solid rgba(78, 205, 196, 0.08);
+    }
+
+    .analysis-label {
+      font-size: 0.58rem;
+      font-weight: 600;
+      color: var(--color-ingredient);
+      margin-bottom: 4px;
+      letter-spacing: 0.03em;
+    }
+
+    .analysis-text {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
     }
 
     .ingredient-summary {
       font-size: 0.72rem;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       line-height: 1.5;
       padding: 8px 10px;
-      background: rgba(78, 205, 196, 0.05);
+      background: rgba(78, 205, 196, 0.06);
       border-radius: 6px;
-      border-left: 2px solid rgba(78, 205, 196, 0.3);
+      border-left: 3px solid var(--color-ingredient);
+      font-weight: 500;
     }
 
     /* ===== GOOGLE TRENDS SECTION ===== */
@@ -717,7 +876,11 @@
     <div id="ingredient-items">
 
       <div class="ingredient-pair" data-category="リッププランパー">
-        <div class="ingredient-category">リッププランパー</div>
+        <div class="ingredient-pair-header">
+          <div class="ingredient-category">リッププランパー</div>
+
+        </div>
+
         <div class="ingredient-vs-grid">
           <div class="ingredient-product">
             <span class="ingredient-label label-petitpra">プチプラ</span>
@@ -735,20 +898,29 @@
             <div class="ingredient-product-rating"><span class="star">&#x2605;</span> 4.8</div>
           </div>
         </div>
-        <div class="ingredient-tags">
-          <span class="ingredient-tag">バニリルブチル</span>
-          <span class="ingredient-tag">デシルテトラデカノール</span>
-          <span class="ingredient-tag">ヒアルロン酸Na</span>
-          <span class="ingredient-tag">チェリーオイル</span>
-          <span class="ingredient-tag">ゼニアオイエキス</span>
+        <div class="ingredient-tags-section">
+          <div class="tags-label">共通成分</div>
+          <div class="ingredient-tags">
+          <span class="ingredient-tag tag-shared">バニリルブチル</span>
+          <span class="ingredient-tag tag-shared">デシルテトラデカノール</span>
+          <span class="ingredient-tag tag-shared">ヒアルロン酸Na</span>
+          <span class="ingredient-tag tag-shared">チェリーオイル</span>
+          <span class="ingredient-tag tag-shared">ゼニアオイエキス</span>
+          </div>
         </div>
+
+
         <div class="ingredient-summary">
           プランプ効果と保湿力が共通し、ヴィセの温感刺激が強く日常使いに代替可能。
         </div>
       </div>
 
       <div class="ingredient-pair" data-category="チーク">
-        <div class="ingredient-category">チーク</div>
+        <div class="ingredient-pair-header">
+          <div class="ingredient-category">チーク</div>
+
+        </div>
+
         <div class="ingredient-vs-grid">
           <div class="ingredient-product">
             <span class="ingredient-label label-petitpra">プチプラ</span>
@@ -766,19 +938,28 @@
             <div class="ingredient-product-rating"><span class="star">&#x2605;</span> 4.5</div>
           </div>
         </div>
-        <div class="ingredient-tags">
-          <span class="ingredient-tag">タルク</span>
-          <span class="ingredient-tag">ジメチコン</span>
-          <span class="ingredient-tag">酸化鉄</span>
-          <span class="ingredient-tag">マイカ</span>
+        <div class="ingredient-tags-section">
+          <div class="tags-label">共通成分</div>
+          <div class="ingredient-tags">
+          <span class="ingredient-tag tag-shared">タルク</span>
+          <span class="ingredient-tag tag-shared">ジメチコン</span>
+          <span class="ingredient-tag tag-shared">酸化鉄</span>
+          <span class="ingredient-tag tag-shared">マイカ</span>
+          </div>
         </div>
+
+
         <div class="ingredient-summary">
           色味・テクスチャーが激似でナチュラル血色感を与え、プチプラ完全代替可能。
         </div>
       </div>
 
       <div class="ingredient-pair" data-category="美容液">
-        <div class="ingredient-category">美容液</div>
+        <div class="ingredient-pair-header">
+          <div class="ingredient-category">美容液</div>
+
+        </div>
+
         <div class="ingredient-vs-grid">
           <div class="ingredient-product">
             <span class="ingredient-label label-petitpra">プチプラ</span>
@@ -796,13 +977,18 @@
             <div class="ingredient-product-rating"><span class="star">&#x2605;</span> 4.7</div>
           </div>
         </div>
-        <div class="ingredient-tags">
-          <span class="ingredient-tag">ガラクトミセス培養液</span>
-          <span class="ingredient-tag">ビタミン類</span>
-          <span class="ingredient-tag">アミノ酸類</span>
-          <span class="ingredient-tag">ピテラ(ガラクトミセス)</span>
-          <span class="ingredient-tag">ミネラル類</span>
+        <div class="ingredient-tags-section">
+          <div class="tags-label">共通成分</div>
+          <div class="ingredient-tags">
+          <span class="ingredient-tag tag-shared">ガラクトミセス培養液</span>
+          <span class="ingredient-tag tag-shared">ビタミン類</span>
+          <span class="ingredient-tag tag-shared">アミノ酸類</span>
+          <span class="ingredient-tag tag-shared">ピテラ(ガラクトミセス)</span>
+          <span class="ingredient-tag tag-shared">ミネラル類</span>
+          </div>
         </div>
+
+
         <div class="ingredient-summary">
           主成分ガラクトミセス共通で保湿・整肌効果が高く、プチプラで優れた代替品。
         </div>
