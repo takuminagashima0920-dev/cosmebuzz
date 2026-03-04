@@ -451,6 +451,99 @@
       text-align: right;
     }
 
+    /* ===== SOURCE LABELS ===== */
+    .source-note {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      line-height: 1.5;
+    }
+
+    .source-note a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--text-dim);
+    }
+
+    .source-badge {
+      display: inline-block;
+      font-size: 0.55rem;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-left: 6px;
+      vertical-align: middle;
+      letter-spacing: 0.03em;
+    }
+
+    .source-badge-api {
+      background: rgba(78, 205, 196, 0.15);
+      color: #4ECDC4;
+      border: 1px solid rgba(78, 205, 196, 0.25);
+    }
+
+    .source-badge-ai {
+      background: rgba(167, 139, 250, 0.15);
+      color: #A78BFA;
+      border: 1px solid rgba(167, 139, 250, 0.25);
+    }
+
+    /* ===== DATA SOURCES CARD ===== */
+    .sources-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-card);
+      padding: 16px var(--spacing-card);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .sources-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sources-list {
+      list-style: none;
+    }
+
+    .sources-list li {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      padding: 4px 0;
+      line-height: 1.6;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .sources-list li::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background: var(--text-dim);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .sources-disclaimer {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      line-height: 1.6;
+    }
+
     /* ===== FOOTER ===== */
     .footer {
       text-align: center;
@@ -557,7 +650,7 @@
 
       <div class="ec-item" data-platform="rakuten">
         <div class="ec-item-header">
-          <span class="ec-badge ec-badge-rakuten">楽天市場</span>
+          <span class="ec-badge ec-badge-rakuten">楽天市場<span class="source-badge source-badge-api">API</span></span>
 
         </div>
         <div class="ec-product-name">【半額セール】シートマスク パック フェイスパック シートパック フェイスマスク 顔パック 大容量 美容 日本製 ...</div>
@@ -568,7 +661,7 @@
 
       <a href="https://www.amazon.co.jp/dp/B09V8K5XX7" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;"><div class="ec-item" data-platform="amazon">
         <div class="ec-item-header">
-          <span class="ec-badge ec-badge-amazon">Amazon</span>
+          <span class="ec-badge ec-badge-amazon">Amazon<span class="source-badge source-badge-ai">AI検索</span></span>
           <span class="ec-discount">-20% OFF</span>
         </div>
         <div class="ec-product-name">TIRTIR マスクフィット レッドクッション</div>
@@ -580,7 +673,7 @@
 
       <a href="https://www.qoo10.jp/g/595819896" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;"><div class="ec-item" data-platform="qoo10">
         <div class="ec-item-header">
-          <span class="ec-badge ec-badge-qoo10">Qoo10</span>
+          <span class="ec-badge ec-badge-qoo10">Qoo10<span class="source-badge source-badge-ai">AI検索</span></span>
           <span class="ec-discount">-20% OFF</span>
         </div>
         <div class="ec-product-name">rom&amp;nd ジューシーラスティングティント</div>
@@ -592,6 +685,10 @@
 
     </div>
     <!-- [DYNAMIC: ec-items] End -->
+    <div class="source-note">
+      <span class="source-badge source-badge-api">API</span> 楽天市場 → <a href="https://developers.rakuten.com/" target="_blank" rel="noopener">楽天商品検索API</a>から取得した実データ<br>
+      <span class="source-badge source-badge-ai">AI検索</span> Amazon・Qoo10 → AI Web検索による参考情報
+    </div>
   </section>
 
   <!-- ========================================== -->
@@ -612,6 +709,9 @@
 
     </div>
     <!-- [DYNAMIC: ingredient-items] End -->
+    <div class="source-note">
+      <span class="source-badge source-badge-ai">AI検索</span> SNSで話題のデュープ情報をAI Web検索で調査・成分比較を自動生成
+    </div>
   </section>
 
   <!-- ========================================== -->
@@ -685,6 +785,27 @@
 
     </div>
     <!-- [DYNAMIC: trend-items] End -->
+    <div class="source-note">
+      <span class="source-badge source-badge-api">API</span> <a href="https://trends.google.co.jp/" target="_blank" rel="noopener">Google Trends</a> 美容カテゴリの検索ボリュームを毎日取得
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- DATA SOURCES -->
+  <!-- ========================================== -->
+  <section class="sources-card">
+    <div class="sources-title">&#x1F4CB; データソースについて</div>
+    <ul class="sources-list">
+      <li>楽天市場の商品情報・価格・レビュー数は<strong style="color:var(--text-secondary);">楽天商品検索API</strong>から直接取得しています</li>
+      <li>Google検索トレンドは<strong style="color:var(--text-secondary);">Google Trends API</strong>の美容関連キーワードを日次取得しています</li>
+      <li>Amazon・Qoo10のセール情報はAI（Grok / Claude）のWeb検索機能で収集した参考情報です</li>
+      <li>成分比較はSNSで話題のデュープ情報をAI検索で調査し、自動生成しています</li>
+    </ul>
+    <div class="sources-disclaimer">
+      ※ <span class="source-badge source-badge-api">API</span> マークのデータは公式APIから取得した実データです。
+      <span class="source-badge source-badge-ai">AI検索</span> マークのデータはAIによる参考情報のため、実際と異なる場合があります。
+      正確な価格・在庫は各サイトでご確認ください。
+    </div>
   </section>
 
   <!-- ========================================== -->
