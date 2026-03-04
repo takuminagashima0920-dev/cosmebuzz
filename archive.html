@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="コスメバズ 成分比較アーカイブ — プチプラvsデパコスの成分類似度を検証した全記録">
+  <meta property="og:title" content="成分比較アーカイブ | コスメバズ">
+  <meta property="og:description" content="成分類似度でコスメの&quot;激似&quot;を検証。過去の全比較データを一覧で。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://takuminagashima0920-dev.github.io/cosmebuzz/archive.html">
+  <meta property="og:locale" content="ja_JP">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
+  <title>成分比較アーカイブ | コスメバズ</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+      background: #1C1C24;
+      color: #FFFFFF;
+      min-height: 100vh;
+    }
+    .container { max-width: 480px; margin: 0 auto; padding: 20px 16px; }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .page-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #4ECDC4, #45B7AA);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-tagline {
+      font-size: 0.68rem;
+      color: #AAAAAA;
+      margin-top: 4px;
+      letter-spacing: 0.06em;
+    }
+    .page-stats {
+      font-size: 0.7rem;
+      color: #888;
+      margin-top: 8px;
+    }
+    .page-stats strong { color: #4ECDC4; }
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 0.7rem;
+      color: #DC8C9E;
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Filter */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .filter-btn {
+      font-size: 0.62rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(78,205,196,0.2);
+      background: transparent;
+      color: #AAAAAA;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: rgba(78,205,196,0.15);
+      color: #4ECDC4;
+      border-color: rgba(78,205,196,0.4);
+    }
+
+    /* Card */
+    .arc-card {
+      background: #282830;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .arc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .arc-category {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #4ECDC4;
+      letter-spacing: 0.06em;
+      padding-left: 8px;
+      border-left: 3px solid #4ECDC4;
+    }
+    .arc-replace {
+      font-size: 0.55rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .replace-high { background: rgba(107,203,119,0.15); color: #6BCB77; border: 1px solid rgba(107,203,119,0.3); }
+    .replace-mid { background: rgba(255,204,0,0.12); color: #FFCC00; border: 1px solid rgba(255,204,0,0.25); }
+    .replace-low { background: rgba(255,107,107,0.12); color: #FF6B6B; border: 1px solid rgba(255,107,107,0.25); }
+
+    .arc-similarity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .arc-sim-label { font-size: 0.55rem; color: #888; white-space: nowrap; }
+    .arc-sim-bar-bg {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .arc-sim-bar { height: 100%; border-radius: 2px; }
+    .arc-sim-score { font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+
+    .arc-vs {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+    .arc-product { text-align: center; }
+    .arc-label {
+      font-size: 0.55rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 4px;
+      letter-spacing: 0.08em;
+    }
+    .arc-label-petit { background: rgba(107,203,119,0.15); color: #6BCB77; border: 1px solid rgba(107,203,119,0.25); }
+    .arc-label-depa { background: rgba(255,107,107,0.15); color: #FF6B6B; border: 1px solid rgba(255,107,107,0.25); }
+    .arc-name { font-size: 0.72rem; font-weight: 500; line-height: 1.3; margin-bottom: 3px; }
+    .arc-price { font-size: 0.8rem; font-weight: 700; }
+    .arc-price-petit { color: #6BCB77; }
+    .arc-price-depa { color: #FF6B6B; }
+    .arc-vs-mark {
+      display: flex;
+      align-items: center;
+      padding-top: 16px;
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: #4ECDC4;
+    }
+
+    .arc-shared {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .arc-tag {
+      font-size: 0.58rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(78,205,196,0.1);
+      color: #4ECDC4;
+      border: 1px solid rgba(78,205,196,0.15);
+    }
+
+    .arc-why {
+      font-size: 0.68rem;
+      color: #AAAAAA;
+      line-height: 1.5;
+      padding: 8px 10px;
+      background: rgba(78,205,196,0.04);
+      border-radius: 6px;
+      border: 1px solid rgba(78,205,196,0.08);
+      margin-bottom: 8px;
+    }
+
+    .arc-summary {
+      font-size: 0.7rem;
+      color: #FFFFFF;
+      line-height: 1.5;
+      padding: 8px 10px;
+      background: rgba(78,205,196,0.06);
+      border-radius: 6px;
+      border-left: 3px solid #4ECDC4;
+      font-weight: 500;
+    }
+
+    .arc-date {
+      font-size: 0.55rem;
+      color: #666;
+      text-align: right;
+      margin-top: 6px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 24px 0 16px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      margin-top: 16px;
+    }
+    .footer-brand {
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #DC8C9E, #F0B0C0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .footer-tagline { font-size: 0.58rem; color: #888; margin-top: 4px; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <div class="page-title">&#x1F9EC; 成分比較アーカイブ</div>
+    <div class="page-tagline">成分類似度でコスメの"激似"を検証</div>
+    <div class="page-stats"><strong>14</strong> ペア / <strong>7</strong> カテゴリ収録</div>
+    <a href="index.html" class="back-link">&larr; トップに戻る</a>
+  </div>
+
+  <div class="filter-bar">
+        <button class="filter-btn active" data-cat="all">すべて</button>
+        <button class="filter-btn" data-cat="フェイスパウダー">フェイスパウダー</button>
+        <button class="filter-btn" data-cat="アイシャドウパレット">アイシャドウパレット</button>
+        <button class="filter-btn" data-cat="ティントリップ">ティントリップ</button>
+        <button class="filter-btn" data-cat="リップ">リップ</button>
+        <button class="filter-btn" data-cat="チーク">チーク</button>
+        <button class="filter-btn" data-cat="アイシャドウ">アイシャドウ</button>
+        <button class="filter-btn" data-cat="化粧下地">化粧下地</button>
+
+  </div>
+
+      <div class="arc-card" data-category="フェイスパウダー">
+        <div class="arc-header">
+          <span class="arc-category">フェイスパウダー</span>
+          <span class="arc-replace replace-high">ほぼ代替可能</span>
+        </div>
+        <div class="arc-similarity">
+            <span class="arc-sim-label">類似度</span>
+            <div class="arc-sim-bar-bg"><div class="arc-sim-bar" style="width:78%;background:#4ECDC4;"></div></div>
+            <span class="arc-sim-score" style="color:#4ECDC4;">78%</span>
+          </div>
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">セザンヌ 毛穴レスパウダー CL クリア</div>
+            <div class="arc-price arc-price-petit">&yen;748</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">NARS ライトリフレクティングセッティングパウダー プレスト N</div>
+            <div class="arc-price arc-price-depa">&yen;5,830</div>
+          </div>
+        </div>
+        <div class="arc-shared"><span class="arc-tag">皮脂吸着成分</span> <span class="arc-tag">透明パウダー</span> <span class="arc-tag">光反射成分</span></div>
+        <div class="arc-why">どちらも皮脂を抑えつつ自然なツヤを残すクリアパウダーで、毛穴ぼかし効果も同等。NARSは微細パールで上品な光沢、セザンヌは光反射パウダーで似た仕上がりを実現。実際にSNSでも「半顔比較で差がわからない」と話題。</div>
+        <div class="arc-summary">皮脂抑制とツヤ感は同等レベル。より上品な透明感を求めるならNARS、コスパ重視なら断然セザンヌ。</div>
+        <div class="arc-date">2026-03-04</div>
+      </div>
+
+      <div class="arc-card" data-category="アイシャドウパレット">
+        <div class="arc-header">
+          <span class="arc-category">アイシャドウパレット</span>
+          <span class="arc-replace replace-mid">部分的に代替可能</span>
+        </div>
+        <div class="arc-similarity">
+            <span class="arc-sim-label">類似度</span>
+            <div class="arc-sim-bar-bg"><div class="arc-sim-bar" style="width:72%;background:#4ECDC4;"></div></div>
+            <span class="arc-sim-score" style="color:#4ECDC4;">72%</span>
+          </div>
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">エクセル スキニーリッチシャドウ SR01 ベージュブラウン</div>
+            <div class="arc-price arc-price-petit">&yen;1,620</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">ルナソル スキンモデリングアイズ 01 ベージュベージュ</div>
+            <div class="arc-price arc-price-depa">&yen;5,400</div>
+          </div>
+        </div>
+        <div class="arc-shared"><span class="arc-tag">ベージュブラウン系4色配色</span> <span class="arc-tag">パール成分</span> <span class="arc-tag">保湿オイル</span></div>
+        <div class="arc-why">4色の配色順序とブラウンベージュの色味がほぼ同じで、どちらも捨て色なしのベーシックパレット。エクセルは発色重視、ルナソルは上品な仕上がり重視だが、基本的なグラデーション効果は似ている。美容専門家も「色だけなら見分けがつかない」と評価。</div>
+        <div class="arc-summary">日常使いのナチュラルメイクならエクセルで十分。特別な日の上品仕上げを求めるならルナソル。</div>
+        <div class="arc-date">2026-03-04</div>
+      </div>
+
+      <div class="arc-card" data-category="ティントリップ">
+        <div class="arc-header">
+          <span class="arc-category">ティントリップ</span>
+          <span class="arc-replace replace-low">用途次第</span>
+        </div>
+        <div class="arc-similarity">
+            <span class="arc-sim-label">類似度</span>
+            <div class="arc-sim-bar-bg"><div class="arc-sim-bar" style="width:65%;background:#FFCC00;"></div></div>
+            <span class="arc-sim-score" style="color:#FFCC00;">65%</span>
+          </div>
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">キャンメイク ステイオンバームルージュ 14 ブランブルーズ</div>
+            <div class="arc-price arc-price-petit">&yen;638</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">ディオール アディクト リップ グロウ 012 ローズウッド</div>
+            <div class="arc-price arc-price-depa">&yen;4,950</div>
+          </div>
+        </div>
+        <div class="arc-shared"><span class="arc-tag">ティントバーム処方</span> <span class="arc-tag">自然な発色成分</span> <span class="arc-tag">保湿オイル</span></div>
+        <div class="arc-why">どちらも唇のpHに反応して自然な血色感を出すティントバーム。塗った直後より時間が経つほどに似た色味に発色する。保湿しながら色づく仕組みは同じで、ナチュラルな仕上がりも共通。</div>
+        <div class="arc-summary">日中の自然な血色感ならキャンメイクで充分。長時間の保湿力と上質感を求めるならディオール。</div>
+        <div class="arc-date">2026-03-04</div>
+      </div>
+
+      <div class="arc-card" data-category="リップ">
+        <div class="arc-header">
+          <span class="arc-category">リップ</span>
+          
+        </div>
+        
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">キャンメイク メルティールミナスルージュ</div>
+            <div class="arc-price arc-price-petit">&yen;880</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">ディオール アディクト リップ グロウ</div>
+            <div class="arc-price arc-price-depa">&yen;5,500</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">保湿オイル共通でツヤ・血色感が似ており、プチプラで代替可能。</div>
+        <div class="arc-date">2026-03-03</div>
+      </div>
+
+      <div class="arc-card" data-category="チーク">
+        <div class="arc-header">
+          <span class="arc-category">チーク</span>
+          
+        </div>
+        
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">セザンヌ ナチュラル チークN</div>
+            <div class="arc-price arc-price-petit">&yen;396</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">ディオール バックステージ ロージー グロウ</div>
+            <div class="arc-price arc-price-depa">&yen;7,700</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">パウダー質感と自然発色が共通、プチプラで十分代替可。</div>
+        <div class="arc-date">2026-03-03</div>
+      </div>
+
+      <div class="arc-card" data-category="アイシャドウ">
+        <div class="arc-header">
+          <span class="arc-category">アイシャドウ</span>
+          
+        </div>
+        
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">リンメル ワンダー スウィート アイシャドウ</div>
+            <div class="arc-price arc-price-petit">&yen;1,760</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">アディクション ザ アイシャドウ パレット</div>
+            <div class="arc-price arc-price-depa">&yen;6,820</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">ラメと発色が似てグラデ似、プチプラでデパコス級の仕上がり。</div>
+        <div class="arc-date">2026-03-03</div>
+      </div>
+
+      <div class="arc-card" data-category="フェイスパウダー">
+        <div class="arc-header">
+          <span class="arc-category">フェイスパウダー</span>
+          
+        </div>
+        
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">セザンヌ うるふわ仕上げパウダー</div>
+            <div class="arc-price arc-price-petit">&yen;858</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">コスメデコルテ AQ ミリオリティ フェイスパウダー n</div>
+            <div class="arc-price arc-price-depa">&yen;23,100</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">微粒子で毛穴カバー・ツヤ出し共通、デパ保湿持続優位もプチプラ代替可能。</div>
+        <div class="arc-date">2026-03-02</div>
+      </div>
+
+      <div class="arc-card" data-category="リップ">
+        <div class="arc-header">
+          <span class="arc-category">リップ</span>
+          
+        </div>
+        
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">rom&amp;nd グラスティングメルティングバーム</div>
+            <div class="arc-price arc-price-petit">&yen;1,320</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">ディオール アディクト リップ グロウ</div>
+            <div class="arc-price arc-price-depa">&yen;4,730</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">むっちりツヤ保湿共通、プチプラがコスパ良く完璧代替。</div>
+        <div class="arc-date">2026-03-02</div>
+      </div>
+
+      <div class="arc-card" data-category="リップ">
+        <div class="arc-header">
+          <span class="arc-category">リップ</span>
+          
+        </div>
+        
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">ケイト リップモンスター</div>
+            <div class="arc-price arc-price-petit">&yen;1,540</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">RMK デューイーメルト リップカラー</div>
+            <div class="arc-price arc-price-depa">&yen;4,180</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">発色・色持ち・ツヤ共通、デパ優位保湿もプチプラで日常代替OK。</div>
+        <div class="arc-date">2026-03-02</div>
+      </div>
+
+      <div class="arc-card" data-category="化粧下地">
+        <div class="arc-header">
+          <span class="arc-category">化粧下地</span>
+          
+        </div>
+        
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">セザンヌ 皮脂テカリ防止下地</div>
+            <div class="arc-price arc-price-petit">&yen;660</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">クレ・ド・ポー ボーテ ヴォワールコレクチュールn</div>
+            <div class="arc-price arc-price-depa">&yen;8,250</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">皮脂コントロール共通、デパコス美容効果優位もテカリ防止で代替可。</div>
+        <div class="arc-date">2026-02-28</div>
+      </div>
+
+      <div class="arc-card" data-category="フェイスパウダー">
+        <div class="arc-header">
+          <span class="arc-category">フェイスパウダー</span>
+          
+        </div>
+        
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">UGLAM ラプードルオートニュアンス</div>
+            <div class="arc-price arc-price-petit">&yen;1,100</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">エレガンス ラ プードル オートニュアンス</div>
+            <div class="arc-price arc-price-depa">&yen;13,200</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">シルク質感と毛穴カバー激似、プチプラで透明感持続し代替可能。</div>
+        <div class="arc-date">2026-02-28</div>
+      </div>
+
+      <div class="arc-card" data-category="リップ">
+        <div class="arc-header">
+          <span class="arc-category">リップ</span>
+          
+        </div>
+        <div class="arc-similarity">
+            <span class="arc-sim-label">類似度</span>
+            <div class="arc-sim-bar-bg"><div class="arc-sim-bar" style="width:85%;background:#4ECDC4;"></div></div>
+            <span class="arc-sim-score" style="color:#4ECDC4;">85%</span>
+          </div>
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">キャンメイク メルティールミナスルージュ</div>
+            <div class="arc-price arc-price-petit">&yen;880</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">Dior アディクト リップグロウ</div>
+            <div class="arc-price arc-price-depa">&yen;4,950</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">保湿成分（ワセリン・シア脂）が共通。デパコスはオイル豊富でツヤ持続優位だが、プチプラで5.6倍コスパ良好。</div>
+        <div class="arc-date">2026-02-27</div>
+      </div>
+
+      <div class="arc-card" data-category="チーク">
+        <div class="arc-header">
+          <span class="arc-category">チーク</span>
+          
+        </div>
+        <div class="arc-similarity">
+            <span class="arc-sim-label">類似度</span>
+            <div class="arc-sim-bar-bg"><div class="arc-sim-bar" style="width:88%;background:#4ECDC4;"></div></div>
+            <span class="arc-sim-score" style="color:#4ECDC4;">88%</span>
+          </div>
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">ヴィセ レイヤード フルリ チーク</div>
+            <div class="arc-price arc-price-petit">&yen;1,760</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">ディオールスキン ルージュ ブラッシュ</div>
+            <div class="arc-price arc-price-depa">&yen;7,700</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">スキンケア成分中心で保湿・血色感共通。デパコスは自然由来90%で上品ツヤ強いが、プチプラ4.4倍で代替可。</div>
+        <div class="arc-date">2026-02-27</div>
+      </div>
+
+      <div class="arc-card" data-category="アイシャドウ">
+        <div class="arc-header">
+          <span class="arc-category">アイシャドウ</span>
+          
+        </div>
+        <div class="arc-similarity">
+            <span class="arc-sim-label">類似度</span>
+            <div class="arc-sim-bar-bg"><div class="arc-sim-bar" style="width:90%;background:#4ECDC4;"></div></div>
+            <span class="arc-sim-score" style="color:#4ECDC4;">90%</span>
+          </div>
+        <div class="arc-vs">
+          <div class="arc-product">
+            <span class="arc-label arc-label-petit">プチプラ</span>
+            <div class="arc-name">rom&amp;nd ベターザンアイズ</div>
+            <div class="arc-price arc-price-petit">&yen;1,760</div>
+          </div>
+          <div class="arc-vs-mark">VS</div>
+          <div class="arc-product">
+            <span class="arc-label arc-label-depa">デパコス</span>
+            <div class="arc-name">TOM FORD アイ カラー クォード</div>
+            <div class="arc-price arc-price-depa">&yen;12,980</div>
+          </div>
+        </div>
+        
+        
+        <div class="arc-summary">パウダーベース成分ほぼ同一で発色・密着感激似。デパコスはラグジュアリー質感優るが、7.4倍コスパのプチプラ推奨。</div>
+        <div class="arc-date">2026-02-27</div>
+      </div>
+
+  <footer class="footer">
+    <div class="footer-brand">&#x1F484; コスメバズ | CosmeBuzz</div>
+    <div class="footer-tagline">成分類似度でコスメの"激似"を検証</div>
+  </footer>
+
+</div>
+
+<script>
+document.querySelectorAll('.filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    var cat = this.getAttribute('data-cat');
+    document.querySelectorAll('.arc-card').forEach(function(card) {
+      if (cat === 'all' || card.getAttribute('data-category') === cat) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>
