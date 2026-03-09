@@ -216,15 +216,16 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 <div class="hero">
   <div class="hero-eyebrow">X API Proposal</div>
   <h1 class="hero-headline">
-    Xで昨日バズったコスメが<br>
-    <em>毎朝わかるとしたら。</em>
+    バズる前に、<br>
+    <em>仕掛けられるとしたら。</em>
   </h1>
   <p class="hero-sub">
     X APIを使うと、<br class="br-d">
-    <strong>「昨日Xで何がバズったか」</strong>が毎日データで取れる。<br><br>
-    しかもPRタグ付きの投稿も検出できるので、<br>
-    <strong>「どのブランドが今インフルエンサーに<br class="br-d">
-    お金を使っているか」</strong>まで見える。
+    <strong>「これからバズりそうなコスメ」</strong>を<br class="br-d">
+    毎日データで捉えられる。<br><br>
+    楽天の売上・@cosmeの口コミ・Google検索——<br>
+    <strong>複数の市場データと掛け合わせる</strong>ことで、<br class="br-d">
+    バズの初動を精度高く見つけ出す。
   </p>
   <div class="hero-scroll" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})">SCROLL<span>↓</span></div>
 </div>
@@ -232,15 +233,17 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 <!-- ===== 01: 毎朝届くデータ（詳細） ===== -->
 <div class="section wide" id="s1">
   <div class="section-label r">01 — Daily Intelligence</div>
-  <div class="section-title r">毎朝、<em>こんなデータが届く。</em></div>
+  <div class="section-title r">「次に来るコスメ」が<br><em>毎朝わかる。</em></div>
   <div class="section-sub r">
-    X APIはX（旧Twitter）の<strong>公式API</strong>。<br>
-    いいね数・リポスト数・インプレッション数は<br class="br-d">
-    Xのサーバーから直接取得するので<strong>数字は正確</strong>。<br><br>
-    コスメバズが「楽天・@cosmeの市場データ」なら、<br>
-    X APIは<strong>「SNS上のリアルタイムの動き」</strong>。<br>
-    市場データでは拾えない<br class="br-d">
-    「今この瞬間、Xで何が話題か」が見える。
+    X APIで<strong>美容投稿の言及数の動き</strong>を毎日追跡。<br>
+    「まだ総数は少ないけど、<br class="br-d">
+    前日比で急増している」——<br>
+    これが<strong>バズの初動</strong>。<br><br>
+    さらにコスメバズで毎日取っている<br>
+    <strong>楽天の売上・@cosmeの口コミ・<br class="br-d">
+    Googleの検索トレンド</strong>と掛け合わせる。<br>
+    複数のデータが同時に動き始めたものは<br>
+    <strong>バズる確度が高い。</strong>
   </div>
 
   <!-- X Analytics vs X API 比較 -->
@@ -264,12 +267,12 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
         ✓ <strong style="color:var(--text)">9アカウント分を一括自動取得</strong><br>
         ✓ <strong style="color:var(--text)">X全体の投稿を検索できる</strong><br>
         ✓ データ取得→加工→配信まで全自動<br>
-        ✓ #PR検出・バズ検出が可能
+        ✓ #PR検出・バズ予測が可能
       </div>
       <div style="margin-top:14px;padding:10px;background:rgba(34,211,238,.05);border-radius:6px;border:1px solid var(--cyan-bdr);font-size:11px;color:var(--sub);line-height:1.7;text-align:center">
         Analyticsとの最大の違いは<br>
         <strong style="color:var(--cyan)">「9アカウント一括」</strong>と<br>
-        <strong style="color:var(--cyan)">「X全体の検索」</strong>。
+        <strong style="color:var(--cyan)">「X全体のトレンド検知」</strong>。
       </div>
     </div>
   </div>
@@ -280,16 +283,17 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
         <div class="line-chat-bg">
           <div class="line-bubble">
             <div class="line-card">
-              <div class="line-card-badge hot">昨日のバズ TOP</div>
+              <div class="line-card-badge" style="background:rgba(251,146,60,.1);color:#f97316">バズ予兆</div>
               <div class="line-card-title">rom&nd グラスティングメルティングバーム</div>
               <div class="line-card-desc">
-                X検出: 美容投稿の中で前日比 320%<br>
-                「発色やばい」「秋の覇権」等の投稿が急増<br>
-                主な拡散元: フォロワー5万↑の一般ユーザー3名
+                X言及数: まだ82件だが前日比 +320%<br>
+                楽天: 美容液カテゴリ 156位→48位<br>
+                @cosme: 口コミ数 前週比 2.1倍<br>
+                → 3つのデータが同時に動き始めている
               </div>
               <div class="line-card-metrics">
-                <div class="line-card-metric"><div class="line-card-mv">18K</div><div class="line-card-ml">いいね計</div></div>
-                <div class="line-card-metric"><div class="line-card-mv">4.2K</div><div class="line-card-ml">リポスト</div></div>
+                <div class="line-card-metric"><div class="line-card-mv">+320%</div><div class="line-card-ml">X言及 前日比</div></div>
+                <div class="line-card-metric"><div class="line-card-mv">3指標</div><div class="line-card-ml">同時上昇中</div></div>
               </div>
             </div>
           </div>
@@ -311,13 +315,13 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
           </div>
           <div class="line-bubble">
             <div class="line-card">
-              <div class="line-card-badge hot">急上昇ワード</div>
-              <div class="line-card-title">昨日のXトレンドワード（美容）</div>
+              <div class="line-card-badge" style="background:rgba(251,146,60,.1);color:#f97316">来週の注目</div>
+              <div class="line-card-title">バズ予兆スコア TOP</div>
               <div class="line-card-desc">
-                1. 「ドクダミトナー」 +280%<br>
-                2. 「メルティングバーム」 +320%<br>
-                3. 「クッションファンデ 崩れない」 +180%<br>
-                4. 「韓国スキンケア 秋」 +150%
+                1. メルティングバーム — スコア 87<br>
+                2. ドクダミトナー — スコア 72<br>
+                3. ツヤ肌クッション — スコア 65<br>
+                4. 韓国スキンケア 秋 — スコア 58
               </div>
             </div>
           </div>
@@ -331,18 +335,23 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
         <em>毎朝まとまって届く。</em>
       </div>
       <div class="feat-desc">
-        <strong style="color:var(--cyan)">① 昨日のバズTOP</strong><br>
-        X上のコスメ投稿をリポスト・いいね数で<br class="br-d">
-        ランキング化。今Xで話題になっている商品が<br class="br-d">
-        ひと目でわかる。メンバーの投稿ネタになる。<br><br>
+        <strong style="color:var(--orange)">① バズ予兆</strong><br>
+        Xの言及数がまだ少ないのに<br class="br-d">
+        前日比で急増しているもの＝バズの初動。<br>
+        さらに楽天・@cosme・Google検索も<br class="br-d">
+        同時に動いていれば<strong>確度が高い。</strong><br>
+        他のインフルエンサーが取り上げる前に<br class="br-d">
+        先にポストすれば、<strong>一番乗りになれる。</strong><br><br>
         <strong style="color:var(--green)">② PR検出（F未取引）</strong><br>
         #PR タグ付き投稿を自動検出。<br>
         そのブランドがFに依頼した実績があるか照合し、<br>
         <strong>「予算はあるけどFに来ていないブランド」</strong>を<br class="br-d">
         リストアップ。営業リードになる。<br><br>
-        <strong style="color:var(--cyan)">③ 急上昇ワード</strong><br>
-        美容関連で前日急増したキーワード。<br>
-        「今ユーザーが何に興味を持っているか」がわかる。
+        <strong style="color:var(--orange)">③ バズ予兆スコアTOP</strong><br>
+        X言及の加速度 × 楽天売上変動 ×<br class="br-d">
+        @cosme口コミ増 × 検索トレンドを<br class="br-d">
+        掛け合わせたスコアで自動ランキング。<br>
+        来週バズりそうなものが一覧で見える。
       </div>
     </div>
   </div>
@@ -747,7 +756,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 <div class="closing">
   <div class="section-label r" style="text-align:center">SUMMARY</div>
   <p class="r closing-headline">
-    バズ検出、営業リード、<br>
+    バズ予測、営業リード、<br>
     キャンペーン集計、<em>PDF報告書。</em><br>
     全部、毎日<em>自動で回る仕組み。</em>
   </p>
