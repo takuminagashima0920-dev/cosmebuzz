@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C-MATCH — Data Platform</title>
+<title>C-MATCH — X API活用提案</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -58,7 +58,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 .nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:14px 40px;backdrop-filter:blur(14px);background:rgba(10,15,26,.75);border-bottom:1px solid var(--bdr);opacity:0;transform:translateY(-20px);transition:opacity .4s,transform .4s}
 .nav.show{opacity:1;transform:translateY(0)}
-.nav-brand{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--sub);letter-spacing:-.3px}
+.nav-brand{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--sub)}
 .nav-brand span{color:var(--cyan)}
 
 .section{max-width:1000px;margin:0 auto;padding:100px 40px}
@@ -68,6 +68,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .section-title{font-size:32px;font-weight:900;line-height:1.5;margin-bottom:14px;letter-spacing:-.5px}
 .section-title em{font-style:normal;color:var(--cyan)}
 .section-sub{font-size:14px;color:var(--sub);line-height:1.9;margin-bottom:52px;max-width:580px}
+.section-sub strong{color:var(--text)}
 
 /* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 40px;position:relative}
@@ -85,13 +86,11 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .demo-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.3),0 16px 48px rgba(0,0,0,.2)}
 .demo-topbar{display:flex;align-items:center;gap:6px;padding:12px 18px;border-bottom:1px solid var(--bdr);background:rgba(255,255,255,.02)}
 .demo-dot{width:8px;height:8px;border-radius:50%}
-.demo-dot.rd{background:#f87171}
-.demo-dot.yl{background:#fbbf24}
-.demo-dot.gn{background:#4ade80}
+.demo-dot.rd{background:#f87171}.demo-dot.yl{background:#fbbf24}.demo-dot.gn{background:#4ade80}
 .demo-topbar-title{font-family:'Inter',sans-serif;font-size:11px;color:var(--dim);margin-left:8px;letter-spacing:.5px}
 .demo-body{padding:24px}
 
-/* FEAT ROW */
+/* FEAT */
 .feat-row{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
 .feat-row.rev{direction:rtl}
 .feat-row.rev > *{direction:ltr}
@@ -100,15 +99,16 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .feat-desc{font-size:13px;color:var(--sub);line-height:2}
 .feat-desc strong{color:var(--text)}
 
-/* IMPACT CARDS */
-.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
-.impact-card{padding:24px 16px;background:var(--card2);border-radius:12px;text-align:center;border:1px solid var(--bdr);transition:all .3s}
-.impact-card:hover{border-color:var(--bdr-h);transform:translateY(-2px)}
-.impact-ic{width:28px;height:28px;margin:0 auto 10px;color:var(--cyan)}
-.impact-before{font-family:'Inter',sans-serif;font-size:16px;color:var(--dim);text-decoration:line-through}
-.impact-after{font-family:'Inter',sans-serif;font-size:28px;font-weight:900;color:var(--cyan);margin:4px 0}
-.impact-label{font-size:11px;color:var(--sub);line-height:1.4}
-.impact-change{font-size:10px;color:var(--green);font-weight:700;font-family:'Inter',sans-serif;margin-top:4px}
+/* MOCK TABLE */
+.mock-table{width:100%;border-collapse:collapse;font-size:12px}
+.mock-table th{text-align:left;padding:10px 12px;color:var(--dim);font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--bdr)}
+.mock-table td{padding:11px 12px;border-bottom:1px solid var(--bdr);color:var(--sub)}
+.mock-table tr:last-child td{border-bottom:none}
+
+.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.5px}
+.badge.hot{background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.2)}
+.badge.new{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.15)}
+.badge.known{background:rgba(255,255,255,.04);color:var(--sub);border:1px solid var(--bdr)}
 
 /* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
@@ -116,7 +116,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .stat-v{font-family:'Inter',sans-serif;font-size:24px;font-weight:800;color:var(--text)}
 .stat-l{font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
 
-/* XAPI BARS */
+/* XAPI */
 .xapi-account{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bdr);font-size:12px}
 .xapi-account:last-child{border-bottom:none}
 .xapi-handle{color:var(--cyan);font-weight:600;font-family:'Inter',sans-serif;font-size:11px}
@@ -131,44 +131,15 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .line-card{padding:14px}
 .line-card-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;margin-bottom:8px;letter-spacing:.5px}
 .line-card-badge.hot{background:rgba(6,182,212,.1);color:var(--cyan-d)}
-.line-card-badge.up{background:rgba(22,163,74,.08);color:#16a34a}
+.line-card-badge.new-biz{background:rgba(52,211,153,.08);color:#16a34a}
 .line-card-title{font-size:13px;font-weight:700;margin-bottom:6px;line-height:1.4;color:#1a1a1a}
-.line-card-desc{font-size:10px;color:#6b7280;line-height:1.5;margin-bottom:10px}
+.line-card-desc{font-size:10px;color:#6b7280;line-height:1.6;margin-bottom:10px}
 .line-card-metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px}
 .line-card-metric{padding:6px;background:#f3f4f6;border-radius:4px;text-align:center}
-.line-card-mv{font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:var(--cyan-d)}
+.line-card-mv{font-family:'Inter',sans-serif;font-size:13px;font-weight:800;color:var(--cyan-d)}
 .line-card-ml{font-size:7px;color:#9ca3af;margin-top:1px}
 .line-card-btn{display:block;text-align:center;padding:8px;background:var(--cyan-d);border-radius:6px;color:#fff;font-size:10px;font-weight:600;text-decoration:none}
 .line-time{font-size:9px;color:rgba(255,255,255,.7);margin-top:4px}
-
-/* CAMPAIGN */
-.cd-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
-.cd-card{padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--bdr)}
-.cd-card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.cd-brand{font-size:12px;font-weight:700}
-.cd-status{display:inline-block;padding:3px 8px;border-radius:3px;font-size:9px;font-weight:700}
-.cd-status.active{background:rgba(52,211,153,.1);color:var(--green)}
-.cd-status.done{background:var(--cyan-bg);color:var(--cyan)}
-.cd-kpis{display:grid;grid-template-columns:1fr 1fr;gap:4px}
-.cd-kpi{padding:6px;background:var(--card);border-radius:4px;text-align:center}
-.cd-kpi-v{font-family:'Inter',sans-serif;font-size:13px;font-weight:800}
-.cd-kpi-l{font-size:7px;color:var(--dim);margin-top:1px}
-.cd-progress{margin-top:8px}
-.cd-progress-bar{height:3px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden}
-.cd-progress-fill{height:100%;border-radius:2px;background:var(--cyan)}
-.cd-progress-label{font-size:8px;color:var(--dim);margin-top:3px;display:flex;justify-content:space-between}
-.cd-pdf{display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg2);border-radius:8px;border:1px solid var(--bdr)}
-.cd-pdf-ic{width:32px;height:40px;background:var(--cyan-bg);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--cyan)}
-.cd-pdf-info h5{font-size:11px;font-weight:700;margin-bottom:2px}
-.cd-pdf-info p{font-size:9px;color:var(--dim)}
-
-/* SOURCE TAGS */
-.source-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
-.source-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--bdr);background:var(--card)}
-.source-tag .src-dot{width:6px;height:6px;border-radius:50%}
-.source-tag .src-dot.free{background:var(--green)}
-.source-tag .src-dot.paid{background:var(--cyan)}
-.source-tag .src-price{font-size:9px;color:var(--dim);margin-left:2px}
 
 /* SCENARIO */
 .scenario{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:36px 32px;margin-bottom:28px;position:relative;overflow:hidden;transition:all .3s}
@@ -181,12 +152,23 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .scenario-steps .step-n{font-family:'Inter',sans-serif;font-weight:800;color:var(--cyan);font-size:12px;flex-shrink:0;width:20px;margin-top:2px}
 .scenario-steps strong{color:var(--text)}
 .scenario-steps em{font-style:normal;color:var(--cyan)}
-.scenario-result{margin-top:20px;padding:18px 20px;background:var(--cyan-bg);border:1px solid var(--cyan-bdr);border-radius:10px;font-size:14px;font-weight:700;color:var(--cyan);line-height:1.7}
+.scenario-result{margin-top:20px;padding:18px 20px;background:var(--cyan-bg);border:1px solid var(--cyan-bdr);border-radius:10px;font-size:14px;color:var(--text);line-height:1.8}
+.scenario-result em{font-style:normal;color:var(--cyan);font-weight:700}
+
+/* SOURCE */
+.source-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.source-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--bdr);background:var(--card)}
+.source-tag .src-dot{width:6px;height:6px;border-radius:50%}
+.source-tag .src-dot.free{background:var(--green)}
+.source-tag .src-dot.paid{background:var(--cyan)}
+.source-tag .src-price{font-size:9px;color:var(--dim);margin-left:2px}
 
 /* CLOSING */
 .closing{text-align:center;padding:100px 40px 80px;max-width:680px;margin:0 auto}
-.closing-headline{font-size:28px;font-weight:900;line-height:1.8}
+.closing-headline{font-size:26px;font-weight:900;line-height:1.8}
 .closing-headline em{font-style:normal;color:var(--cyan)}
+.closing-sub{font-size:14px;color:var(--sub);line-height:2;margin-top:20px}
+.closing-sub strong{color:var(--text)}
 
 .footer{text-align:center;padding:20px;font-size:10px;color:var(--dim);letter-spacing:1px;border-top:1px solid var(--bdr)}
 
@@ -201,8 +183,6 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   .feat-row{grid-template-columns:1fr!important}
   .feat-row.rev{direction:ltr}
   .stats-row{grid-template-columns:1fr!important}
-  .impact-grid{grid-template-columns:1fr!important}
-  .cd-grid{grid-template-columns:1fr!important}
   .closing-headline{font-size:20px!important}
   .feat-headline{font-size:17px!important}
   .br-d::after{content:none!important}
@@ -213,106 +193,95 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 <body>
 
 <div class="bg-canvas">
-  <div class="bg-blob b1"></div>
-  <div class="bg-blob b2"></div>
-  <div class="bg-blob b3"></div>
-  <div class="bg-blob b4"></div>
+  <div class="bg-blob b1"></div><div class="bg-blob b2"></div>
+  <div class="bg-blob b3"></div><div class="bg-blob b4"></div>
 </div>
 <div class="particles" id="particles"></div>
 <div class="progress-bar" id="progressBar"></div>
 
 <nav class="nav" id="nav">
-  <div class="nav-brand"><span>C-MATCH</span> Data Platform</div>
+  <div class="nav-brand"><span>C-MATCH</span> × X API</div>
 </nav>
 
 <!-- ===== HERO ===== -->
 <div class="hero">
-  <div class="hero-eyebrow">C-MATCH × Data</div>
+  <div class="hero-eyebrow">X API proposal for C-MATCH</div>
   <h1 class="hero-headline">
-    <span class="nowrap">C-MATCH</span>の影響力を<br>
-    <em>「数字」で証明できたら。</em>
+    Xで昨日バズったコスメが<br>
+    <em>毎朝わかるとしたら。</em>
   </h1>
   <p class="hero-sub">
-    X API × 楽天API × @cosme × Google Trends。<br>
-    この4つのデータを組み合わせると、<br>
-    <strong>投稿が市場にどう効いたかを<br class="br-d">
-    自動で可視化する仕組み</strong>が作れる。<br><br>
-    それが動いたら何ができるか、<br>
-    具体的にイメージしてみてほしい。
+    X APIを導入すると、<br class="br-d">
+    <strong>「昨日Xで何がバズったか」</strong>が毎日データで取れる。<br><br>
+    しかもPRタグ付きの投稿も検出できるので、<br>
+    <strong>「どのブランドが今インフルエンサー施策を<br class="br-d">
+    やっているか」</strong>まで見える。<br><br>
+    この2つが見えると、何が変わるか。
   </p>
   <div class="hero-scroll" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})">SCROLL<span>↓</span></div>
 </div>
 
-<!-- ===== 01: 報告書のデモ ===== -->
+<!-- ===== 01: 毎朝届くデータ ===== -->
 <div class="section wide" id="s1">
-  <div class="section-label r">01 — Report Demo</div>
-  <div class="section-title r">例えば、Anuaの案件で<br><em>こんなレポートが出せる。</em></div>
+  <div class="section-label r">01 — Daily Intelligence</div>
+  <div class="section-title r">毎朝こんなデータが<em>自動で届く。</em></div>
   <div class="section-sub r">
-    9アカウントでAnuaのドクダミトナーを<br class="br-d">
-    一斉投稿したとする。<br>
-    投稿後7日間で、こんなデータが自動で集まる。
+    X APIで前日のコスメ関連投稿を自動検索。<br>
+    「何がバズっているか」と<br class="br-d">
+    「どのブランドがPR施策をやっているか」を<br>
+    毎朝LINEにまとめて届ける。
   </div>
 
-  <div class="r" style="margin-bottom:12px">
-    <div style="font-size:12px;color:var(--dim);letter-spacing:2px;margin-bottom:8px">投稿後に市場で起きた変化（自動計測）</div>
-  </div>
-  <div class="impact-grid r">
-    <div class="impact-card">
-      <div class="impact-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg></div>
-      <div class="impact-before">156位</div>
-      <div class="impact-after">23位</div>
-      <div class="impact-label">楽天ランキング</div>
-      <div class="impact-change">▲ 133ランクUP</div>
-    </div>
-    <div class="impact-card">
-      <div class="impact-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>
-      <div class="impact-before">47件/日</div>
-      <div class="impact-after">184件/日</div>
-      <div class="impact-label">@cosme 口コミ</div>
-      <div class="impact-change">▲ 3.9倍</div>
-    </div>
-    <div class="impact-card">
-      <div class="impact-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-      <div class="impact-before">Score 8</div>
-      <div class="impact-after">Score 64</div>
-      <div class="impact-label">Google 検索トレンド</div>
-      <div class="impact-change">▲ 8倍</div>
-    </div>
-  </div>
-
-  <div class="feat-row r" style="margin-top:40px">
-    <div class="demo-card">
-      <div class="demo-topbar">
-        <div class="demo-dot rd"></div><div class="demo-dot yl"></div><div class="demo-dot gn"></div>
-        <span class="demo-topbar-title">Anua Campaign Report — Auto Generated</span>
-      </div>
-      <div class="demo-body">
-        <div class="stats-row">
-          <div class="stat-card"><div class="stat-v">2.4M</div><div class="stat-l">リーチ合計</div></div>
-          <div class="stat-card"><div class="stat-v">186K</div><div class="stat-l">反応数</div></div>
-          <div class="stat-card"><div class="stat-v">7.8%</div><div class="stat-l">反応率</div></div>
+  <div class="feat-row r">
+    <div style="padding:10px">
+      <div class="line-preview">
+        <div class="line-chat-bg">
+          <div class="line-bubble">
+            <div class="line-card">
+              <div class="line-card-badge hot">昨日のバズ</div>
+              <div class="line-card-title">rom&nd グラスティングメルティングバーム</div>
+              <div class="line-card-desc">リポスト 4,200+ / いいね 18,000+<br>「発色やばい」「これ秋の覇権」等の投稿が急増<br>X検出: 美容系投稿の中で前日比 320%</div>
+              <div class="line-card-metrics">
+                <div class="line-card-metric"><div class="line-card-mv">18K</div><div class="line-card-ml">いいね合計</div></div>
+                <div class="line-card-metric"><div class="line-card-mv">4.2K</div><div class="line-card-ml">リポスト</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="line-bubble">
+            <div class="line-card">
+              <div class="line-card-badge new-biz">PR検出 — 未取引</div>
+              <div class="line-card-title">NAMING. カラーリップバーム</div>
+              <div class="line-card-desc">PR投稿を3件検出（他事務所のインフルエンサー）<br>Fへの依頼実績: なし<br>→ 先にアプローチできる可能性あり</div>
+              <div class="line-card-metrics">
+                <div class="line-card-metric"><div class="line-card-mv">3件</div><div class="line-card-ml">PR投稿</div></div>
+                <div class="line-card-metric"><div class="line-card-mv">未取引</div><div class="line-card-ml">F実績</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="line-time">毎朝 自動配信</div>
         </div>
-        <div style="height:180px"><canvas id="reportChart"></canvas></div>
       </div>
     </div>
     <div>
       <div class="feat-headline">
-        この報告書が<br>
-        <em>自動で出来上がる。</em>
+        「バズ検出」と<br>
+        <em>「営業リード」</em>が<br>
+        毎朝勝手に届く。
       </div>
       <div class="feat-desc">
-        X APIで9アカウントのリーチ・反応を自動取得。<br>
-        同時に楽天API・@cosme・Google Trendsから<br>
-        市場の変動データも自動で集める。<br><br>
-        キャンペーンが終わったら、<br>
-        <strong>ワンクリックでPDFレポート生成。</strong><br>
-        ブランドにそのまま送れる。
+        <strong>上のカード：昨日Xでバズったコスメ。</strong><br>
+        メンバーの投稿ネタとしてすぐ使える。<br>
+        今バズり始めている商品がわかるから、<br>
+        タイミングを逃さず投稿できる。<br><br>
+        <strong>下のカード：PR投稿を出しているけど、<br class="br-d">
+        まだFに依頼が来ていないブランド。</strong><br>
+        他の事務所のインフルエンサーにPRを出している<br class="br-d">
+        =インフルエンサー施策に予算がある。<br>
+        でもまだFには来ていない。<br>
+        <strong>こっちから先に声をかけられる。</strong>
       </div>
       <div class="source-tags" style="margin-top:20px">
         <div class="source-tag"><span class="src-dot paid"></span>X API<span class="src-price">$200/月</span></div>
-        <div class="source-tag"><span class="src-dot free"></span>楽天API<span class="src-price">無料</span></div>
-        <div class="source-tag"><span class="src-dot free"></span>@cosme<span class="src-price">無料</span></div>
-        <div class="source-tag"><span class="src-dot free"></span>Google Trends<span class="src-price">無料</span></div>
       </div>
     </div>
   </div>
@@ -320,25 +289,30 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 <div class="section-divider"></div>
 
-<!-- ===== 02: 9アカウント集計 ===== -->
+<!-- ===== 02: 9アカウント自動集計 ===== -->
 <div class="section wide" id="s2">
-  <div class="section-label r">02 — Account Analytics</div>
-  <div class="section-title r">9アカウント分のデータが<br><em>自動で集まる。</em></div>
+  <div class="section-label r">02 — Account Report</div>
+  <div class="section-title r">9アカウントの数字を<br><em>自動でまとめる。</em></div>
   <div class="section-sub r">
-    X APIを使うと、各アカウントの<br class="br-d">
-    リーチ・反応・クリック数が<br class="br-d">
+    X APIを使うと、各アカウントの投稿データ<br class="br-d">
+    （リーチ・いいね・リポスト・クリック数）を<br>
     API経由で自動取得できる。<br>
-    スクショを集めてまとめる手間がなくなる。
+    スクショを1枚ずつ集める作業がなくなる。
   </div>
 
   <div class="feat-row rev r">
     <div class="demo-card">
       <div class="demo-topbar">
         <div class="demo-dot rd"></div><div class="demo-dot yl"></div><div class="demo-dot gn"></div>
-        <span class="demo-topbar-title">9 Accounts — Reach Summary</span>
+        <span class="demo-topbar-title">Anua Campaign — 9 Accounts</span>
       </div>
       <div class="demo-body">
-        <div style="height:180px;margin-bottom:16px"><canvas id="xapiChart"></canvas></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-v">2.4M</div><div class="stat-l">リーチ合計</div></div>
+          <div class="stat-card"><div class="stat-v">186K</div><div class="stat-l">いいね合計</div></div>
+          <div class="stat-card"><div class="stat-v">7.8%</div><div class="stat-l">反応率</div></div>
+        </div>
+        <div style="height:180px;margin-bottom:16px"><canvas id="campaignChart"></canvas></div>
         <div>
           <div class="xapi-account"><span class="xapi-handle">@cosme_trend01</span><div class="xapi-bar"><div class="xapi-bar-fill" style="width:92%"></div></div><span class="xapi-reach">580K</span></div>
           <div class="xapi-account"><span class="xapi-handle">@beauty_pick</span><div class="xapi-bar"><div class="xapi-bar-fill" style="width:78%"></div></div><span class="xapi-reach">490K</span></div>
@@ -350,83 +324,21 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
     </div>
     <div>
       <div class="feat-headline">
-        どのアカウントが<br>
-        <em>どれだけ効いたか。</em>
+        キャンペーン単位で、<br>
+        <em>誰がどれだけ届けたか。</em>
       </div>
       <div class="feat-desc">
-        キャンペーンごとに、<br>
-        どのアカウントがどれだけリーチしたか、<br>
-        どのアカウントの反応率が高かったかがわかる。<br><br>
-        <strong>「このブランドにはこのアカウントが効く」</strong><br>
-        というデータが蓄積されていく。<br>
-        次の案件のアサインにも使える。
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="section-divider"></div>
-
-<!-- ===== 03: トレンド配信 ===== -->
-<div class="section wide" id="s3">
-  <div class="section-label r">03 — Trend Delivery</div>
-  <div class="section-title r">毎朝、<em>これがLINEに届く。</em></div>
-  <div class="section-sub r">
-    楽天API・@cosme・Google Trendsのデータを<br class="br-d">
-    毎日自動でチェック。<br>
-    急上昇している商品をLINEで自動通知する。
-  </div>
-
-  <div class="feat-row r">
-    <div style="padding:20px 10px">
-      <div class="line-preview">
-        <div class="line-chat-bg">
-          <div class="line-bubble">
-            <div class="line-card">
-              <div class="line-card-badge hot">急上昇</div>
-              <div class="line-card-title">Anua ドクダミ77%トナー</div>
-              <div class="line-card-desc">楽天 156位→23位に急上昇<br>@cosme口コミ +89件(24h)<br>Google検索 8倍に増加</div>
-              <div class="line-card-metrics">
-                <div class="line-card-metric"><div class="line-card-mv">87</div><div class="line-card-ml">注目度スコア</div></div>
-                <div class="line-card-metric"><div class="line-card-mv">+24</div><div class="line-card-ml">前日比</div></div>
-              </div>
-              <a class="line-card-btn">くわしく見る</a>
-            </div>
-          </div>
-          <div class="line-bubble">
-            <div class="line-card">
-              <div class="line-card-badge up">上昇中</div>
-              <div class="line-card-title">TIRTIR マスクフィット<br>クッションファンデ</div>
-              <div class="line-card-desc">@cosmeランキング3位<br>楽天レビュー4.7 / SNS言及 +340%</div>
-              <div class="line-card-metrics">
-                <div class="line-card-metric"><div class="line-card-mv">72</div><div class="line-card-ml">注目度スコア</div></div>
-                <div class="line-card-metric"><div class="line-card-mv">+15</div><div class="line-card-ml">前日比</div></div>
-              </div>
-              <a class="line-card-btn">くわしく見る</a>
-            </div>
-          </div>
-          <div class="line-time">毎日 12:35 自動配信</div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="feat-headline">
-        メンバーは<br>
-        <em>LINEを見るだけ。</em>
-      </div>
-      <div class="feat-desc">
-        「今どの商品が伸びてるか」は<br>
-        楽天・@cosme・Google Trendsの<br>
-        3つのデータソースを毎日自動でチェックして判定。<br><br>
-        <strong>メンバーが自分で調べる必要はない。</strong><br>
-        毎朝LINEを開けば、今日の注目商品がわかる。<br><br>
-        「次何投稿しよう」のヒントが<br>
-        毎日勝手に届く仕組み。
+        案件ごとに「どのアカウントが<br class="br-d">
+        どれだけリーチしたか」が自動で出る。<br><br>
+        今は各アカウントに<br class="br-d">
+        「スクショ送って」と連絡して、<br>
+        手動で集めてまとめている作業。<br>
+        <strong>それが全部自動になる。</strong><br><br>
+        ブランドに送る報告資料の数字も<br>
+        ここからそのまま使える。
       </div>
       <div class="source-tags" style="margin-top:20px">
-        <div class="source-tag"><span class="src-dot free"></span>楽天API<span class="src-price">無料</span></div>
-        <div class="source-tag"><span class="src-dot free"></span>@cosme<span class="src-price">無料</span></div>
-        <div class="source-tag"><span class="src-dot free"></span>Google Trends<span class="src-price">無料</span></div>
+        <div class="source-tag"><span class="src-dot paid"></span>X API<span class="src-price">$200/月</span></div>
       </div>
     </div>
   </div>
@@ -434,106 +346,54 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 <div class="section-divider"></div>
 
-<!-- ===== 04: 案件管理 ===== -->
-<div class="section wide" id="s4">
-  <div class="section-label r">04 — Campaign Manager</div>
-  <div class="section-title r">全案件の進捗が<em>一画面で見える。</em></div>
+<!-- ===== 03: 具体シナリオ ===== -->
+<div class="section" id="s3">
+  <div class="section-label r">03 — Scenarios</div>
+  <div class="section-title r"><em>具体的に</em>どう使えるか。</div>
   <div class="section-sub r">
-    どのブランドの案件が何割進んでいるか。<br>
-    リーチはどこまで伸びているか。<br>
-    聞かなくても、開けばわかる。
-  </div>
-
-  <div class="demo-card r">
-    <div class="demo-topbar">
-      <div class="demo-dot rd"></div><div class="demo-dot yl"></div><div class="demo-dot gn"></div>
-      <span class="demo-topbar-title">Campaign Manager — 2026 Q1</span>
-    </div>
-    <div class="demo-body">
-      <div class="cd-grid">
-        <div class="cd-card">
-          <div class="cd-card-h"><span class="cd-brand">Anua</span><span class="cd-status active">進行中</span></div>
-          <div class="cd-kpis"><div class="cd-kpi"><div class="cd-kpi-v">2.4M</div><div class="cd-kpi-l">リーチ</div></div><div class="cd-kpi"><div class="cd-kpi-v">186K</div><div class="cd-kpi-l">反応</div></div></div>
-          <div class="cd-progress"><div class="cd-progress-bar"><div class="cd-progress-fill" style="width:72%"></div></div><div class="cd-progress-label"><span>投稿 7/9完了</span><span style="color:var(--cyan)">72%</span></div></div>
-        </div>
-        <div class="cd-card">
-          <div class="cd-card-h"><span class="cd-brand">medicube</span><span class="cd-status active">進行中</span></div>
-          <div class="cd-kpis"><div class="cd-kpi"><div class="cd-kpi-v">1.8M</div><div class="cd-kpi-l">リーチ</div></div><div class="cd-kpi"><div class="cd-kpi-v">142K</div><div class="cd-kpi-l">反応</div></div></div>
-          <div class="cd-progress"><div class="cd-progress-bar"><div class="cd-progress-fill" style="width:55%"></div></div><div class="cd-progress-label"><span>投稿 5/9完了</span><span style="color:var(--cyan)">55%</span></div></div>
-        </div>
-        <div class="cd-card">
-          <div class="cd-card-h"><span class="cd-brand">TIRTIR</span><span class="cd-status done">完了</span></div>
-          <div class="cd-kpis"><div class="cd-kpi"><div class="cd-kpi-v">3.1M</div><div class="cd-kpi-l">リーチ</div></div><div class="cd-kpi"><div class="cd-kpi-v">245K</div><div class="cd-kpi-l">反応</div></div></div>
-          <div class="cd-progress"><div class="cd-progress-bar"><div class="cd-progress-fill" style="width:100%"></div></div><div class="cd-progress-label"><span>投稿 9/9完了</span><span style="color:var(--cyan)">100%</span></div></div>
-        </div>
-        <div class="cd-card">
-          <div class="cd-card-h"><span class="cd-brand">Torriden</span><span class="cd-status active">進行中</span></div>
-          <div class="cd-kpis"><div class="cd-kpi"><div class="cd-kpi-v">890K</div><div class="cd-kpi-l">リーチ</div></div><div class="cd-kpi"><div class="cd-kpi-v">67K</div><div class="cd-kpi-l">反応</div></div></div>
-          <div class="cd-progress"><div class="cd-progress-bar"><div class="cd-progress-fill" style="width:33%"></div></div><div class="cd-progress-label"><span>投稿 3/9完了</span><span style="color:var(--cyan)">33%</span></div></div>
-        </div>
-      </div>
-      <div class="cd-pdf">
-        <div class="cd-pdf-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-        <div class="cd-pdf-info">
-          <h5>TIRTIR_report_2026Q1.pdf</h5>
-          <p>キャンペーン完了 → ワンクリックでPDFレポート生成 → ブランドにそのまま送付</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="section-divider"></div>
-
-<!-- ===== 05: これが動いたら何が起きるか（シナリオ） ===== -->
-<div class="section" id="s5">
-  <div class="section-label r">05 — What Happens</div>
-  <div class="section-title r">このデータがあると、<br><em>何が変わるか。</em></div>
-  <div class="section-sub r">
-    このデータが加わると、<br class="br-d">
-    今の強みがさらに効くようになる。<br>
-    3つの場面で想像してみてほしい。
+    X APIで取れるデータが、<br class="br-d">
+    日々の業務の中でどう役に立つか。<br>
+    いくつかの場面で考えてみる。
   </div>
 
   <div class="scenario r">
-    <div class="scenario-q">Anuaの担当者が、hinceの担当者に<br class="br-d"><span class="nowrap">C-MATCH</span>を紹介する場面を想像してほしい。</div>
+    <div class="scenario-q">まだFに来ていないブランドの案件を、<br class="br-d">先に見つける。</div>
     <ul class="scenario-steps">
-      <li><span class="step-n">1</span><span>Anuaの案件が終わる。いつも通りの投稿は成功した。</span></li>
-      <li><span class="step-n">2</span><span>ここで、報告書にインプレッション数だけでなく<br><strong>「投稿後に楽天順位が156位→23位に上がった」</strong><br><strong>「@cosmeの口コミが3.9倍に増えた」</strong><br>「Google検索が8倍に伸びた」というデータが入っている。</span></li>
-      <li><span class="step-n">3</span><span>Anuaの担当者はこの報告書をそのまま社内に出す。<br>上司に「この事務所、投稿の市場への影響まで<br class="br-d">レポートしてくれるんですよ」と言える。</span></li>
-      <li><span class="step-n">4</span><span>ある日、hinceの担当者と話す機会がある。<br>「いい事務所ない？」と聞かれたとき、<br><strong>「<span class="nowrap">C-MATCH</span>、報告書のクオリティが全然違うよ」</strong><br>と紹介しやすい。<strong>根拠がある</strong>から。</span></li>
+      <li><span class="step-n">1</span><span>X APIで美容系の「#PR」タグ付き投稿を毎日自動検索する。</span></li>
+      <li><span class="step-n">2</span><span>すると「このブランド、他のインフルエンサーにPR出してるな」というのがデータでわかる。<br>例えば、NAMING.というブランドが3人のインフルエンサーにPR投稿を依頼しているのが見える。</span></li>
+      <li><span class="step-n">3</span><span>Fの過去案件リストと照合すると、<strong>NAMING.からはまだ依頼が来ていない。</strong><br>でもPRを出している=<strong>インフルエンサー施策に予算がある</strong>のは確実。</span></li>
+      <li><span class="step-n">4</span><span>このタイミングで<strong>こちらからNAMING.にアプローチできる。</strong><br>「向こうから来るのを待つ」だけじゃなく、<br>「予算がある＝確度の高い相手」に先に声をかけにいける。</span></li>
     </ul>
     <div class="scenario-result">
-      今のBtoB紹介の流れに「紹介しやすい理由」が加わる。<br>
-      → <em>紹介の確度が上がって、案件が増える。</em>
+      今はBtoB紹介で案件が来るのを待っている状態。<br>
+      X APIがあれば<em>「予算を持っている新規ブランドを自分から見つけて、先にアプローチする」</em>という動きが取れるようになる。
     </div>
   </div>
 
   <div class="scenario r">
-    <div class="scenario-q">TIRTIRが「来期も頼むかどうか」を<br class="br-d">社内で検討している場面を想像してほしい。</div>
+    <div class="scenario-q">メンバーの投稿ネタの精度を上げる。</div>
     <ul class="scenario-steps">
-      <li><span class="step-n">1</span><span>TIRTIRの担当者がキャンペーンの効果を社内で報告する。<br>「継続するかどうか」の判断材料が必要。</span></li>
-      <li><span class="step-n">2</span><span>他の事務所の報告書：「インプレッション○万でした」。<br>上司から「で、売上に効いたの？」と聞かれて答えられない。</span></li>
-      <li><span class="step-n">3</span><span><span class="nowrap">C-MATCH</span>の報告書：「投稿後に楽天でクッションファンデ<br class="br-d">カテゴリ1位になりました」「@cosme口コミが184件/日に<br class="br-d">増えました」という<strong>市場データ付き</strong>。</span></li>
-      <li><span class="step-n">4</span><span>担当者は上司に<strong>「この事務所は効果が数字で見えるから、<br class="br-d">継続する価値があります」</strong>と説明できる。</span></li>
+      <li><span class="step-n">1</span><span>X APIで「昨日コスメ関連でバズった投稿」を毎朝自動で検出。<br>リポスト数・いいね数の多い投稿から、<strong>今Xで話題になっている商品</strong>がわかる。</span></li>
+      <li><span class="step-n">2</span><span>メンバーは毎朝LINEを見るだけで「今日何を投稿すればいいか」のヒントがもらえる。<br>自分でXを何時間もチェックする必要がなくなる。</span></li>
+      <li><span class="step-n">3</span><span>バズが始まっているタイミングで投稿できれば、<strong>波に乗れる確率が上がる。</strong><br>「2日前にバズったネタを今日投稿する」ではなく、<br>「昨日バズり始めた商品を今日投稿する」ができる。</span></li>
     </ul>
     <div class="scenario-result">
-      ブランド側が「継続する根拠」を社内で説明できる。<br>
-      → <em>継続率が上がって、売上が安定する。</em>
+      メンバーの情報収集の手間が減る。<br>
+      加えて<em>投稿のタイミングが「バズの波」に合いやすくなる</em>ので、投稿のパフォーマンス自体も上がりやすい。
     </div>
   </div>
 
   <div class="scenario r">
-    <div class="scenario-q">新規ブランドとの投稿単価交渉の場面を<br class="br-d">想像してほしい。</div>
+    <div class="scenario-q">ブランドへの報告に、客観的な数字を添える。</div>
     <ul class="scenario-steps">
-      <li><span class="step-n">1</span><span>新規ブランドLuLuLunから「投稿単価いくらですか？」<br>と問い合わせが来た。</span></li>
-      <li><span class="step-n">2</span><span>他の事務所は「フォロワー数×○円」で見積もりを出す。<br>比較されるのはフォロワー数と単価だけ。<br>安い方が選ばれやすい。</span></li>
-      <li><span class="step-n">3</span><span><span class="nowrap">C-MATCH</span>は見積もりと一緒に<br><strong>過去案件の市場インパクトレポート</strong>を添付できる。<br>「Anuaの案件では楽天133ランクUP、<br class="br-d">口コミ3.9倍でした」という実績。</span></li>
-      <li><span class="step-n">4</span><span>LuLuLunの担当者から見ると、<br>「フォロワー数×単価」しか出さない事務所と<br>「過去の市場実績データ付き」の<span class="nowrap">C-MATCH</span>は<br><strong>比較の土俵が違う</strong>。</span></li>
+      <li><span class="step-n">1</span><span>今、ブランドへの報告はアカウントのスクショを集めて送っている。<br>手間がかかるし、数字のまとめ方もバラバラになりがち。</span></li>
+      <li><span class="step-n">2</span><span>X APIを使えば、キャンペーンの投稿データ（リーチ・いいね・リポスト・クリック）が<br class="br-d"><strong>9アカウント分まとめて自動集計</strong>される。</span></li>
+      <li><span class="step-n">3</span><span>統一されたフォーマットで数字が揃うので、<br><strong>ブランドの担当者が自社内で報告するときにそのまま使いやすい。</strong></span></li>
+      <li><span class="step-n">4</span><span>担当者にとって「報告が楽な事務所」は、<strong>次も頼みやすい事務所になる。</strong><br>報告のフォーマットが整っていること自体が、地味だけど継続に効く。</span></li>
     </ul>
     <div class="scenario-result">
-      「効果測定込み」という付加価値が生まれる。<br>
-      → <em>単価の交渉で「安さ」以外の軸を持てる。</em>
+      スクショ集めの手間が減る。<br>
+      それ以上に、<em>ブランド担当者にとって「社内報告がしやすい=次も使いやすい」</em>という形で、リピートに効いてくる。
     </div>
   </div>
 </div>
@@ -544,19 +404,25 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 <div class="closing">
   <div class="section-label r" style="text-align:center">SUMMARY</div>
   <p class="r closing-headline">
-    影響力に、<em>「数字で証明する力」</em>が加わる。<br>
-    必要なコストはX API <em>$200/月</em>。<br>
-    それ以外のデータは全て無料で取れる。
+    X APIで取れるデータ。<br>
+    それを<em>仕組みに変えられれば、</em><br>
+    毎日の武器になる。
   </p>
   <div class="source-tags r" style="margin-top:28px;justify-content:center">
     <div class="source-tag"><span class="src-dot paid"></span>X API<span class="src-price">$200/月</span></div>
-    <div class="source-tag"><span class="src-dot free"></span>楽天API<span class="src-price">無料</span></div>
-    <div class="source-tag"><span class="src-dot free"></span>@cosme<span class="src-price">無料</span></div>
-    <div class="source-tag"><span class="src-dot free"></span>Google Trends<span class="src-price">無料</span></div>
   </div>
+  <p class="r closing-sub">
+    X API $200/月。<br>
+    データを取るだけならコストはこれだけ。<br><br>
+    あとは、そのデータを<br class="br-d">
+    <strong>毎日自動で回る仕組みに変える</strong>こと。<br>
+    そこができれば、<br class="br-d">
+    営業リードもメンバーへの情報配信も<br class="br-d">
+    レポート生成も、全部自動で動き続ける。
+  </p>
 </div>
 
-<div class="footer"><span class="nowrap">C-MATCH</span> Data Platform ｜ Confidential</div>
+<div class="footer"><span class="nowrap">C-MATCH</span> × X API ｜ Confidential</div>
 
 <script>
 const ob=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('v')})},{threshold:.08});
@@ -568,33 +434,13 @@ window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('show',window.scrollY>200);
 });
 
-new Chart(document.getElementById('reportChart'),{
-  type:'line',
-  data:{
-    labels:['Day1','Day2','Day3','Day4','Day5','Day6','Day7'],
-    datasets:[
-      {label:'リーチ',data:[180000,420000,680000,520000,340000,220000,140000],borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,.08)',fill:true,tension:.4,pointRadius:3,borderWidth:2},
-      {label:'反応',data:[14000,33000,52000,41000,26000,17000,10000],borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.06)',fill:true,tension:.4,pointRadius:3,borderWidth:2}
-    ]
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:true,position:'bottom',labels:{color:'#4a5568',font:{size:10},boxWidth:12,padding:12}}},
-    scales:{
-      y:{beginAtZero:true,ticks:{color:'#4a5568',font:{size:9},callback:v=>v>=1000?(v/1000)+'K':''},grid:{color:'rgba(255,255,255,.03)'}},
-      x:{ticks:{color:'#4a5568',font:{size:10}},grid:{display:false}}
-    },
-    animation:{duration:1200,easing:'easeOutQuart'}
-  }
-});
-
-new Chart(document.getElementById('xapiChart'),{
+new Chart(document.getElementById('campaignChart'),{
   type:'bar',
   data:{
     labels:['Day1','Day2','Day3','Day4','Day5','Day6','Day7'],
     datasets:[
       {label:'リーチ',data:[180000,420000,680000,520000,340000,220000,140000],backgroundColor:'rgba(34,211,238,.35)',borderColor:'rgba(34,211,238,.7)',borderWidth:1,borderRadius:4},
-      {label:'反応',data:[14000,33000,52000,41000,26000,17000,10000],backgroundColor:'rgba(52,211,153,.25)',borderColor:'rgba(52,211,153,.6)',borderWidth:1,borderRadius:4}
+      {label:'いいね',data:[14000,33000,52000,41000,26000,17000,10000],backgroundColor:'rgba(52,211,153,.25)',borderColor:'rgba(52,211,153,.6)',borderWidth:1,borderRadius:4}
     ]
   },
   options:{
@@ -611,8 +457,7 @@ new Chart(document.getElementById('xapiChart'),{
 (function(){
   const c=document.getElementById('particles');
   for(let i=0;i<20;i++){
-    const p=document.createElement('div');
-    p.className='particle';
+    const p=document.createElement('div');p.className='particle';
     p.style.left=Math.random()*100+'%';
     p.style.animationDuration=(18+Math.random()*25)+'s';
     p.style.animationDelay=Math.random()*20+'s';
