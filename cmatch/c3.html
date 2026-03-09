@@ -3,483 +3,417 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C-MATCH × Tech — データで動かす、新しいC-MATCH。</title>
+<title>C-MATCH Data Platform — Demo</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-:root {
-  --gold: #c8a45e;
-  --gold-l: #dcc88a;
-  --gold-d: #9e7e3a;
-  --bg: #0e0e0e;
-  --card: #161616;
-  --card2: #1c1c1c;
-  --subtle: #131313;
-  --text: #f0efe9;
-  --sub: #9a9a9a;
-  --dim: #555;
-  --bdr: rgba(255,255,255,0.05);
-  --bdr-h: rgba(200,164,94,0.25);
-  --red: #e05555;
-  --green: #5ec87a;
+:root{
+  --bg:#f8f8f6;
+  --card:#fff;
+  --card-s:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+  --card-s2:0 2px 8px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.06);
+  --text:#1a1a1a;
+  --sub:#6b6b6b;
+  --dim:#999;
+  --bdr:#e8e8e6;
+  --bdr-l:#f0f0ee;
+  --accent:#2563eb;
+  --accent-l:#3b82f6;
+  --accent-bg:rgba(37,99,235,.06);
+  --green:#16a34a;
+  --green-bg:rgba(22,163,74,.08);
+  --orange:#ea580c;
+  --orange-bg:rgba(234,88,12,.08);
+  --red:#dc2626;
+  --purple:#7c3aed;
+  --purple-bg:rgba(124,58,237,.06);
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:hidden}
 body{font-family:'Noto Sans JP','Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-/* NOISE */
-body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-
-/* BG */
-.bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden}
-.bg-blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:0;animation:blobPulse 12s ease-in-out infinite}
-.bg-blob.b1{width:600px;height:600px;top:-10%;left:-5%;background:radial-gradient(circle,rgba(200,164,94,.12),transparent 70%);animation-delay:0s;opacity:.6}
-.bg-blob.b2{width:500px;height:500px;top:25%;right:-8%;background:radial-gradient(circle,rgba(140,120,80,.08),transparent 70%);animation-delay:-4s;opacity:.5}
-.bg-blob.b3{width:700px;height:700px;top:50%;left:10%;background:radial-gradient(circle,rgba(100,80,50,.06),transparent 70%);animation-delay:-8s;opacity:.4}
-.bg-blob.b4{width:550px;height:550px;top:75%;right:5%;background:radial-gradient(circle,rgba(200,164,94,.07),transparent 70%);animation-delay:-2s;opacity:.5}
-.bg-blob.b5{width:400px;height:400px;bottom:-5%;left:30%;background:radial-gradient(circle,rgba(160,130,70,.09),transparent 70%);animation-delay:-6s;opacity:.4}
-@keyframes blobPulse{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.4}
-  25%{transform:translate(30px,-20px) scale(1.05);opacity:.6}
-  50%{transform:translate(-20px,30px) scale(.95);opacity:.5}
-  75%{transform:translate(15px,15px) scale(1.08);opacity:.55}
-}
-
-.section-glow{position:absolute;pointer-events:none;z-index:0}
-.section-glow.top-left{width:500px;height:500px;top:-100px;left:-100px;background:radial-gradient(circle,rgba(200,164,94,.04),transparent 70%)}
-.section-glow.top-right{width:400px;height:400px;top:-80px;right:-80px;background:radial-gradient(circle,rgba(200,164,94,.03),transparent 70%)}
-.section-glow.center{width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(200,164,94,.03),transparent 70%)}
-
-.section-divider{width:100%;height:1px;max-width:600px;margin:0 auto;background:linear-gradient(90deg,transparent,rgba(200,164,94,.15),transparent);position:relative}
-
-.particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
-.particle{position:absolute;width:2px;height:2px;background:rgba(200,164,94,.2);border-radius:50%;animation:float linear infinite}
-@keyframes float{
-  0%{transform:translateY(100vh) scale(0);opacity:0}
-  10%{opacity:1}
-  90%{opacity:1}
-  100%{transform:translateY(-10vh) scale(1);opacity:0}
-}
-
-.br-d::after{content:'\A';white-space:pre}
 .nowrap{white-space:nowrap}
+.br-d::after{content:'\A';white-space:pre}
 
-/* ANIMATIONS */
-.r{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+/* ===== ANIMATIONS ===== */
+.r{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
 .r.v{opacity:1;transform:translateY(0)}
-.rl{opacity:0;transform:translateX(-36px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
-.rl.v{opacity:1;transform:translateX(0)}
-.rr{opacity:0;transform:translateX(36px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
-.rr.v{opacity:1;transform:translateX(0)}
-.rs{opacity:0;transform:scale(.92);transition:opacity .6s ease,transform .6s ease}
-.rs.v{opacity:1;transform:scale(1)}
 
-/* PROGRESS */
-.progress-bar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-l));z-index:10000;transition:width .1s;width:0}
-
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(12px);background:rgba(14,14,14,0.7);border-bottom:1px solid var(--bdr);opacity:0;transform:translateY(-20px);transition:opacity .4s,transform .4s}
+/* ===== NAV ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:14px 40px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(16px);background:rgba(248,248,246,.85);border-bottom:1px solid var(--bdr-l);opacity:0;transform:translateY(-20px);transition:opacity .4s,transform .4s}
 .nav.show{opacity:1;transform:translateY(0)}
-.nav-logo{height:28px;opacity:.7}
-.nav-links{display:flex;gap:24px}
-.nav-links a{color:var(--sub);font-size:11px;letter-spacing:2px;text-decoration:none;text-transform:uppercase;transition:color .3s}
-.nav-links a:hover{color:var(--gold)}
+.nav-brand{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.nav-brand span{color:var(--accent);font-weight:800}
 
-/* SECTIONS */
-section{min-height:100vh;padding:120px 80px;position:relative;max-width:1200px;margin:0 auto}
-section.fw{max-width:none}
+/* ===== PROGRESS ===== */
+.progress-bar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-l));z-index:10001;transition:width .1s;width:0}
 
-.s-label{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:14px}
-.s-title{font-size:36px;font-weight:900;margin-bottom:14px;line-height:1.4;letter-spacing:-0.5px}
-.s-title em{font-style:normal;color:var(--gold)}
-.s-lead{font-size:15px;color:var(--sub);font-weight:300;margin-bottom:56px;line-height:1.9;max-width:620px}
+/* ===== SECTIONS ===== */
+.section{max-width:960px;margin:0 auto;padding:100px 40px}
+.section.wide{max-width:1100px}
+.section-label{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
+.section-title{font-size:28px;font-weight:900;line-height:1.5;margin-bottom:12px;letter-spacing:-.5px}
+.section-sub{font-size:14px;color:var(--sub);line-height:1.8;margin-bottom:48px;max-width:540px}
 
-/* HERO */
-#hero{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:100vh;max-width:none;position:relative}
-.hero-glow{position:absolute;border-radius:50%;filter:blur(140px);pointer-events:none;animation:heroGlow 8s ease-in-out infinite alternate}
-.hero-glow.a{width:600px;height:600px;top:10%;left:20%;background:rgba(200,164,94,.08)}
-.hero-glow.b{width:450px;height:450px;bottom:15%;right:15%;background:rgba(120,100,60,.06);animation-delay:-4s}
-@keyframes heroGlow{0%{opacity:.5;transform:scale(1)}100%{opacity:.8;transform:scale(1.15)}}
-.hero-content{position:relative;z-index:1}
-.hero-logo{width:160px;margin-bottom:52px;animation:hfloat 5s ease-in-out infinite}
-@keyframes hfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.hero-eyebrow{font-family:'Inter',sans-serif;font-size:12px;letter-spacing:8px;color:var(--dim);margin-bottom:24px;text-transform:uppercase}
-.hero-headline{font-size:48px;font-weight:900;line-height:1.5;margin-bottom:24px;letter-spacing:-1px}
-.hero-headline em{font-style:normal;background:linear-gradient(135deg,var(--gold),var(--gold-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:17px;color:var(--sub);font-weight:300;max-width:560px;margin:0 auto 56px;line-height:1.8}
-.hero-cta{margin-top:8px}
-.hero-btn{display:inline-block;padding:14px 40px;border:1px solid rgba(200,164,94,.3);border-radius:6px;color:var(--gold);font-size:13px;font-weight:600;letter-spacing:2px;text-decoration:none;transition:all .3s}
-.hero-btn:hover{background:rgba(200,164,94,.08);border-color:rgba(200,164,94,.5);transform:translateY(-2px)}
-.scroll-cue{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);color:var(--dim);font-size:10px;letter-spacing:3px;cursor:pointer;text-align:center;animation:cue 2.5s ease-in-out infinite}
-.scroll-cue span{display:block;margin-top:6px;font-size:16px}
-@keyframes cue{0%,100%{opacity:.4;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(5px)}}
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 40px;position:relative;max-width:none}
+.hero-eyebrow{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:6px;color:var(--dim);margin-bottom:20px;text-transform:uppercase}
+.hero-headline{font-size:40px;font-weight:900;line-height:1.6;margin-bottom:20px;letter-spacing:-1px}
+.hero-headline em{font-style:normal;color:var(--accent)}
+.hero-sub{font-size:16px;color:var(--sub);max-width:480px;line-height:1.8;margin-bottom:48px}
+.hero-scroll{color:var(--dim);font-size:10px;letter-spacing:3px;cursor:pointer;position:absolute;bottom:40px;animation:bounce 2s ease-in-out infinite}
+.hero-scroll span{display:block;margin-top:6px;font-size:14px}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(6px);opacity:1}}
 
-/* ===== BEFORE / AFTER ===== */
-.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:40px}
-.ba-col{padding:40px 32px;border-radius:14px;border:1px solid var(--bdr);position:relative;overflow:hidden}
-.ba-col.before{background:var(--card)}
-.ba-col.after{background:rgba(200,164,94,.03);border-color:var(--bdr-h)}
-.ba-col.after::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent)}
-.ba-tag{display:inline-block;padding:5px 14px;border-radius:4px;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:24px;text-transform:uppercase}
-.ba-tag.b{background:rgba(255,255,255,.03);color:var(--dim);border:1px solid var(--bdr)}
-.ba-tag.a{background:rgba(200,164,94,.1);color:var(--gold);border:1px solid rgba(200,164,94,.2)}
-.ba-list{list-style:none;display:flex;flex-direction:column;gap:18px}
-.ba-list li{display:flex;align-items:flex-start;gap:14px;font-size:14px;line-height:1.7}
-.ba-list .ba-ic{width:24px;height:24px;flex-shrink:0;margin-top:2px}
-.ba-list .ba-ic.x{color:var(--dim)}
-.ba-list .ba-ic.ok{color:var(--gold)}
-.ba-list .ba-txt{color:var(--sub)}
-.ba-col.after .ba-txt{color:var(--text)}
+/* ===== DEMO CARD (main wrapper for mock UIs) ===== */
+.demo-card{background:var(--card);border-radius:16px;box-shadow:var(--card-s);border:1px solid var(--bdr-l);overflow:hidden;transition:box-shadow .3s}
+.demo-card:hover{box-shadow:var(--card-s2)}
+.demo-topbar{display:flex;align-items:center;gap:6px;padding:12px 18px;border-bottom:1px solid var(--bdr-l);background:#fafaf8}
+.demo-dot{width:8px;height:8px;border-radius:50%}
+.demo-dot.r{background:#f87171}
+.demo-dot.y{background:#fbbf24}
+.demo-dot.g{background:#4ade80}
+.demo-topbar-title{font-family:'Inter',sans-serif;font-size:11px;color:var(--dim);margin-left:8px;letter-spacing:.5px}
+.demo-body{padding:24px}
 
-/* ===== TECH ARCH ===== */
-.arch-flow{display:flex;align-items:center;justify-content:center;gap:0;margin:48px 0 36px;flex-wrap:wrap}
-.arch-node{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:28px 20px;text-align:center;flex:0 0 160px;transition:all .3s;position:relative}
-.arch-node:hover{border-color:var(--bdr-h);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.3)}
-.arch-node-ic{width:40px;height:40px;margin:0 auto 12px;color:var(--gold)}
-.arch-node h4{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--gold)}
-.arch-node p{font-size:11px;color:var(--sub);line-height:1.5}
-.arch-arrow{color:var(--gold);font-size:24px;padding:0 8px;opacity:.4;flex-shrink:0}
-.arch-cycle{text-align:center;margin-top:28px;font-size:13px;color:var(--sub);line-height:1.8;max-width:540px;margin-left:auto;margin-right:auto;padding:22px 32px;background:var(--card);border:1px solid var(--bdr);border-radius:8px}
-.arch-cycle strong{color:var(--gold)}
+/* ===== FEATURE ROW ===== */
+.feat-row{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.feat-row.rev{direction:rtl}
+.feat-row.rev > *{direction:ltr}
+.feat-text-mini{font-size:13px;color:var(--sub);line-height:1.8;margin-top:12px}
+.feat-headline{font-size:20px;font-weight:800;line-height:1.5;margin-bottom:4px}
 
-/* ===== FEATURE SECTIONS ===== */
-.feat-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-top:40px}
-.feat-layout.rev{direction:rtl}
-.feat-layout.rev > *{direction:ltr}
-.feat-text{display:flex;flex-direction:column;gap:16px}
-.feat-catch{font-size:22px;font-weight:900;line-height:1.5}
-.feat-catch em{font-style:normal;color:var(--gold)}
-.feat-desc{font-size:14px;color:var(--sub);line-height:1.9}
+/* ===== COMPARISON (Before → After) ===== */
+.cmp-row{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch}
+.cmp-col{padding:32px 28px;border-radius:14px}
+.cmp-col.before{background:#fff;border:1px solid var(--bdr)}
+.cmp-col.after{background:var(--accent-bg);border:1px solid rgba(37,99,235,.15)}
+.cmp-arrow{display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--accent);font-weight:300}
+.cmp-tag{display:inline-block;padding:4px 12px;border-radius:4px;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;margin-bottom:20px;text-transform:uppercase}
+.cmp-tag.b{background:var(--bdr-l);color:var(--dim)}
+.cmp-tag.a{background:var(--accent);color:#fff}
+.cmp-list{list-style:none;display:flex;flex-direction:column;gap:14px}
+.cmp-list li{font-size:13px;line-height:1.7;display:flex;align-items:flex-start;gap:10px;color:var(--sub)}
+.cmp-list li svg{width:18px;height:18px;flex-shrink:0;margin-top:2px}
+.cmp-col.before .cmp-list li svg{color:var(--dim)}
+.cmp-col.after .cmp-list li svg{color:var(--accent)}
+.cmp-col.after .cmp-list li{color:var(--text);font-weight:500}
 
-/* Mock Dashboard */
-.mock-dash{background:var(--card);border:1px solid var(--bdr);border-radius:14px;overflow:hidden}
-.mock-topbar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--bdr);background:rgba(255,255,255,.01)}
-.mock-dot{width:8px;height:8px;border-radius:50%;background:var(--dim)}
-.mock-dot.r{background:#e05555}
-.mock-dot.y{background:#deb846}
-.mock-dot.g{background:#5ec87a}
-.mock-title{font-size:11px;color:var(--dim);margin-left:8px;font-family:'Inter',sans-serif;letter-spacing:1px}
-.mock-body{padding:20px}
-
-/* Mock Table */
+/* ===== MOCK TABLE ===== */
 .mock-table{width:100%;border-collapse:collapse;font-size:12px}
-.mock-table th{text-align:left;padding:8px 10px;color:var(--dim);font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--bdr)}
-.mock-table td{padding:10px;border-bottom:1px solid var(--bdr);color:var(--sub)}
+.mock-table th{text-align:left;padding:10px 12px;color:var(--dim);font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--bdr-l)}
+.mock-table td{padding:11px 12px;border-bottom:1px solid var(--bdr-l);color:var(--sub)}
 .mock-table tr:last-child td{border-bottom:none}
+.mock-table tbody tr:hover{background:rgba(37,99,235,.02)}
 
 /* Badges */
-.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:1px}
-.badge.breakout{background:rgba(200,164,94,.15);color:var(--gold);border:1px solid rgba(200,164,94,.25)}
-.badge.rising{background:rgba(94,200,122,.1);color:#5ec87a;border:1px solid rgba(94,200,122,.15)}
-.badge.established{background:rgba(100,160,255,.1);color:#6ea0ff;border:1px solid rgba(100,160,255,.15)}
-.badge.declining{background:rgba(200,94,94,.1);color:#c85e5e;border:1px solid rgba(200,94,94,.15)}
+.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.5px}
+.badge.breakout{background:var(--accent-bg);color:var(--accent)}
+.badge.rising{background:var(--green-bg);color:var(--green)}
+.badge.established{background:var(--purple-bg);color:var(--purple)}
+.badge.declining{background:rgba(220,38,38,.06);color:var(--red)}
 
-/* Trend score num */
-.score-val{font-family:'Inter',sans-serif;font-weight:700;color:var(--gold)}
-.score-change{font-size:10px;margin-left:4px}
-.score-change.up{color:#5ec87a}
-.score-change.dn{color:#c85e5e}
+.score-val{font-family:'Inter',sans-serif;font-weight:700;color:var(--text)}
+.score-change{font-size:10px;margin-left:4px;font-family:'Inter',sans-serif;font-weight:600}
+.score-change.up{color:var(--green)}
+.score-change.dn{color:var(--red)}
 
-/* Chart card */
-.chart-wrap{background:var(--card);border-radius:14px;padding:20px;border:1px solid var(--bdr)}
+/* ===== STATS ROW ===== */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat-card{padding:16px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid var(--bdr-l)}
+.stat-v{font-family:'Inter',sans-serif;font-size:24px;font-weight:800;color:var(--text)}
+.stat-l{font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
 
-/* X API Mock */
-.xapi-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.xapi-stat{padding:14px;background:var(--subtle);border-radius:8px;text-align:center}
-.xapi-stat-v{font-family:'Inter',sans-serif;font-size:22px;font-weight:900;color:var(--gold)}
-.xapi-stat-l{font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
-.xapi-account{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr);font-size:12px}
+/* ===== XAPI ACCOUNTS ===== */
+.xapi-account{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bdr-l);font-size:12px}
 .xapi-account:last-child{border-bottom:none}
-.xapi-handle{color:var(--gold);font-weight:600;font-family:'Inter',sans-serif}
-.xapi-reach{color:var(--sub)}
-.xapi-bar{height:4px;background:var(--subtle);border-radius:2px;flex:1;margin:0 12px;max-width:120px}
-.xapi-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold-l))}
+.xapi-handle{color:var(--accent);font-weight:600;font-family:'Inter',sans-serif;font-size:11px}
+.xapi-reach{color:var(--sub);font-family:'Inter',sans-serif;font-weight:600}
+.xapi-bar{height:4px;background:var(--bdr-l);border-radius:2px;flex:1;margin:0 14px;max-width:120px}
+.xapi-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent-l))}
 
-/* LINE Mock */
-.line-preview{max-width:320px;margin:0 auto}
-.line-bubble{background:#1c1c1c;border-radius:18px 18px 18px 4px;padding:0;overflow:hidden;border:1px solid var(--bdr);margin-bottom:12px}
-.line-card{padding:16px}
-.line-card-badge{display:inline-block;padding:3px 10px;border-radius:3px;background:rgba(200,164,94,.12);color:var(--gold);font-size:10px;font-weight:700;margin-bottom:10px;letter-spacing:1px}
-.line-card-title{font-size:14px;font-weight:700;margin-bottom:8px;line-height:1.4}
-.line-card-desc{font-size:11px;color:var(--sub);line-height:1.6;margin-bottom:12px}
-.line-card-metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
-.line-card-metric{padding:8px;background:var(--subtle);border-radius:6px;text-align:center}
-.line-card-mv{font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:var(--gold)}
-.line-card-ml{font-size:8px;color:var(--dim);margin-top:1px;letter-spacing:.5px}
-.line-card-btn{display:block;text-align:center;padding:10px;background:rgba(200,164,94,.08);border-radius:6px;color:var(--gold);font-size:11px;font-weight:600;text-decoration:none;border:1px solid rgba(200,164,94,.12)}
-.line-time{font-size:10px;color:var(--dim);text-align:left;margin-top:4px}
+/* ===== MARKET IMPACT (the key differentiator) ===== */
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.impact-card{padding:20px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid var(--bdr-l)}
+.impact-icon{width:32px;height:32px;margin:0 auto 10px;color:var(--accent)}
+.impact-before{font-family:'Inter',sans-serif;font-size:18px;font-weight:300;color:var(--dim);text-decoration:line-through}
+.impact-after{font-family:'Inter',sans-serif;font-size:28px;font-weight:900;color:var(--accent);margin:4px 0}
+.impact-label{font-size:10px;color:var(--sub);line-height:1.4}
+.impact-change{font-size:10px;color:var(--green);font-weight:700;font-family:'Inter',sans-serif;margin-top:4px}
 
-/* Client Dashboard Mock */
+/* ===== LINE MOCK ===== */
+.line-preview{max-width:300px;margin:0 auto}
+.line-chat-bg{background:#8cabd9;border-radius:16px;padding:20px 16px;position:relative}
+.line-bubble{background:#fff;border-radius:14px 14px 14px 4px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.line-card{padding:14px}
+.line-card-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;margin-bottom:8px;letter-spacing:.5px}
+.line-card-badge.br{background:var(--accent-bg);color:var(--accent)}
+.line-card-badge.rs{background:var(--green-bg);color:var(--green)}
+.line-card-title{font-size:13px;font-weight:700;margin-bottom:6px;line-height:1.4;color:var(--text)}
+.line-card-desc{font-size:10px;color:var(--sub);line-height:1.5;margin-bottom:10px}
+.line-card-metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px}
+.line-card-metric{padding:6px;background:var(--bg);border-radius:4px;text-align:center}
+.line-card-mv{font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:var(--accent)}
+.line-card-ml{font-size:7px;color:var(--dim);margin-top:1px}
+.line-card-btn{display:block;text-align:center;padding:8px;background:var(--accent);border-radius:6px;color:#fff;font-size:10px;font-weight:600;text-decoration:none}
+.line-time{font-size:9px;color:rgba(255,255,255,.7);text-align:left;margin-top:4px}
+
+/* ===== CAMPAIGN CARD (client dashboard) ===== */
 .cd-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
-.cd-card{padding:16px;background:var(--subtle);border-radius:10px;border:1px solid var(--bdr)}
+.cd-card{padding:16px;background:var(--bg);border-radius:10px;border:1px solid var(--bdr-l)}
 .cd-card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.cd-brand{font-size:12px;font-weight:700;color:var(--text)}
-.cd-status{display:inline-block;padding:3px 8px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px}
-.cd-status.active{background:rgba(94,200,122,.1);color:#5ec87a;border:1px solid rgba(94,200,122,.15)}
-.cd-status.review{background:rgba(200,164,94,.1);color:var(--gold);border:1px solid rgba(200,164,94,.15)}
-.cd-status.done{background:rgba(100,160,255,.1);color:#6ea0ff;border:1px solid rgba(100,160,255,.15)}
-.cd-kpis{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.cd-kpi{padding:8px;background:rgba(255,255,255,.01);border-radius:4px;text-align:center}
-.cd-kpi-v{font-family:'Inter',sans-serif;font-size:13px;font-weight:800;color:var(--gold)}
-.cd-kpi-l{font-size:8px;color:var(--dim);margin-top:1px}
-.cd-progress{margin-top:10px}
-.cd-progress-bar{height:4px;background:var(--card);border-radius:2px;overflow:hidden}
-.cd-progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold-l))}
-.cd-progress-label{font-size:9px;color:var(--dim);margin-top:4px;display:flex;justify-content:space-between}
-.cd-pdf{display:flex;align-items:center;gap:10px;padding:14px;background:var(--subtle);border-radius:8px;border:1px solid var(--bdr);margin-top:12px}
-.cd-pdf-ic{width:32px;height:32px;color:var(--gold);flex-shrink:0}
-.cd-pdf-info h5{font-size:12px;font-weight:700;margin-bottom:2px}
-.cd-pdf-info p{font-size:10px;color:var(--dim)}
+.cd-brand{font-size:12px;font-weight:700}
+.cd-status{display:inline-block;padding:3px 8px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.3px}
+.cd-status.active{background:var(--green-bg);color:var(--green)}
+.cd-status.review{background:var(--orange-bg);color:var(--orange)}
+.cd-status.done{background:var(--accent-bg);color:var(--accent)}
+.cd-kpis{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.cd-kpi{padding:6px;background:var(--card);border-radius:4px;text-align:center}
+.cd-kpi-v{font-family:'Inter',sans-serif;font-size:13px;font-weight:800;color:var(--text)}
+.cd-kpi-l{font-size:7px;color:var(--dim);margin-top:1px}
+.cd-progress{margin-top:8px}
+.cd-progress-bar{height:3px;background:var(--bdr-l);border-radius:2px;overflow:hidden}
+.cd-progress-fill{height:100%;border-radius:2px;background:var(--accent)}
+.cd-progress-label{font-size:8px;color:var(--dim);margin-top:3px;display:flex;justify-content:space-between}
 
-/* ROADMAP / TIMELINE */
-.timeline{display:flex;gap:0;margin-top:52px;position:relative}
-.timeline::before{content:'';position:absolute;top:40px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,var(--gold),rgba(200,164,94,.1))}
-.tl-step{flex:1;text-align:center;position:relative;padding:0 10px}
-.tl-dot{width:32px;height:32px;background:var(--gold);border-radius:50%;margin:24px auto 18px;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-weight:900;font-size:13px;color:var(--bg);position:relative;z-index:1;box-shadow:0 0 14px rgba(200,164,94,.2);transition:transform .3s}
-.tl-step:hover .tl-dot{transform:scale(1.12);box-shadow:0 0 24px rgba(200,164,94,.35)}
-.tl-step h4{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:7px}
-.tl-step p{font-size:11px;color:var(--sub);line-height:1.6}
+.cd-pdf{display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border-radius:8px;border:1px solid var(--bdr-l)}
+.cd-pdf-ic{width:32px;height:40px;background:var(--accent-bg);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent)}
+.cd-pdf-info h5{font-size:11px;font-weight:700;margin-bottom:2px}
+.cd-pdf-info p{font-size:9px;color:var(--dim)}
 
-/* CLOSING */
-#closing{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:none}
-.closing-headline{font-size:32px;font-weight:900;line-height:2;max-width:640px}
-.closing-headline em{font-style:normal;color:var(--gold)}
-.closing-logo{width:90px;margin-top:44px;opacity:.4}
+/* ===== REPORT PREVIEW (the money shot) ===== */
+.report-preview{background:var(--card);border-radius:16px;box-shadow:var(--card-s2);border:1px solid var(--bdr-l);overflow:hidden;max-width:800px;margin:0 auto}
+.report-header{padding:32px;border-bottom:1px solid var(--bdr-l);display:flex;justify-content:space-between;align-items:flex-start}
+.report-header-left h3{font-size:18px;font-weight:800;margin-bottom:4px}
+.report-header-left p{font-size:12px;color:var(--sub)}
+.report-logo{font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:var(--dim);letter-spacing:-.3px}
+.report-body{padding:32px}
+.report-section-title{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--accent-bg)}
+.report-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.report-kpi{text-align:center;padding:16px;background:var(--bg);border-radius:8px}
+.report-kpi-v{font-family:'Inter',sans-serif;font-size:24px;font-weight:900;color:var(--text)}
+.report-kpi-l{font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:.5px}
+.report-kpi-change{font-size:10px;color:var(--green);font-weight:700;margin-top:2px}
+.report-chart-area{height:180px;margin-bottom:32px}
+.report-footer{padding:20px 32px;border-top:1px solid var(--bdr-l);background:#fafaf8;font-size:10px;color:var(--dim);display:flex;justify-content:space-between}
 
-.footer{text-align:center;padding:20px;font-size:10px;color:var(--dim);letter-spacing:1px;border-top:1px solid var(--bdr)}
+/* ===== CLOSING ===== */
+.closing{text-align:center;padding:100px 40px 80px;max-width:640px;margin:0 auto}
+.closing-headline{font-size:24px;font-weight:800;line-height:1.8;margin-bottom:16px}
+.closing-headline em{font-style:normal;color:var(--accent)}
+.closing-sub{font-size:14px;color:var(--sub);line-height:1.8}
+
+.footer{text-align:center;padding:20px;font-size:10px;color:var(--dim);letter-spacing:1px;border-top:1px solid var(--bdr-l)}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
-  section{padding:60px 20px!important;min-height:auto!important}
-  .s-title{font-size:22px!important;line-height:1.5!important}
-  .s-lead{font-size:13px!important;line-height:1.8!important;margin-bottom:36px!important}
-  .hero-headline{font-size:28px!important;line-height:1.6!important}
-  .hero-sub{font-size:14px!important;line-height:1.8!important}
-  .nav-links{display:none!important}
+  .section{padding:60px 20px!important}
+  .section-title{font-size:22px!important;line-height:1.5!important}
+  .section-sub{font-size:13px!important}
+  .hero{padding:60px 20px!important;min-height:auto!important;padding-top:120px!important;padding-bottom:100px!important}
+  .hero-headline{font-size:26px!important;line-height:1.6!important}
+  .hero-sub{font-size:14px!important}
   .nav{padding:12px 20px}
-  .ba-grid{grid-template-columns:1fr!important}
-  .arch-flow{flex-direction:column!important;gap:0!important}
-  .arch-arrow{transform:rotate(90deg);padding:4px 0!important}
-  .arch-node{flex:0 0 auto!important;width:100%!important}
-  .feat-layout{grid-template-columns:1fr!important}
-  .feat-layout.rev{direction:ltr}
-  .xapi-stats{grid-template-columns:1fr!important}
+  .cmp-row{grid-template-columns:1fr!important}
+  .cmp-arrow{transform:rotate(90deg);padding:8px 0}
+  .feat-row{grid-template-columns:1fr!important}
+  .feat-row.rev{direction:ltr}
+  .stats-row{grid-template-columns:1fr!important}
+  .impact-grid{grid-template-columns:1fr!important}
   .cd-grid{grid-template-columns:1fr!important}
-  .timeline{flex-direction:column!important}
-  .timeline::before{display:none!important}
-  .closing-headline{font-size:20px!important;padding:0 16px!important}
-  .feat-catch{font-size:18px!important}
+  .report-kpi-row{grid-template-columns:1fr 1fr!important}
+  .report-header{flex-direction:column;gap:12px}
+  .closing-headline{font-size:20px!important}
+  .feat-headline{font-size:17px!important}
   .br-d::after{content:none!important}
-}
-@media(min-width:769px)and(max-width:1024px){
-  .arch-flow{flex-wrap:wrap;gap:16px!important}
-  .arch-arrow{display:none}
-  .arch-node{flex:0 0 calc(33% - 16px)!important}
 }
 </style>
 </head>
 <body>
 
-<!-- BG -->
-<div class="bg-canvas">
-  <div class="bg-blob b1"></div>
-  <div class="bg-blob b2"></div>
-  <div class="bg-blob b3"></div>
-  <div class="bg-blob b4"></div>
-  <div class="bg-blob b5"></div>
-</div>
-<div class="particles" id="particles"></div>
-
 <div class="progress-bar" id="progressBar"></div>
 
-<!-- NAV -->
 <nav class="nav" id="nav">
-  <img src="assets/page1_img1.png" alt="C-MATCH" class="nav-logo">
-  <div class="nav-links">
-    <a href="#compare">Before / After</a>
-    <a href="#arch">Tech Stack</a>
-    <a href="#trend">Trend</a>
-    <a href="#xapi">X API</a>
-    <a href="#delivery">Delivery</a>
-    <a href="#roadmap">Roadmap</a>
-  </div>
+  <div class="nav-brand"><span>C-MATCH</span> Data Platform</div>
 </nav>
 
-<!-- ===== 1. HERO ===== -->
-<section id="hero" class="fw">
-  <div class="hero-glow a"></div>
-  <div class="hero-glow b"></div>
-  <div class="hero-content">
-    <img src="assets/page1_img1.png" alt="C-MATCH" class="hero-logo">
-    <div class="hero-eyebrow">C-MATCH × Technology</div>
-    <h1 class="hero-headline">
-      データで動かす、<br><em>新しい<span class="nowrap">C-MATCH</span>。</em>
-    </h1>
-    <p class="hero-sub">
-      トレンド予測・効果測定・自動配信。<br>
-      テクノロジーで<span class="nowrap">C-MATCH</span>の武器を<br class="br-d">
-      次のレベルへ引き上げる。
-    </p>
-    <div class="hero-cta">
-      <a href="#compare" class="hero-btn">詳しく見る</a>
-    </div>
-  </div>
-  <div class="scroll-cue" onclick="document.getElementById('compare').scrollIntoView({behavior:'smooth'})">SCROLL<span>↓</span></div>
-</section>
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-eyebrow">C-MATCH × Data Platform</div>
+  <h1 class="hero-headline">
+    案件レポートが、<br><em>ここまで変わる。</em>
+  </h1>
+  <p class="hero-sub">
+    X API × 楽天 × @cosme × Google Trends。<br>
+    投稿の効果を「数字で証明」する<br>
+    レポートとダッシュボードのデモ。
+  </p>
+  <div class="hero-scroll" onclick="document.getElementById('report').scrollIntoView({behavior:'smooth'})">SCROLL<span>↓</span></div>
+</div>
 
-<div class="section-divider"></div>
-
-<!-- ===== 2. BEFORE → AFTER ===== -->
-<section id="compare" style="position:relative">
-  <div class="section-glow top-right"></div>
-  <div class="s-label r">01 — BEFORE / AFTER</div>
-  <div class="s-title r"><span class="nowrap">C-MATCH</span>に、<em>テクノロジーが加わると。</em></div>
-  <div class="s-lead r">
-    すでに業界トップクラスの影響力を持つ<br class="br-d">
-    <span class="nowrap">C-MATCH</span>。<br>
-    そこにデータとテクノロジーが加わることで、<br>
-    他事務所との差は決定的になる。
+<!-- ===== 1. REPORT PREVIEW (the money shot — first thing they see) ===== -->
+<div class="section wide" id="report">
+  <div class="section-label r">01 — Campaign Report</div>
+  <div class="section-title r">ブランドに届く報告書が、<br>こう変わる。</div>
+  <div class="section-sub r">
+    キャンペーン終了後に自動生成される<br class="br-d">
+    レポートのイメージ。
   </div>
 
-  <div class="ba-grid">
-    <div class="ba-col before rl">
-      <div class="ba-tag b">BEFORE — 現状</div>
-      <ul class="ba-list">
-        <li>
-          <svg class="ba-ic x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          <span class="ba-txt">商品選定は<strong style="color:var(--text)">感覚と経験</strong>に依存</span>
-        </li>
-        <li>
-          <svg class="ba-ic x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          <span class="ba-txt">投稿後の効果を<strong style="color:var(--text)">数値で示せない</strong></span>
-        </li>
-        <li>
-          <svg class="ba-ic x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          <span class="ba-txt">クライアント報告は<strong style="color:var(--text)">インプレッションのみ</strong></span>
-        </li>
-        <li>
-          <svg class="ba-ic x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          <span class="ba-txt">トレンド情報の収集が<strong style="color:var(--text)">手動・バラバラ</strong></span>
-        </li>
-      </ul>
-    </div>
-    <div class="ba-col after rr">
-      <div class="ba-tag a">AFTER — 永島参画後</div>
-      <ul class="ba-list">
-        <li>
-          <svg class="ba-ic ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <span class="ba-txt"><strong style="color:var(--gold)">データドリブン</strong>な商品選定<br>楽天・@cosme・SNSを統合分析</span>
-        </li>
-        <li>
-          <svg class="ba-ic ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <span class="ba-txt"><strong style="color:var(--gold)">X API</strong>で投稿効果を自動計測<br>9アカウント横断で数値化</span>
-        </li>
-        <li>
-          <svg class="ba-ic ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <span class="ba-txt"><strong style="color:var(--gold)">市場インパクト</strong>を証明する報告書<br>楽天順位変動・口コミ増・検索上昇</span>
-        </li>
-        <li>
-          <svg class="ba-ic ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <span class="ba-txt"><strong style="color:var(--gold)">毎日自動配信</strong>のトレンドレポート<br>手動作業ゼロで最新情報をキャッチ</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
-<!-- ===== 3. TECH STACK OVERVIEW ===== -->
-<section id="arch" style="position:relative;text-align:center">
-  <div class="section-glow center"></div>
-  <div class="s-label r">02 — TECH STACK</div>
-  <div class="s-title r" style="text-align:center">すべてが<em>自動で回る</em>仕組み</div>
-  <div class="s-lead r" style="text-align:center;margin-left:auto;margin-right:auto">
-    データ収集から分析、配信、効果測定まで。<br>
-    毎日自動で回り続けるサイクルを構築する。
-  </div>
-
-  <div class="arch-flow r">
-    <div class="arch-node">
-      <div class="arch-node-ic">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <div class="report-preview r">
+    <div class="report-header">
+      <div class="report-header-left">
+        <h3>Anua ドクダミ77%トナー — Campaign Report</h3>
+        <p>2026年3月1日〜3月7日 ｜ <span class="nowrap">C-MATCH</span> 9アカウント一斉投稿</p>
       </div>
-      <h4>データ収集</h4>
-      <p>楽天・@cosme<br>Google Trends<br>SNSバズ情報</p>
+      <div class="report-logo"><span class="nowrap">C-MATCH</span></div>
     </div>
-    <div class="arch-arrow">→</div>
-    <div class="arch-node">
-      <div class="arch-node-ic">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="7.5 4.21 12 6.81 16.5 4.21"/><polyline points="7.5 19.79 7.5 14.6 3 12"/><polyline points="21 12 16.5 14.6 16.5 19.79"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    <div class="report-body">
+      <div class="report-section-title">Campaign KPIs</div>
+      <div class="report-kpi-row">
+        <div class="report-kpi">
+          <div class="report-kpi-v">2.4M</div>
+          <div class="report-kpi-l">Total Impressions</div>
+        </div>
+        <div class="report-kpi">
+          <div class="report-kpi-v">186K</div>
+          <div class="report-kpi-l">Engagements</div>
+        </div>
+        <div class="report-kpi">
+          <div class="report-kpi-v">7.8%</div>
+          <div class="report-kpi-l">Eng. Rate</div>
+        </div>
+        <div class="report-kpi">
+          <div class="report-kpi-v">4,200</div>
+          <div class="report-kpi-l">Link Clicks</div>
+        </div>
       </div>
-      <h4>AI分析</h4>
-      <p>トレンドスコア算出<br>速度・方向性を自動分類<br>商品ランキング生成</p>
+
+      <div class="report-section-title">Market Impact — 投稿後の市場変動</div>
+      <div class="impact-grid" style="margin-top:0;margin-bottom:32px">
+        <div class="impact-card">
+          <div class="impact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg></div>
+          <div class="impact-before">156位</div>
+          <div class="impact-after">23位</div>
+          <div class="impact-label">楽天ランキング</div>
+          <div class="impact-change">▲ 133ランクUP</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>
+          <div class="impact-before">47件/日</div>
+          <div class="impact-after">184件/日</div>
+          <div class="impact-label">@cosme 口コミ数</div>
+          <div class="impact-change">▲ 3.9倍</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="impact-before">Score 8</div>
+          <div class="impact-after">Score 64</div>
+          <div class="impact-label">Google 検索トレンド</div>
+          <div class="impact-change">▲ 8倍</div>
+        </div>
+      </div>
+
+      <div class="report-section-title">Impressions — 日別推移</div>
+      <div class="report-chart-area">
+        <canvas id="reportChart"></canvas>
+      </div>
     </div>
-    <div class="arch-arrow">→</div>
-    <div class="arch-node">
-      <div class="arch-node-ic">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
-      </div>
-      <h4>自動配信</h4>
-      <p>LINE / ダッシュボード<br>毎日定時に<br>トレンド速報を配信</p>
-    </div>
-    <div class="arch-arrow">→</div>
-    <div class="arch-node">
-      <div class="arch-node-ic">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
-      </div>
-      <h4>効果測定</h4>
-      <p>X API v2で<br>投稿の波及効果を<br>自動取得・可視化</p>
-    </div>
-    <div class="arch-arrow">→</div>
-    <div class="arch-node">
-      <div class="arch-node-ic">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-      </div>
-      <h4>フィードバック</h4>
-      <p>効果データを<br>次の商品選定・<br>戦略に反映</p>
+    <div class="report-footer">
+      <span>Auto-generated by <span class="nowrap">C-MATCH</span> Data Platform</span>
+      <span>Confidential — For Anua Inc. Only</span>
     </div>
   </div>
 
-  <div class="arch-cycle r">
-    <strong>24時間365日、自動で回り続ける。</strong><br>
-    手動作業ゼロで、データが蓄積され、分析の精度が日々向上する。
-  </div>
-</section>
+  <p class="r" style="text-align:center;margin-top:28px;font-size:13px;color:var(--sub);line-height:1.8">
+    インプレッション報告だけでなく、<br class="br-d">
+    <strong style="color:var(--text)">楽天順位・@cosme口コミ・Google検索</strong>の変動まで自動で含まれる。<br>
+    キャンペーン終了後、<strong style="color:var(--accent)">ワンクリックでPDF出力</strong>。
+  </p>
+</div>
 
-<div class="section-divider"></div>
-
-<!-- ===== 4. FEATURE 1: TREND ===== -->
-<section id="trend" style="position:relative">
-  <div class="section-glow top-left"></div>
-  <div class="s-label r">03 — TREND PREDICTION</div>
-  <div class="s-title r"><em>バズる前に、仕掛ける。</em></div>
-  <div class="s-lead r">
-    @cosmeランキング・楽天売上・SNS言及量を統合。<br>
-    トレンド速度スコアで商品を自動分類し、<br>
-    「次に来る商品」をいち早く特定する。
+<!-- ===== 2. X API DASHBOARD ===== -->
+<div class="section wide" id="xapi">
+  <div class="section-label r">02 — X API Dashboard</div>
+  <div class="section-title r">9アカウントの効果を、<br>一画面で把握する。</div>
+  <div class="section-sub r">
+    X API v2で全アカウントの投稿データを<br class="br-d">
+    自動取得。アカウント横断でリーチを集計。
   </div>
 
-  <div class="feat-layout r">
-    <!-- Mock Dashboard -->
-    <div class="mock-dash">
-      <div class="mock-topbar">
-        <div class="mock-dot r"></div><div class="mock-dot y"></div><div class="mock-dot g"></div>
-        <span class="mock-title">Beauty Trend Dashboard</span>
+  <div class="feat-row r">
+    <div class="demo-card">
+      <div class="demo-topbar">
+        <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+        <span class="demo-topbar-title">X API — Campaign Analytics</span>
       </div>
-      <div class="mock-body">
-        <div style="height:200px;margin-bottom:16px">
+      <div class="demo-body">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-v">2.4M</div>
+            <div class="stat-l">Total Reach</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-v">186K</div>
+            <div class="stat-l">Engagements</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-v">7.8%</div>
+            <div class="stat-l">Avg. Eng Rate</div>
+          </div>
+        </div>
+        <div style="height:180px;margin-bottom:16px">
+          <canvas id="xapiChart"></canvas>
+        </div>
+        <div>
+          <div class="xapi-account"><span class="xapi-handle">@cosme_trend01</span><div class="xapi-bar"><div class="xapi-bar-fill" style="width:92%"></div></div><span class="xapi-reach">580K</span></div>
+          <div class="xapi-account"><span class="xapi-handle">@beauty_pick</span><div class="xapi-bar"><div class="xapi-bar-fill" style="width:78%"></div></div><span class="xapi-reach">490K</span></div>
+          <div class="xapi-account"><span class="xapi-handle">@skincare_lab</span><div class="xapi-bar"><div class="xapi-bar-fill" style="width:65%"></div></div><span class="xapi-reach">410K</span></div>
+          <div class="xapi-account"><span class="xapi-handle">@makeup_daily</span><div class="xapi-bar"><div class="xapi-bar-fill" style="width:54%"></div></div><span class="xapi-reach">340K</span></div>
+          <div class="xapi-account"><span class="xapi-handle">@k_beauty_jp</span><div class="xapi-bar"><div class="xapi-bar-fill" style="width:45%"></div></div><span class="xapi-reach">280K</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="feat-text-mini">
+      <div class="feat-headline">今のレポート：<br>「インプレッション○万でした」</div>
+      <p style="margin:12px 0 20px;color:var(--dim);font-size:13px;line-height:1.7">↓</p>
+      <div class="feat-headline" style="color:var(--accent)">このレポート：<br>「投稿後、楽天が156位→23位に<br class="br-d">上がりました」</div>
+      <p style="margin-top:16px;font-size:13px;color:var(--sub);line-height:1.8">
+        ブランド担当者が別のブランドに<br class="br-d">
+        <span class="nowrap">C-MATCH</span>を紹介するとき、<br>
+        <strong style="color:var(--text)">「ここ、報告書もちゃんとしてるよ」</strong><br>
+        と言える材料になる。
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 3. TREND DASHBOARD ===== -->
+<div class="section wide" id="trend">
+  <div class="section-label r">03 — Trend Dashboard</div>
+  <div class="section-title r">次に来る商品を、<br>データで特定する。</div>
+  <div class="section-sub r">
+    楽天・@cosme・Google Trends・SNS言及量を統合。<br class="br-d">
+    トレンド速度スコアで商品を自動分類。
+  </div>
+
+  <div class="feat-row rev r">
+    <div class="demo-card">
+      <div class="demo-topbar">
+        <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+        <span class="demo-topbar-title">Beauty Trend Dashboard</span>
+      </div>
+      <div class="demo-body">
+        <div style="height:200px;margin-bottom:20px">
           <canvas id="trendChart"></canvas>
         </div>
         <table class="mock-table">
-          <thead>
-            <tr><th>商品名</th><th>スコア</th><th>変動</th><th>分類</th></tr>
-          </thead>
+          <thead><tr><th>商品名</th><th>スコア</th><th>変動</th><th>分類</th></tr></thead>
           <tbody>
             <tr>
-              <td style="color:var(--text);font-weight:600">Anua ドクダミトナー</td>
+              <td style="color:var(--text);font-weight:600">Anua ドクダミ77%トナー</td>
               <td><span class="score-val">87</span></td>
               <td><span class="score-change up">+24</span></td>
               <td><span class="badge breakout">BREAKOUT</span></td>
@@ -506,368 +440,186 @@ section.fw{max-width:none}
         </table>
       </div>
     </div>
-    <!-- Text -->
-    <div class="feat-text">
-      <div class="feat-catch"><em>「次に来る商品」</em>を、<br>データが教えてくれる。</div>
-      <div class="feat-desc">
-        楽天の売上ランキング、@cosmeの口コミ急増、<br class="br-d">
-        SNSでの言及量 ── 複数のデータソースを<br class="br-d">
-        統合し、独自のトレンド速度スコアを算出。<br><br>
-        <strong style="color:var(--text)">BREAKOUT</strong>（急上昇）→ <strong style="color:var(--text)">RISING</strong>（上昇中）→ <strong style="color:var(--text)">ESTABLISHED</strong>（定番化）<br class="br-d">
-        と自動分類し、最適な仕掛けタイミングを逃さない。<br><br>
-        <span style="color:var(--gold)">タイアップ商品の選定を、感覚からデータへ。</span>
-      </div>
+    <div class="feat-text-mini">
+      <div class="feat-headline">タイアップ商品の選定を、<br><span style="color:var(--accent)">感覚からデータへ。</span></div>
+      <p style="margin-top:16px;font-size:13px;color:var(--sub);line-height:1.8">
+        <strong style="color:var(--text)">BREAKOUT</strong>に入った商品は<br class="br-d">
+        2週間以内にSNSで急伸した商品。<br><br>
+        メンバーに「今これがいい」と<br class="br-d">
+        根拠を持って伝えられる。
+      </p>
     </div>
   </div>
-</section>
+</div>
 
-<div class="section-divider"></div>
-
-<!-- ===== 5. FEATURE 2: X API ===== -->
-<section id="xapi" style="position:relative">
-  <div class="section-glow top-right"></div>
-  <div class="s-label r">04 — X API ANALYTICS</div>
-  <div class="s-title r">9アカウントの波及効果を、<br><em>数字で証明する。</em></div>
-  <div class="s-lead r">
-    X API v2で投稿後の数値を自動取得。<br>
-    インプレッションだけでなく、<br class="br-d">
-    楽天順位変動や口コミ増加まで連動して計測する。
+<!-- ===== 4. LINE DELIVERY ===== -->
+<div class="section wide" id="delivery">
+  <div class="section-label r">04 — Daily Delivery</div>
+  <div class="section-title r">毎朝、勝手に届く。</div>
+  <div class="section-sub r">
+    トレンド速報がLINEで毎日自動配信。<br class="br-d">
+    メンバーは開くだけ。手動作業ゼロ。
   </div>
 
-  <div class="feat-layout rev r">
-    <!-- Mock X API Dashboard -->
-    <div class="mock-dash">
-      <div class="mock-topbar">
-        <div class="mock-dot r"></div><div class="mock-dot y"></div><div class="mock-dot g"></div>
-        <span class="mock-title">X API Campaign Report</span>
-      </div>
-      <div class="mock-body">
-        <div class="xapi-stats">
-          <div class="xapi-stat">
-            <div class="xapi-stat-v">2.4M</div>
-            <div class="xapi-stat-l">Total Impressions</div>
-          </div>
-          <div class="xapi-stat">
-            <div class="xapi-stat-v">186K</div>
-            <div class="xapi-stat-l">Engagements</div>
-          </div>
-          <div class="xapi-stat">
-            <div class="xapi-stat-v">7.8%</div>
-            <div class="xapi-stat-l">Eng. Rate</div>
-          </div>
-        </div>
-        <div style="height:160px;margin-bottom:16px">
-          <canvas id="xapiChart"></canvas>
-        </div>
-        <div style="padding:8px 0">
-          <div class="xapi-account">
-            <span class="xapi-handle">@cosme_trend01</span>
-            <div class="xapi-bar"><div class="xapi-bar-fill" style="width:92%"></div></div>
-            <span class="xapi-reach">580K</span>
-          </div>
-          <div class="xapi-account">
-            <span class="xapi-handle">@beauty_pick</span>
-            <div class="xapi-bar"><div class="xapi-bar-fill" style="width:78%"></div></div>
-            <span class="xapi-reach">490K</span>
-          </div>
-          <div class="xapi-account">
-            <span class="xapi-handle">@skincare_lab</span>
-            <div class="xapi-bar"><div class="xapi-bar-fill" style="width:65%"></div></div>
-            <span class="xapi-reach">410K</span>
-          </div>
-          <div class="xapi-account">
-            <span class="xapi-handle">@makeup_daily</span>
-            <div class="xapi-bar"><div class="xapi-bar-fill" style="width:54%"></div></div>
-            <span class="xapi-reach">340K</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Text -->
-    <div class="feat-text">
-      <div class="feat-catch"><em>インプレッションの先</em>を、<br>可視化する。</div>
-      <div class="feat-desc">
-        9アカウント一斉投稿の波及効果を、<br class="br-d">
-        X API v2で横断的に自動取得。<br><br>
-        さらに、<span style="color:var(--gold)">楽天ランキングの順位変動</span>、<br class="br-d">
-        <span style="color:var(--gold)">@cosme口コミ数の増加</span>、<br class="br-d">
-        <span style="color:var(--gold)">Google検索スコアの上昇</span>を連動計測。<br><br>
-        <strong style="color:var(--text)">例：投稿後に楽天順位が156位→23位、<br class="br-d">
-        @cosme口コミ3.9倍、検索スコア8→64</strong><br><br>
-        「インプレッション○万でした」とは<br class="br-d">
-        次元の違う報告書を、ブランドに届ける。
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
-<!-- ===== 6. FEATURE 3: AUTO DELIVERY ===== -->
-<section id="delivery" style="position:relative">
-  <div class="section-glow top-left"></div>
-  <div class="s-label r">05 — AUTO DELIVERY</div>
-  <div class="s-title r"><em>毎朝届く、</em>美容トレンド速報。</div>
-  <div class="s-lead r">
-    トレンドデータを毎日自動で<br class="br-d">
-    LINE・ダッシュボードに配信。<br>
-    手動作業ゼロで、最新情報が手元に届く。
-  </div>
-
-  <div class="feat-layout r">
-    <!-- LINE Mock -->
+  <div class="feat-row r">
     <div style="padding:20px">
       <div class="line-preview">
-        <div class="line-bubble">
-          <div class="line-card">
-            <div class="line-card-badge">BREAKOUT</div>
-            <div class="line-card-title">Anua ドクダミ77%トナー</div>
-            <div class="line-card-desc">楽天急上昇 156位→23位 / @cosme口コミ +89件(24h) / SNSバズスコア 87</div>
-            <div class="line-card-metrics">
-              <div class="line-card-metric">
-                <div class="line-card-mv">87</div>
-                <div class="line-card-ml">トレンドスコア</div>
+        <div class="line-chat-bg">
+          <div class="line-bubble">
+            <div class="line-card">
+              <div class="line-card-badge br">BREAKOUT</div>
+              <div class="line-card-title">Anua ドクダミ77%トナー</div>
+              <div class="line-card-desc">楽天急上昇 156位→23位<br>@cosme口コミ +89件(24h)<br>SNSバズスコア 87</div>
+              <div class="line-card-metrics">
+                <div class="line-card-metric">
+                  <div class="line-card-mv">87</div>
+                  <div class="line-card-ml">トレンドスコア</div>
+                </div>
+                <div class="line-card-metric">
+                  <div class="line-card-mv">+24</div>
+                  <div class="line-card-ml">前日比</div>
+                </div>
               </div>
-              <div class="line-card-metric">
-                <div class="line-card-mv">+24</div>
-                <div class="line-card-ml">前日比</div>
+              <a class="line-card-btn">詳細を見る</a>
+            </div>
+          </div>
+          <div class="line-bubble">
+            <div class="line-card">
+              <div class="line-card-badge rs">RISING</div>
+              <div class="line-card-title">TIRTIR マスクフィット<br>クッションファンデ</div>
+              <div class="line-card-desc">@cosmeランキング3位<br>楽天レビュー4.7 / SNS +340%</div>
+              <div class="line-card-metrics">
+                <div class="line-card-metric">
+                  <div class="line-card-mv">72</div>
+                  <div class="line-card-ml">トレンドスコア</div>
+                </div>
+                <div class="line-card-metric">
+                  <div class="line-card-mv">+15</div>
+                  <div class="line-card-ml">前日比</div>
+                </div>
               </div>
-            </div>
-            <a class="line-card-btn">詳細を見る →</a>
-          </div>
-        </div>
-        <div class="line-bubble">
-          <div class="line-card">
-            <div class="line-card-badge" style="background:rgba(94,200,122,.1);color:#5ec87a">RISING</div>
-            <div class="line-card-title">TIRTIR マスクフィット<br>クッションファンデ</div>
-            <div class="line-card-desc">@cosmeランキング3位 / 楽天レビュー4.7 / SNS言及量 +340%</div>
-            <div class="line-card-metrics">
-              <div class="line-card-metric">
-                <div class="line-card-mv">72</div>
-                <div class="line-card-ml">トレンドスコア</div>
-              </div>
-              <div class="line-card-metric">
-                <div class="line-card-mv">+15</div>
-                <div class="line-card-ml">前日比</div>
-              </div>
-            </div>
-            <a class="line-card-btn">詳細を見る →</a>
-          </div>
-        </div>
-        <div class="line-time">12:35 配信</div>
-      </div>
-    </div>
-    <!-- Text -->
-    <div class="feat-text">
-      <div class="feat-catch"><em>情報を探す時代</em>は終わり。<br>情報が届く仕組みを。</div>
-      <div class="feat-desc">
-        毎日12:35、LINE公式アカウントから<br class="br-d">
-        その日の美容トレンド速報が自動配信。<br><br>
-        <span style="color:var(--gold)">Flex Messageカード形式</span>で、<br class="br-d">
-        商品名・トレンドスコア・分類・急上昇データが<br class="br-d">
-        ひと目で分かるレイアウト。<br><br>
-        インフルエンサーは毎朝LINEを開くだけで<br class="br-d">
-        最新のトレンド情報をキャッチ。<br>
-        情報収集の時間を、<span style="color:var(--gold)">コンテンツ制作に集中</span>できる。
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
-<!-- ===== 7. FEATURE 4: CLIENT DASHBOARD ===== -->
-<section id="dashboard" style="position:relative">
-  <div class="section-glow top-right"></div>
-  <div class="s-label r">06 — CLIENT DASHBOARD</div>
-  <div class="s-title r">案件管理を、<em>一画面で完結させる。</em></div>
-  <div class="s-lead r">
-    ブランド別のキャンペーン進捗・効果を一元管理。<br>
-    PDF報告書を自動生成し、<br class="br-d">
-    クライアントへの報告クオリティを劇的に向上。
-  </div>
-
-  <div class="feat-layout rev r">
-    <!-- Mock Client Dashboard -->
-    <div class="mock-dash">
-      <div class="mock-topbar">
-        <div class="mock-dot r"></div><div class="mock-dot y"></div><div class="mock-dot g"></div>
-        <span class="mock-title">Campaign Manager</span>
-      </div>
-      <div class="mock-body">
-        <div class="cd-grid">
-          <div class="cd-card">
-            <div class="cd-card-h">
-              <span class="cd-brand">Anua</span>
-              <span class="cd-status active">進行中</span>
-            </div>
-            <div class="cd-kpis">
-              <div class="cd-kpi"><div class="cd-kpi-v">2.4M</div><div class="cd-kpi-l">リーチ</div></div>
-              <div class="cd-kpi"><div class="cd-kpi-v">186K</div><div class="cd-kpi-l">エンゲージメント</div></div>
-            </div>
-            <div class="cd-progress">
-              <div class="cd-progress-bar"><div class="cd-progress-fill" style="width:72%"></div></div>
-              <div class="cd-progress-label"><span>投稿 7/9完了</span><span style="color:var(--gold)">72%</span></div>
+              <a class="line-card-btn">詳細を見る</a>
             </div>
           </div>
-          <div class="cd-card">
-            <div class="cd-card-h">
-              <span class="cd-brand">medicube</span>
-              <span class="cd-status review">レビュー中</span>
-            </div>
-            <div class="cd-kpis">
-              <div class="cd-kpi"><div class="cd-kpi-v">1.8M</div><div class="cd-kpi-l">リーチ</div></div>
-              <div class="cd-kpi"><div class="cd-kpi-v">142K</div><div class="cd-kpi-l">エンゲージメント</div></div>
-            </div>
-            <div class="cd-progress">
-              <div class="cd-progress-bar"><div class="cd-progress-fill" style="width:55%"></div></div>
-              <div class="cd-progress-label"><span>投稿 5/9完了</span><span style="color:var(--gold)">55%</span></div>
-            </div>
-          </div>
-          <div class="cd-card">
-            <div class="cd-card-h">
-              <span class="cd-brand">TIRTIR</span>
-              <span class="cd-status done">完了</span>
-            </div>
-            <div class="cd-kpis">
-              <div class="cd-kpi"><div class="cd-kpi-v">3.1M</div><div class="cd-kpi-l">リーチ</div></div>
-              <div class="cd-kpi"><div class="cd-kpi-v">245K</div><div class="cd-kpi-l">エンゲージメント</div></div>
-            </div>
-            <div class="cd-progress">
-              <div class="cd-progress-bar"><div class="cd-progress-fill" style="width:100%"></div></div>
-              <div class="cd-progress-label"><span>投稿 9/9完了</span><span style="color:var(--gold)">100%</span></div>
-            </div>
-          </div>
-          <div class="cd-card">
-            <div class="cd-card-h">
-              <span class="cd-brand">Torriden</span>
-              <span class="cd-status active">進行中</span>
-            </div>
-            <div class="cd-kpis">
-              <div class="cd-kpi"><div class="cd-kpi-v">890K</div><div class="cd-kpi-l">リーチ</div></div>
-              <div class="cd-kpi"><div class="cd-kpi-v">67K</div><div class="cd-kpi-l">エンゲージメント</div></div>
-            </div>
-            <div class="cd-progress">
-              <div class="cd-progress-bar"><div class="cd-progress-fill" style="width:33%"></div></div>
-              <div class="cd-progress-label"><span>投稿 3/9完了</span><span style="color:var(--gold)">33%</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="cd-pdf">
-          <div class="cd-pdf-ic">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          </div>
-          <div class="cd-pdf-info">
-            <h5 style="color:var(--text)">TIRTIR_campaign_report_2026Q1.pdf</h5>
-            <p>自動生成 — 2026/03/08 12:00</p>
-          </div>
+          <div class="line-time">12:35</div>
         </div>
       </div>
     </div>
-    <!-- Text -->
-    <div class="feat-text">
-      <div class="feat-catch">ブランドへの報告を、<br><em>他事務所と差別化する。</em></div>
-      <div class="feat-desc">
-        案件の進捗・KPIを一画面で管理。<br>
-        キャンペーン完了時にはPDF報告書を自動生成。<br><br>
-        報告書には<span style="color:var(--gold)">インプレッション</span>だけでなく、<br class="br-d">
-        <span style="color:var(--gold)">楽天順位変動・@cosme口コミ増加・<br class="br-d">
-        Google検索スコアの推移</span>まで含まれる。<br><br>
-        「ここ、報告書もちゃんとしてる」── <br class="br-d">
-        BtoB紹介の現場で、<span style="color:var(--gold)">その一言が次の案件を呼ぶ。</span>
+    <div class="feat-text-mini">
+      <div class="feat-headline">情報を探す手間を、<br><span style="color:var(--accent)">ゼロにする。</span></div>
+      <p style="margin-top:16px;font-size:13px;color:var(--sub);line-height:1.8">
+        毎日12:35、LINEに自動配信。<br>
+        メンバーは<strong style="color:var(--text)">LINEを開くだけ</strong>で<br class="br-d">
+        今日の美容トレンドをキャッチ。<br><br>
+        「次の投稿、何にしよう」の答えが<br class="br-d">
+        毎朝手元に届く。
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 5. CAMPAIGN MANAGER ===== -->
+<div class="section wide" id="campaign">
+  <div class="section-label r">05 — Campaign Manager</div>
+  <div class="section-title r">全案件を、一画面で。</div>
+  <div class="section-sub r">
+    進行中の案件・KPI・進捗を一元管理。<br class="br-d">
+    完了時にはPDF報告書をワンクリック生成。
+  </div>
+
+  <div class="demo-card r">
+    <div class="demo-topbar">
+      <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+      <span class="demo-topbar-title">Campaign Manager — 2026 Q1</span>
+    </div>
+    <div class="demo-body">
+      <div class="cd-grid">
+        <div class="cd-card">
+          <div class="cd-card-h"><span class="cd-brand">Anua</span><span class="cd-status active">進行中</span></div>
+          <div class="cd-kpis">
+            <div class="cd-kpi"><div class="cd-kpi-v">2.4M</div><div class="cd-kpi-l">リーチ</div></div>
+            <div class="cd-kpi"><div class="cd-kpi-v">186K</div><div class="cd-kpi-l">エンゲージメント</div></div>
+          </div>
+          <div class="cd-progress"><div class="cd-progress-bar"><div class="cd-progress-fill" style="width:72%"></div></div><div class="cd-progress-label"><span>投稿 7/9完了</span><span style="color:var(--accent)">72%</span></div></div>
+        </div>
+        <div class="cd-card">
+          <div class="cd-card-h"><span class="cd-brand">medicube</span><span class="cd-status review">レビュー中</span></div>
+          <div class="cd-kpis">
+            <div class="cd-kpi"><div class="cd-kpi-v">1.8M</div><div class="cd-kpi-l">リーチ</div></div>
+            <div class="cd-kpi"><div class="cd-kpi-v">142K</div><div class="cd-kpi-l">エンゲージメント</div></div>
+          </div>
+          <div class="cd-progress"><div class="cd-progress-bar"><div class="cd-progress-fill" style="width:55%"></div></div><div class="cd-progress-label"><span>投稿 5/9完了</span><span style="color:var(--accent)">55%</span></div></div>
+        </div>
+        <div class="cd-card">
+          <div class="cd-card-h"><span class="cd-brand">TIRTIR</span><span class="cd-status done">完了</span></div>
+          <div class="cd-kpis">
+            <div class="cd-kpi"><div class="cd-kpi-v">3.1M</div><div class="cd-kpi-l">リーチ</div></div>
+            <div class="cd-kpi"><div class="cd-kpi-v">245K</div><div class="cd-kpi-l">エンゲージメント</div></div>
+          </div>
+          <div class="cd-progress"><div class="cd-progress-bar"><div class="cd-progress-fill" style="width:100%"></div></div><div class="cd-progress-label"><span>投稿 9/9完了</span><span style="color:var(--accent)">100%</span></div></div>
+        </div>
+        <div class="cd-card">
+          <div class="cd-card-h"><span class="cd-brand">Torriden</span><span class="cd-status active">進行中</span></div>
+          <div class="cd-kpis">
+            <div class="cd-kpi"><div class="cd-kpi-v">890K</div><div class="cd-kpi-l">リーチ</div></div>
+            <div class="cd-kpi"><div class="cd-kpi-v">67K</div><div class="cd-kpi-l">エンゲージメント</div></div>
+          </div>
+          <div class="cd-progress"><div class="cd-progress-bar"><div class="cd-progress-fill" style="width:33%"></div></div><div class="cd-progress-label"><span>投稿 3/9完了</span><span style="color:var(--accent)">33%</span></div></div>
+        </div>
+      </div>
+      <div class="cd-pdf">
+        <div class="cd-pdf-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div class="cd-pdf-info">
+          <h5>TIRTIR_campaign_report_2026Q1.pdf</h5>
+          <p>自動生成 — 2026/03/08 12:00 ｜ ワンクリックでダウンロード</p>
+        </div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<div class="section-divider"></div>
-
-<!-- ===== 8. ROADMAP ===== -->
-<section id="roadmap" style="position:relative;text-align:center">
-  <div class="section-glow center"></div>
-  <div class="s-label r">07 — ROADMAP</div>
-  <div class="s-title r" style="text-align:center"><em>導入タイムライン</em></div>
-  <div class="s-lead r" style="text-align:center;margin-left:auto;margin-right:auto">
-    段階的に導入し、<br class="br-d">
-    着実に<span class="nowrap">C-MATCH</span>の武器を強化していく。
-  </div>
-
-  <div class="timeline r">
-    <div class="tl-step">
-      <div class="tl-dot">1</div>
-      <h4>Phase 1</h4>
-      <p style="color:var(--gold);font-weight:700;margin-bottom:4px">1ヶ月目</p>
-      <p>トレンド分析基盤の導入<br>日次レポート配信開始<br>データ蓄積スタート</p>
-    </div>
-    <div class="tl-step">
-      <div class="tl-dot">2</div>
-      <h4>Phase 2</h4>
-      <p style="color:var(--gold);font-weight:700;margin-bottom:4px">2〜3ヶ月目</p>
-      <p>X API連携<br>9アカウント効果測定<br>市場インパクト分析</p>
-    </div>
-    <div class="tl-step">
-      <div class="tl-dot">3</div>
-      <h4>Phase 3</h4>
-      <p style="color:var(--gold);font-weight:700;margin-bottom:4px">4〜6ヶ月目</p>
-      <p>クライアントダッシュボード<br>PDF報告書自動生成<br>フル自動化完成</p>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
-<!-- ===== 9. CLOSING ===== -->
-<section id="closing" class="fw">
-  <div class="hero-glow a"></div>
-  <div class="hero-glow b"></div>
-  <h2 class="closing-headline r">
-    テクノロジーで、<br><em><span class="nowrap">C-MATCH</span>を次のステージへ。</em>
-  </h2>
-  <p class="r" style="color:var(--sub);margin-top:24px;font-size:15px;line-height:1.9;text-align:center;max-width:520px">
-    影響力 × データ。<br>
-    その掛け算が、<br class="br-d">
-    他事務所には真似できない<br class="br-d">
-    <span class="nowrap">C-MATCH</span>だけの武器になる。
+<!-- ===== CLOSING ===== -->
+<div class="closing">
+  <p class="r closing-headline">
+    全部、<em>自動で回る。</em>
   </p>
-  <div class="r" style="margin-top:44px">
-    <a href="#hero" class="hero-btn">トップへ戻る</a>
-  </div>
-  <img src="assets/page1_img1.png" alt="C-MATCH" class="closing-logo r">
-</section>
+  <p class="r closing-sub">
+    データ収集 → トレンド分析 → メンバー配信 →<br class="br-d">
+    投稿 → 効果測定 → クライアント報告。<br>
+    このサイクルが毎日、手動作業ゼロで動き続ける。
+  </p>
+</div>
 
-<div class="footer"><span class="nowrap">C-MATCH</span> × Technology ｜ 本資料は社外秘です</div>
+<div class="footer"><span class="nowrap">C-MATCH</span> Data Platform ｜ Demo</div>
 
 <script>
 // Observer
-const ob=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('v')}})},{threshold:.12});
-document.querySelectorAll('.r,.rl,.rr,.rs').forEach(e=>ob.observe(e));
+const ob=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('v')})},{threshold:.1});
+document.querySelectorAll('.r').forEach(e=>ob.observe(e));
 
-// Progress bar + Nav
+// Progress + Nav
 window.addEventListener('scroll',()=>{
   const h=document.documentElement;
-  const p=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
-  document.getElementById('progressBar').style.width=p+'%';
-  document.getElementById('nav').classList.toggle('show',window.scrollY>300);
+  document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';
+  document.getElementById('nav').classList.toggle('show',window.scrollY>200);
 });
 
-// Trend Chart
-new Chart(document.getElementById('trendChart'),{
+// Report Chart (impressions + engagements over 7 days)
+new Chart(document.getElementById('reportChart'),{
   type:'line',
   data:{
-    labels:['3/1','3/2','3/3','3/4','3/5','3/6','3/7','3/8'],
+    labels:['3/1','3/2','3/3','3/4','3/5','3/6','3/7'],
     datasets:[
-      {label:'Anua ドクダミ',data:[42,48,55,63,71,78,84,87],borderColor:'#c8a45e',backgroundColor:'rgba(200,164,94,.1)',fill:true,tension:.4,pointRadius:2,borderWidth:2},
-      {label:'TIRTIR',data:[38,40,45,52,58,62,68,72],borderColor:'#5ec87a',backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2},
-      {label:'Torriden',data:[35,38,42,48,52,56,60,65],borderColor:'#6ea0ff',backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2},
-      {label:'LuLuLun',data:[60,58,57,56,55,55,54,54],borderColor:'#888',backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:1,borderDash:[4,4]}
+      {label:'Impressions',data:[180000,420000,680000,520000,340000,220000,140000],borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.4,pointRadius:3,borderWidth:2},
+      {label:'Engagements',data:[14000,33000,52000,41000,26000,17000,10000],borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.06)',fill:true,tension:.4,pointRadius:3,borderWidth:2}
     ]
   },
   options:{
     responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:true,position:'bottom',labels:{color:'#666',font:{size:10,family:"'Noto Sans JP'"},boxWidth:12,padding:8}},title:{display:true,text:'トレンドスコア推移（直近8日間）',color:'#666',font:{size:11,family:"'Noto Sans JP'",weight:'400'},padding:{bottom:10}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{color:'#999',font:{size:10},boxWidth:12,padding:12}}},
     scales:{
-      y:{beginAtZero:false,min:30,max:100,ticks:{color:'#444',font:{size:10}},grid:{color:'rgba(255,255,255,.02)'}},
-      x:{ticks:{color:'#666',font:{size:10}},grid:{display:false}}
+      y:{beginAtZero:true,ticks:{color:'#999',font:{size:9},callback:v=>v>=1000?(v/1000)+'K':''},grid:{color:'rgba(0,0,0,.04)'}},
+      x:{ticks:{color:'#999',font:{size:10}},grid:{display:false}}
     },
     animation:{duration:1200,easing:'easeOutQuart'}
   }
@@ -879,49 +631,48 @@ new Chart(document.getElementById('xapiChart'),{
   data:{
     labels:['Day1','Day2','Day3','Day4','Day5','Day6','Day7'],
     datasets:[
-      {label:'Impressions',data:[180000,420000,680000,520000,340000,220000,140000],backgroundColor:'rgba(200,164,94,.5)',borderColor:'rgba(200,164,94,1)',borderWidth:1,borderRadius:3},
-      {label:'Engagements',data:[14000,33000,52000,41000,26000,17000,10000],backgroundColor:'rgba(94,200,122,.3)',borderColor:'rgba(94,200,122,.8)',borderWidth:1,borderRadius:3}
+      {label:'Impressions',data:[180000,420000,680000,520000,340000,220000,140000],backgroundColor:'rgba(37,99,235,.35)',borderColor:'rgba(37,99,235,.8)',borderWidth:1,borderRadius:4},
+      {label:'Engagements',data:[14000,33000,52000,41000,26000,17000,10000],backgroundColor:'rgba(22,163,74,.25)',borderColor:'rgba(22,163,74,.7)',borderWidth:1,borderRadius:4}
     ]
   },
   options:{
     responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:true,position:'bottom',labels:{color:'#666',font:{size:10},boxWidth:12,padding:8}},title:{display:true,text:'キャンペーン投稿後の推移',color:'#666',font:{size:11,family:"'Noto Sans JP'",weight:'400'},padding:{bottom:10}}},
+    plugins:{legend:{display:true,position:'bottom',labels:{color:'#999',font:{size:10},boxWidth:12,padding:12}}},
     scales:{
-      y:{beginAtZero:true,ticks:{color:'#444',font:{size:9},callback:v=>v>=1000?(v/1000)+'K':v},grid:{color:'rgba(255,255,255,.02)'}},
-      x:{ticks:{color:'#666',font:{size:10}},grid:{display:false}}
+      y:{beginAtZero:true,ticks:{color:'#999',font:{size:9},callback:v=>v>=1000?(v/1000)+'K':''},grid:{color:'rgba(0,0,0,.04)'}},
+      x:{ticks:{color:'#999',font:{size:10}},grid:{display:false}}
     },
     animation:{duration:1200,easing:'easeOutQuart'}
   }
 });
 
-// Particles
-(function(){
-  const c=document.getElementById('particles');
-  for(let i=0;i<25;i++){
-    const p=document.createElement('div');
-    p.className='particle';
-    p.style.left=Math.random()*100+'%';
-    p.style.animationDuration=(15+Math.random()*25)+'s';
-    p.style.animationDelay=Math.random()*20+'s';
-    p.style.width=p.style.height=(1+Math.random()*2)+'px';
-    p.style.opacity=.1+Math.random()*.2;
-    c.appendChild(p);
+// Trend Chart
+new Chart(document.getElementById('trendChart'),{
+  type:'line',
+  data:{
+    labels:['3/1','3/2','3/3','3/4','3/5','3/6','3/7','3/8'],
+    datasets:[
+      {label:'Anua ドクダミ',data:[42,48,55,63,71,78,84,87],borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.06)',fill:true,tension:.4,pointRadius:2,borderWidth:2},
+      {label:'TIRTIR',data:[38,40,45,52,58,62,68,72],borderColor:'#16a34a',backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2},
+      {label:'Torriden',data:[35,38,42,48,52,56,60,65],borderColor:'#7c3aed',backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2},
+      {label:'LuLuLun',data:[60,58,57,56,55,55,54,54],borderColor:'#ccc',backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:1,borderDash:[4,4]}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:true,position:'bottom',labels:{color:'#999',font:{size:10,family:"'Noto Sans JP'"},boxWidth:12,padding:8}}},
+    scales:{
+      y:{beginAtZero:false,min:30,max:100,ticks:{color:'#999',font:{size:10}},grid:{color:'rgba(0,0,0,.04)'}},
+      x:{ticks:{color:'#999',font:{size:10}},grid:{display:false}}
+    },
+    animation:{duration:1200,easing:'easeOutQuart'}
   }
-})();
-
-// Parallax blobs
-window.addEventListener('scroll',function(){
-  const y=window.scrollY;
-  document.querySelectorAll('.bg-blob').forEach((b,i)=>{
-    const speed=[0.03,-0.02,0.025,-0.015,0.02][i]||0.02;
-    b.style.transform='translateY('+y*speed+'px)';
-  });
-},{passive:true});
+});
 
 // Hero stagger
-document.querySelectorAll('#hero .hero-content > *').forEach((el,i)=>{
+document.querySelectorAll('.hero > *').forEach((el,i)=>{
   el.style.opacity='0';el.style.transform='translateY(14px)';
-  el.style.transition=`opacity .7s ease ${.15+i*.1}s, transform .7s ease ${.15+i*.1}s`;
+  el.style.transition=`opacity .6s ease ${.1+i*.08}s, transform .6s ease ${.1+i*.08}s`;
   requestAnimationFrame(()=>{el.style.opacity='1';el.style.transform='translateY(0)'});
 });
 </script>
