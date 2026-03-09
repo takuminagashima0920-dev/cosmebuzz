@@ -71,7 +71,6 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 /* Desktop-only line break */
 .br-d::after{content:'\A';white-space:pre}
-.br-a::after{content:'\A';white-space:pre}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
@@ -95,6 +94,8 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   .plan-outcomes{grid-template-columns:1fr!important}
   .closing-headline{font-size:24px!important}
   .br-d::after{content:none!important}
+  /* 句読点・読点で優先的に改行 */
+  .hero-headline,.hero-sub,.s-title,.s-lead,.str-d,.str-r,.net-msg,.flow-note,.cl-msg,.opt-use,.closing-headline,.cs-outcome{word-break:keep-all;overflow-wrap:break-word}
 }
 @media(min-width:769px)and(max-width:1024px){
   .m-row{grid-template-columns:1fr 1fr!important}
@@ -375,7 +376,7 @@ section.fw{max-width:none}
     <img src="assets/page1_img1.png" alt="C-MATCH" class="hero-logo">
     <div class="hero-eyebrow">X Beauty Media Network</div>
     <h1 class="hero-headline">
-      貴社の商品を、<span class="br-a"></span><em>明日のトレンド</em>にする。
+      貴社の商品を、<br><em>明日のトレンド</em>にする。
     </h1>
     <p class="hero-sub">
       9つの美容メディアが連動する、国内最大級のX美容ネットワーク。「バズ」を偶然に任せない時代へ。
