@@ -24,12 +24,12 @@
   --bdr-h:rgba(34,211,238,.25);
   --green:#34d399;
   --red:#f87171;
+  --orange:#fb923c;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:hidden}
 body{font-family:'Noto Sans JP','Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-
 .nowrap{white-space:nowrap}
 .br-d::after{content:'\A';white-space:pre}
 
@@ -37,19 +37,15 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 .bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden}
 .bg-blob{position:absolute;border-radius:50%;filter:blur(130px);animation:blobPulse 14s ease-in-out infinite}
-.bg-blob.b1{width:600px;height:600px;top:-8%;left:-5%;background:radial-gradient(circle,rgba(34,211,238,.1),transparent 70%);opacity:.5;animation-delay:0s}
+.bg-blob.b1{width:600px;height:600px;top:-8%;left:-5%;background:radial-gradient(circle,rgba(34,211,238,.1),transparent 70%);opacity:.5}
 .bg-blob.b2{width:500px;height:500px;top:30%;right:-10%;background:radial-gradient(circle,rgba(6,182,212,.07),transparent 70%);opacity:.4;animation-delay:-5s}
 .bg-blob.b3{width:700px;height:700px;top:55%;left:5%;background:radial-gradient(circle,rgba(34,211,238,.05),transparent 70%);opacity:.3;animation-delay:-9s}
 .bg-blob.b4{width:500px;height:500px;top:80%;right:10%;background:radial-gradient(circle,rgba(6,182,212,.06),transparent 70%);opacity:.4;animation-delay:-3s}
-@keyframes blobPulse{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.3}
-  33%{transform:translate(25px,-15px) scale(1.06);opacity:.5}
-  66%{transform:translate(-15px,20px) scale(.94);opacity:.4}
-}
+@keyframes blobPulse{0%,100%{transform:translate(0,0) scale(1);opacity:.3}33%{transform:translate(25px,-15px) scale(1.06);opacity:.5}66%{transform:translate(-15px,20px) scale(.94);opacity:.4}}
 
 .particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
-.particle{position:absolute;width:2px;height:2px;background:rgba(34,211,238,.25);border-radius:50%;animation:float linear infinite}
-@keyframes float{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+.particle{position:absolute;width:2px;height:2px;background:rgba(34,211,238,.25);border-radius:50%;animation:pfloat linear infinite}
+@keyframes pfloat{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(1);opacity:0}}
 
 .r{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
 .r.v{opacity:1;transform:translateY(0)}
@@ -70,18 +66,17 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .section-sub{font-size:14px;color:var(--sub);line-height:1.9;margin-bottom:52px;max-width:580px}
 .section-sub strong{color:var(--text)}
 
-/* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 40px;position:relative}
 .hero-eyebrow{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:6px;color:var(--dim);margin-bottom:24px;text-transform:uppercase}
 .hero-headline{font-size:42px;font-weight:900;line-height:1.6;margin-bottom:24px;letter-spacing:-1px}
 .hero-headline em{font-style:normal;background:linear-gradient(135deg,var(--cyan),var(--cyan-d));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:16px;color:var(--sub);max-width:540px;line-height:2;margin-bottom:52px}
+.hero-sub{font-size:16px;color:var(--sub);max-width:560px;line-height:2;margin-bottom:52px}
 .hero-sub strong{color:var(--text)}
 .hero-scroll{color:var(--dim);font-size:10px;letter-spacing:3px;cursor:pointer;position:absolute;bottom:40px;animation:bounce 2.5s ease-in-out infinite}
 .hero-scroll span{display:block;margin-top:6px;font-size:14px}
 @keyframes bounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(6px);opacity:1}}
 
-/* DEMO CARD */
+/* CARDS */
 .demo-card{background:var(--card);border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.2),0 8px 32px rgba(0,0,0,.15);border:1px solid var(--bdr);overflow:hidden;transition:box-shadow .3s}
 .demo-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.3),0 16px 48px rgba(0,0,0,.2)}
 .demo-topbar{display:flex;align-items:center;gap:6px;padding:12px 18px;border-bottom:1px solid var(--bdr);background:rgba(255,255,255,.02)}
@@ -90,7 +85,6 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .demo-topbar-title{font-family:'Inter',sans-serif;font-size:11px;color:var(--dim);margin-left:8px;letter-spacing:.5px}
 .demo-body{padding:24px}
 
-/* FEAT */
 .feat-row{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
 .feat-row.rev{direction:rtl}
 .feat-row.rev > *{direction:ltr}
@@ -104,11 +98,11 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .mock-table th{text-align:left;padding:10px 12px;color:var(--dim);font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--bdr)}
 .mock-table td{padding:11px 12px;border-bottom:1px solid var(--bdr);color:var(--sub)}
 .mock-table tr:last-child td{border-bottom:none}
-
 .badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.5px}
 .badge.hot{background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.2)}
 .badge.new{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.15)}
 .badge.known{background:rgba(255,255,255,.04);color:var(--sub);border:1px solid var(--bdr)}
+.badge.warn{background:rgba(251,146,60,.1);color:var(--orange);border:1px solid rgba(251,146,60,.15)}
 
 /* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
@@ -116,7 +110,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .stat-v{font-family:'Inter',sans-serif;font-size:24px;font-weight:800;color:var(--text)}
 .stat-l{font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
 
-/* XAPI */
+/* XAPI BARS */
 .xapi-account{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bdr);font-size:12px}
 .xapi-account:last-child{border-bottom:none}
 .xapi-handle{color:var(--cyan);font-weight:600;font-family:'Inter',sans-serif;font-size:11px}
@@ -130,38 +124,49 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 .line-bubble{background:#fff;border-radius:14px 14px 14px 4px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
 .line-card{padding:14px}
 .line-card-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;margin-bottom:8px;letter-spacing:.5px}
-.line-card-badge.hot{background:rgba(6,182,212,.1);color:var(--cyan-d)}
-.line-card-badge.new-biz{background:rgba(52,211,153,.08);color:#16a34a}
+.line-card-badge.hot{background:rgba(6,182,212,.1);color:#0891b2}
+.line-card-badge.biz{background:rgba(22,163,74,.08);color:#16a34a}
 .line-card-title{font-size:13px;font-weight:700;margin-bottom:6px;line-height:1.4;color:#1a1a1a}
 .line-card-desc{font-size:10px;color:#6b7280;line-height:1.6;margin-bottom:10px}
 .line-card-metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px}
 .line-card-metric{padding:6px;background:#f3f4f6;border-radius:4px;text-align:center}
-.line-card-mv{font-family:'Inter',sans-serif;font-size:13px;font-weight:800;color:var(--cyan-d)}
+.line-card-mv{font-family:'Inter',sans-serif;font-size:13px;font-weight:800;color:#0891b2}
 .line-card-ml{font-size:7px;color:#9ca3af;margin-top:1px}
-.line-card-btn{display:block;text-align:center;padding:8px;background:var(--cyan-d);border-radius:6px;color:#fff;font-size:10px;font-weight:600;text-decoration:none}
 .line-time{font-size:9px;color:rgba(255,255,255,.7);margin-top:4px}
 
-/* SCENARIO */
-.scenario{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:36px 32px;margin-bottom:28px;position:relative;overflow:hidden;transition:all .3s}
-.scenario:hover{border-color:var(--bdr-h)}
-.scenario::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),transparent);opacity:.4}
-.scenario-q{font-size:15px;font-weight:700;color:var(--cyan);margin-bottom:20px;line-height:1.6}
-.scenario-steps{list-style:none;display:flex;flex-direction:column;gap:0}
-.scenario-steps li{padding:14px 0;border-bottom:1px solid var(--bdr);font-size:13px;line-height:1.9;color:var(--sub);display:flex;gap:12px}
-.scenario-steps li:last-child{border-bottom:none}
-.scenario-steps .step-n{font-family:'Inter',sans-serif;font-weight:800;color:var(--cyan);font-size:12px;flex-shrink:0;width:20px;margin-top:2px}
-.scenario-steps strong{color:var(--text)}
-.scenario-steps em{font-style:normal;color:var(--cyan)}
-.scenario-result{margin-top:20px;padding:18px 20px;background:var(--cyan-bg);border:1px solid var(--cyan-bdr);border-radius:10px;font-size:14px;color:var(--text);line-height:1.8}
-.scenario-result em{font-style:normal;color:var(--cyan);font-weight:700}
+/* PIPELINE */
+.pipe{display:flex;align-items:stretch;gap:0;margin:40px 0}
+.pipe-step{flex:1;text-align:center;padding:20px 12px;background:var(--card);border:1px solid var(--bdr);position:relative}
+.pipe-step:first-child{border-radius:12px 0 0 12px}
+.pipe-step:last-child{border-radius:0 12px 12px 0}
+.pipe-step:not(:last-child)::after{content:'→';position:absolute;right:-12px;top:50%;transform:translateY(-50%);color:var(--cyan);font-size:16px;z-index:1;width:24px;text-align:center}
+.pipe-num{font-family:'Inter',sans-serif;font-size:10px;font-weight:800;color:var(--cyan);margin-bottom:6px}
+.pipe-title{font-size:11px;font-weight:700;margin-bottom:4px}
+.pipe-desc{font-size:9px;color:var(--dim);line-height:1.4}
+
+/* RAW vs OUTPUT */
+.raw-vs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:32px}
+.raw-box{padding:20px;background:var(--card);border:1px solid var(--bdr);border-radius:12px;overflow:hidden}
+.raw-box-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bdr)}
+.raw-box-label.api{color:var(--dim)}
+.raw-box-label.out{color:var(--cyan)}
+.raw-code{font-family:'SF Mono','Fira Code',monospace;font-size:10px;color:var(--dim);line-height:1.7;white-space:pre-wrap;word-break:break-all}
+.raw-code .hl{color:var(--cyan)}
+.raw-code .str{color:var(--green)}
+.raw-code .num{color:var(--orange)}
+.output-card{padding:14px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;margin-bottom:8px}
+.output-card:last-child{margin-bottom:0}
+.output-card h5{font-size:12px;font-weight:700;margin-bottom:4px}
+.output-card p{font-size:10px;color:var(--sub);line-height:1.5}
+.output-card .out-tag{display:inline-block;padding:2px 6px;border-radius:3px;font-size:8px;font-weight:700;margin-bottom:6px}
+.output-card .out-tag.biz{background:rgba(52,211,153,.1);color:var(--green)}
+.output-card .out-tag.trend{background:rgba(34,211,238,.1);color:var(--cyan)}
 
 /* SOURCE */
 .source-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .source-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--bdr);background:var(--card)}
 .source-tag .src-dot{width:6px;height:6px;border-radius:50%}
-.source-tag .src-dot.free{background:var(--green)}
 .source-tag .src-dot.paid{background:var(--cyan)}
-.source-tag .src-price{font-size:9px;color:var(--dim);margin-left:2px}
 
 /* CLOSING */
 .closing{text-align:center;padding:100px 40px 80px;max-width:680px;margin:0 auto}
@@ -186,7 +191,11 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   .closing-headline{font-size:20px!important}
   .feat-headline{font-size:17px!important}
   .br-d::after{content:none!important}
-  .scenario{padding:24px 20px!important}
+  .pipe{flex-direction:column!important}
+  .pipe-step{border-radius:8px!important}
+  .pipe-step:not(:last-child)::after{content:'↓';right:50%;top:auto;bottom:-14px;transform:translateX(50%)}
+  .pipe-step:not(:last-child){margin-bottom:12px}
+  .raw-vs{grid-template-columns:1fr!important}
 }
 </style>
 </head>
@@ -205,31 +214,32 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 <!-- ===== HERO ===== -->
 <div class="hero">
-  <div class="hero-eyebrow">X API proposal for C-MATCH</div>
+  <div class="hero-eyebrow">X API Proposal</div>
   <h1 class="hero-headline">
     Xで昨日バズったコスメが<br>
     <em>毎朝わかるとしたら。</em>
   </h1>
   <p class="hero-sub">
-    X APIを導入すると、<br class="br-d">
+    X APIを使うと、<br class="br-d">
     <strong>「昨日Xで何がバズったか」</strong>が毎日データで取れる。<br><br>
-    しかもPRタグ付きの投稿も検出できるので、<br>
+    しかもPRタグ付きの投稿も検出できるから、<br>
     <strong>「どのブランドが今インフルエンサー施策を<br class="br-d">
     やっているか」</strong>まで見える。<br><br>
-    この2つが見えると、何が変わるか。
+    ただし、X APIはあくまで「生データの蛇口」。<br>
+    <strong>蛇口をひねるだけでは使い物にならない。</strong><br>
+    そこから先の仕組みが、全てを決める。
   </p>
   <div class="hero-scroll" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})">SCROLL<span>↓</span></div>
 </div>
 
-<!-- ===== 01: 毎朝届くデータ ===== -->
+<!-- ===== 01: 毎朝届くデータ（詳細） ===== -->
 <div class="section wide" id="s1">
   <div class="section-label r">01 — Daily Intelligence</div>
-  <div class="section-title r">毎朝こんなデータが<em>自動で届く。</em></div>
+  <div class="section-title r">毎朝、<em>こんなデータが届く。</em></div>
   <div class="section-sub r">
-    X APIで前日のコスメ関連投稿を自動検索。<br>
-    「何がバズっているか」と<br class="br-d">
-    「どのブランドがPR施策をやっているか」を<br>
-    毎朝LINEにまとめて届ける。
+    朝起きてLINEを開くと、<br class="br-d">
+    昨日のXのコスメ市場がまとまっている。<br>
+    具体的に何が届くのか、見てほしい。
   </div>
 
   <div class="feat-row r">
@@ -238,23 +248,44 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
         <div class="line-chat-bg">
           <div class="line-bubble">
             <div class="line-card">
-              <div class="line-card-badge hot">昨日のバズ</div>
+              <div class="line-card-badge hot">昨日のバズ TOP</div>
               <div class="line-card-title">rom&nd グラスティングメルティングバーム</div>
-              <div class="line-card-desc">リポスト 4,200+ / いいね 18,000+<br>「発色やばい」「これ秋の覇権」等の投稿が急増<br>X検出: 美容系投稿の中で前日比 320%</div>
+              <div class="line-card-desc">
+                X検出: 美容投稿の中で前日比 320%<br>
+                「発色やばい」「秋の覇権」等の投稿が急増<br>
+                主な拡散元: フォロワー5万↑の一般ユーザー3名
+              </div>
               <div class="line-card-metrics">
-                <div class="line-card-metric"><div class="line-card-mv">18K</div><div class="line-card-ml">いいね合計</div></div>
+                <div class="line-card-metric"><div class="line-card-mv">18K</div><div class="line-card-ml">いいね計</div></div>
                 <div class="line-card-metric"><div class="line-card-mv">4.2K</div><div class="line-card-ml">リポスト</div></div>
               </div>
             </div>
           </div>
           <div class="line-bubble">
             <div class="line-card">
-              <div class="line-card-badge new-biz">PR検出 — 未取引</div>
+              <div class="line-card-badge biz">PR検出 — F未取引</div>
               <div class="line-card-title">NAMING. カラーリップバーム</div>
-              <div class="line-card-desc">PR投稿を3件検出（他事務所のインフルエンサー）<br>Fへの依頼実績: なし<br>→ 先にアプローチできる可能性あり</div>
+              <div class="line-card-desc">
+                #PR 付き投稿を3件検出<br>
+                依頼先: 他事務所のインフルエンサー<br>
+                Fへの依頼実績: なし<br>
+                → インフルエンサー予算あり。先手を打てる可能性
+              </div>
               <div class="line-card-metrics">
                 <div class="line-card-metric"><div class="line-card-mv">3件</div><div class="line-card-ml">PR投稿</div></div>
-                <div class="line-card-metric"><div class="line-card-mv">未取引</div><div class="line-card-ml">F実績</div></div>
+                <div class="line-card-metric"><div class="line-card-mv">未取引</div><div class="line-card-ml">Fとの実績</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="line-bubble">
+            <div class="line-card">
+              <div class="line-card-badge hot">急上昇ワード</div>
+              <div class="line-card-title">昨日のXトレンドワード（美容）</div>
+              <div class="line-card-desc">
+                1. 「ドクダミトナー」 +280%<br>
+                2. 「メルティングバーム」 +320%<br>
+                3. 「クッションファンデ 崩れない」 +180%<br>
+                4. 「韓国スキンケア 秋」 +150%
               </div>
             </div>
           </div>
@@ -264,24 +295,22 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
     </div>
     <div>
       <div class="feat-headline">
-        「バズ検出」と<br>
-        <em>「営業リード」</em>が<br>
-        毎朝勝手に届く。
+        3種類のデータが<br>
+        <em>毎朝まとまって届く。</em>
       </div>
       <div class="feat-desc">
-        <strong>上のカード：昨日Xでバズったコスメ。</strong><br>
-        メンバーの投稿ネタとしてすぐ使える。<br>
-        今バズり始めている商品がわかるから、<br>
-        タイミングを逃さず投稿できる。<br><br>
-        <strong>下のカード：PR投稿を出しているけど、<br class="br-d">
-        まだFに依頼が来ていないブランド。</strong><br>
-        他の事務所のインフルエンサーにPRを出している<br class="br-d">
-        =インフルエンサー施策に予算がある。<br>
-        でもまだFには来ていない。<br>
-        <strong>こっちから先に声をかけられる。</strong>
-      </div>
-      <div class="source-tags" style="margin-top:20px">
-        <div class="source-tag"><span class="src-dot paid"></span>X API<span class="src-price">$200/月</span></div>
+        <strong style="color:var(--cyan)">① 昨日のバズTOP</strong><br>
+        X上のコスメ投稿をリポスト・いいね数で<br class="br-d">
+        ランキング化。今Xで話題になっている商品が<br class="br-d">
+        ひと目でわかる。メンバーの投稿ネタになる。<br><br>
+        <strong style="color:var(--green)">② PR検出（F未取引）</strong><br>
+        #PR タグ付き投稿を自動検出。<br>
+        そのブランドがFに依頼した実績があるか照合し、<br>
+        <strong>「予算はあるけどFに来ていないブランド」</strong>を<br class="br-d">
+        リストアップ。営業リードになる。<br><br>
+        <strong style="color:var(--cyan)">③ 急上昇ワード</strong><br>
+        美容関連で前日急増したキーワード。<br>
+        「今ユーザーが何に興味を持っているか」がわかる。
       </div>
     </div>
   </div>
@@ -289,22 +318,97 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 <div class="section-divider"></div>
 
-<!-- ===== 02: 9アカウント自動集計 ===== -->
+<!-- ===== 02: PR検出 → 営業（データ付き） ===== -->
 <div class="section wide" id="s2">
-  <div class="section-label r">02 — Account Report</div>
-  <div class="section-title r">9アカウントの数字を<br><em>自動でまとめる。</em></div>
+  <div class="section-label r">02 — Lead Detection</div>
+  <div class="section-title r">「まだ来ていない案件」を<br><em>先に見つける。</em></div>
   <div class="section-sub r">
-    X APIを使うと、各アカウントの投稿データ<br class="br-d">
-    （リーチ・いいね・リポスト・クリック数）を<br>
-    API経由で自動取得できる。<br>
-    スクショを1枚ずつ集める作業がなくなる。
+    X APIで #PR 投稿を毎日検索すると、<br>
+    <strong>「どのブランドが今インフルエンサーに<br class="br-d">
+    お金を使っているか」</strong>がデータで見える。
   </div>
 
   <div class="feat-row rev r">
     <div class="demo-card">
       <div class="demo-topbar">
         <div class="demo-dot rd"></div><div class="demo-dot yl"></div><div class="demo-dot gn"></div>
-        <span class="demo-topbar-title">Anua Campaign — 9 Accounts</span>
+        <span class="demo-topbar-title">PR Detection — Weekly</span>
+      </div>
+      <div class="demo-body">
+        <table class="mock-table">
+          <thead><tr><th>ブランド</th><th>PR投稿数</th><th>依頼先</th><th>F実績</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="color:var(--text);font-weight:600">NAMING.</td>
+              <td>3件</td>
+              <td style="font-size:11px">他事務所 2名 / 個人 1名</td>
+              <td><span class="badge new">未取引</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--text);font-weight:600">Milk Touch</td>
+              <td>5件</td>
+              <td style="font-size:11px">他事務所 3名 / 個人 2名</td>
+              <td><span class="badge new">未取引</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--text);font-weight:600">AMUSE</td>
+              <td>4件</td>
+              <td style="font-size:11px">他事務所 4名</td>
+              <td><span class="badge new">未取引</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--text);font-weight:600">Anua</td>
+              <td>8件</td>
+              <td style="font-size:11px">F 6名 / 他 2名</td>
+              <td><span class="badge known">取引中</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--text);font-weight:600">ettusais</td>
+              <td>2件</td>
+              <td style="font-size:11px">個人 2名</td>
+              <td><span class="badge warn">過去取引</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="feat-headline">
+        <em>予算を持っている</em>のに<br>
+        まだ来ていないブランド。
+      </div>
+      <div class="feat-desc">
+        他のインフルエンサーにPRを出している<br>
+        = <strong>インフルエンサー施策に予算がある。</strong><br><br>
+        NAMING. は今週3件のPR投稿を出しているが、<br>
+        Fへの依頼実績はない。<br>
+        Milk Touchは5件。AMUSEは4件。<br>
+        <strong>全部、こっちからアプローチできる相手。</strong><br><br>
+        「来るのを待つ」だけでなく、<br>
+        「予算がある相手を先に見つけて動く」<br class="br-d">
+        という選択肢が生まれる。
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ===== 03: 9アカウント集計 ===== -->
+<div class="section wide" id="s3">
+  <div class="section-label r">03 — Campaign Report</div>
+  <div class="section-title r">キャンペーンの数字が<br><em>自動でまとまる。</em></div>
+  <div class="section-sub r">
+    9アカウントの投稿データを<br class="br-d">
+    API経由で自動取得。<br>
+    スクショ依頼 → 手動集計の作業がなくなる。
+  </div>
+
+  <div class="feat-row r">
+    <div class="demo-card">
+      <div class="demo-topbar">
+        <div class="demo-dot rd"></div><div class="demo-dot yl"></div><div class="demo-dot gn"></div>
+        <span class="demo-topbar-title">Anua Campaign — Auto Report</span>
       </div>
       <div class="demo-body">
         <div class="stats-row">
@@ -324,21 +428,21 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
     </div>
     <div>
       <div class="feat-headline">
-        キャンペーン単位で、<br>
-        <em>誰がどれだけ届けたか。</em>
+        「スクショ送って」が<br>
+        <em>全部なくなる。</em>
       </div>
       <div class="feat-desc">
-        案件ごとに「どのアカウントが<br class="br-d">
-        どれだけリーチしたか」が自動で出る。<br><br>
-        今は各アカウントに<br class="br-d">
-        「スクショ送って」と連絡して、<br>
-        手動で集めてまとめている作業。<br>
-        <strong>それが全部自動になる。</strong><br><br>
-        ブランドに送る報告資料の数字も<br>
-        ここからそのまま使える。
-      </div>
-      <div class="source-tags" style="margin-top:20px">
-        <div class="source-tag"><span class="src-dot paid"></span>X API<span class="src-price">$200/月</span></div>
+        今：アカウントごとにスクショを依頼して、<br>
+        数字を手動で集めてまとめる。<br><br>
+        導入後：<strong>キャンペーンの投稿IDを<br class="br-d">
+        登録するだけで、9アカウント分のデータが<br class="br-d">
+        自動で集計される。</strong><br><br>
+        どのアカウントがどれだけリーチしたか。<br>
+        反応率が高かったのはどこか。<br>
+        ブランドへの報告資料にそのまま使える。<br><br>
+        データが蓄積されていけば、<br>
+        「このブランドにはこのアカウントが効く」<br class="br-d">
+        という知見もたまっていく。
       </div>
     </div>
   </div>
@@ -346,56 +450,94 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 <div class="section-divider"></div>
 
-<!-- ===== 03: 具体シナリオ ===== -->
-<div class="section" id="s3">
-  <div class="section-label r">03 — Scenarios</div>
-  <div class="section-title r"><em>具体的に</em>どう使えるか。</div>
+<!-- ===== 04: 裏側の仕組み（ここで「普通じゃできない」を見せる） ===== -->
+<div class="section wide" id="s4">
+  <div class="section-label r">04 — How It Works</div>
+  <div class="section-title r">X APIだけでは、<em>何もできない。</em></div>
   <div class="section-sub r">
-    X APIで取れるデータが、<br class="br-d">
-    日々の業務の中でどう役に立つか。<br>
-    いくつかの場面で考えてみる。
+    X APIはあくまで「生データの蛇口」。<br>
+    契約しただけでは、JSONという機械用の<br class="br-d">
+    データが返ってくるだけ。<br>
+    <strong>それを「使えるもの」に変える仕組み</strong>が必要。
   </div>
 
-  <div class="scenario r">
-    <div class="scenario-q">まだFに来ていないブランドの案件を、<br class="br-d">先に見つける。</div>
-    <ul class="scenario-steps">
-      <li><span class="step-n">1</span><span>X APIで美容系の「#PR」タグ付き投稿を毎日自動検索する。</span></li>
-      <li><span class="step-n">2</span><span>すると「このブランド、他のインフルエンサーにPR出してるな」というのがデータでわかる。<br>例えば、NAMING.というブランドが3人のインフルエンサーにPR投稿を依頼しているのが見える。</span></li>
-      <li><span class="step-n">3</span><span>Fの過去案件リストと照合すると、<strong>NAMING.からはまだ依頼が来ていない。</strong><br>でもPRを出している=<strong>インフルエンサー施策に予算がある</strong>のは確実。</span></li>
-      <li><span class="step-n">4</span><span>このタイミングで<strong>こちらからNAMING.にアプローチできる。</strong><br>「向こうから来るのを待つ」だけじゃなく、<br>「予算がある＝確度の高い相手」に先に声をかけにいける。</span></li>
-    </ul>
-    <div class="scenario-result">
-      今はBtoB紹介で案件が来るのを待っている状態。<br>
-      X APIがあれば<em>「予算を持っている新規ブランドを自分から見つけて、先にアプローチする」</em>という動きが取れるようになる。
+  <div class="r">
+    <div style="font-size:12px;color:var(--dim);letter-spacing:2px;margin-bottom:16px;font-weight:600">毎朝の配信が届くまでの裏側</div>
+  </div>
+
+  <div class="pipe r">
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 1</div>
+      <div class="pipe-title">X API取得</div>
+      <div class="pipe-desc">美容関連キーワードで<br>前日の投稿を検索取得</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 2</div>
+      <div class="pipe-title">フィルタリング</div>
+      <div class="pipe-desc">コスメに関係ない投稿を<br>AI判定で除外</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 3</div>
+      <div class="pipe-title">PR検出</div>
+      <div class="pipe-desc">#PR タグ投稿を抽出<br>ブランド名を自動特定</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 4</div>
+      <div class="pipe-title">案件照合</div>
+      <div class="pipe-desc">F の過去案件DBと照合<br>未取引ブランドを特定</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 5</div>
+      <div class="pipe-title">整形 & 配信</div>
+      <div class="pipe-desc">LINEカード形式に整形<br>毎朝自動で配信</div>
     </div>
   </div>
 
-  <div class="scenario r">
-    <div class="scenario-q">メンバーの投稿ネタの精度を上げる。</div>
-    <ul class="scenario-steps">
-      <li><span class="step-n">1</span><span>X APIで「昨日コスメ関連でバズった投稿」を毎朝自動で検出。<br>リポスト数・いいね数の多い投稿から、<strong>今Xで話題になっている商品</strong>がわかる。</span></li>
-      <li><span class="step-n">2</span><span>メンバーは毎朝LINEを見るだけで「今日何を投稿すればいいか」のヒントがもらえる。<br>自分でXを何時間もチェックする必要がなくなる。</span></li>
-      <li><span class="step-n">3</span><span>バズが始まっているタイミングで投稿できれば、<strong>波に乗れる確率が上がる。</strong><br>「2日前にバズったネタを今日投稿する」ではなく、<br>「昨日バズり始めた商品を今日投稿する」ができる。</span></li>
-    </ul>
-    <div class="scenario-result">
-      メンバーの情報収集の手間が減る。<br>
-      加えて<em>投稿のタイミングが「バズの波」に合いやすくなる</em>ので、投稿のパフォーマンス自体も上がりやすい。
+  <div class="raw-vs r">
+    <div class="raw-box">
+      <div class="raw-box-label api">X APIから返ってくる生データ</div>
+      <div class="raw-code">{
+  <span class="hl">"data"</span>: [{
+    <span class="str">"text"</span>: <span class="str">"NAMING.のリップバーム
+    めちゃくちゃ良い...
+    #PR #コスメレビュー"</span>,
+    <span class="str">"public_metrics"</span>: {
+      <span class="str">"like_count"</span>: <span class="num">3842</span>,
+      <span class="str">"retweet_count"</span>: <span class="num">891</span>,
+      <span class="str">"impression_count"</span>: <span class="num">284019</span>
+    },
+    <span class="str">"created_at"</span>: <span class="str">"2026-03-08T14:23:11Z"</span>,
+    <span class="str">"author_id"</span>: <span class="str">"9382749102"</span>
+  }, ... <span class="hl">// 数百〜数千件</span>
+  ]
+}</div>
+    </div>
+    <div class="raw-box">
+      <div class="raw-box-label out">加工後に届くアウトプット</div>
+      <div class="output-card">
+        <div class="out-tag biz">営業リード</div>
+        <h5 style="color:var(--text)">NAMING. カラーリップバーム</h5>
+        <p>PR投稿 3件検出（他事務所2名 / 個人1名）<br>Fとの取引実績: なし<br>→ インフルエンサー予算あり。先手を打てる可能性</p>
+      </div>
+      <div class="output-card">
+        <div class="out-tag trend">バズ検出</div>
+        <h5 style="color:var(--text)">rom&nd メルティングバーム</h5>
+        <p>いいね計 18K / リポスト 4.2K / 前日比 320%<br>一般ユーザー起点の自然バズ</p>
+      </div>
     </div>
   </div>
 
-  <div class="scenario r">
-    <div class="scenario-q">ブランドへの報告に、客観的な数字を添える。</div>
-    <ul class="scenario-steps">
-      <li><span class="step-n">1</span><span>今、ブランドへの報告はアカウントのスクショを集めて送っている。<br>手間がかかるし、数字のまとめ方もバラバラになりがち。</span></li>
-      <li><span class="step-n">2</span><span>X APIを使えば、キャンペーンの投稿データ（リーチ・いいね・リポスト・クリック）が<br class="br-d"><strong>9アカウント分まとめて自動集計</strong>される。</span></li>
-      <li><span class="step-n">3</span><span>統一されたフォーマットで数字が揃うので、<br><strong>ブランドの担当者が自社内で報告するときにそのまま使いやすい。</strong></span></li>
-      <li><span class="step-n">4</span><span>担当者にとって「報告が楽な事務所」は、<strong>次も頼みやすい事務所になる。</strong><br>報告のフォーマットが整っていること自体が、地味だけど継続に効く。</span></li>
-    </ul>
-    <div class="scenario-result">
-      スクショ集めの手間が減る。<br>
-      それ以上に、<em>ブランド担当者にとって「社内報告がしやすい=次も使いやすい」</em>という形で、リピートに効いてくる。
-    </div>
-  </div>
+  <p class="r" style="text-align:center;margin-top:28px;font-size:13px;color:var(--sub);line-height:1.9;max-width:560px;margin-left:auto;margin-right:auto">
+    左が、X APIを契約しただけで返ってくるもの。<br>
+    右が、仕組みを通した後のアウトプット。<br><br>
+    この間を埋めるのが、<br class="br-d">
+    <strong style="color:var(--text)">美容市場のデータ分析基盤と<br class="br-d">
+    自動化のシステム。</strong><br>
+    検索クエリの設計、AI判定、案件DBとの照合、<br class="br-d">
+    配信フォーマットの整形——<br>
+    <strong style="color:var(--text)">ここが一番手間がかかるところで、<br class="br-d">
+    ここがないとX APIはただのデータの山になる。</strong>
+  </p>
 </div>
 
 <div class="section-divider"></div>
@@ -404,21 +546,18 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 <div class="closing">
   <div class="section-label r" style="text-align:center">SUMMARY</div>
   <p class="r closing-headline">
-    X APIで取れるデータ。<br>
-    それを<em>仕組みに変えられれば、</em><br>
-    毎日の武器になる。
+    X APIは<em>$200/月の蛇口。</em><br>
+    蛇口から出るデータを<br>
+    <em>毎日使える武器に変える仕組み。</em><br>
+    その両方が揃ったとき、<br>
+    営業もレポートも自動で回り始める。
   </p>
-  <div class="source-tags r" style="margin-top:28px;justify-content:center">
-    <div class="source-tag"><span class="src-dot paid"></span>X API<span class="src-price">$200/月</span></div>
-  </div>
   <p class="r closing-sub">
-    X API $200/月。<br>
-    データを取るだけならコストはこれだけ。<br><br>
-    あとは、そのデータを<br class="br-d">
-    <strong>毎日自動で回る仕組みに変える</strong>こと。<br>
-    そこができれば、<br class="br-d">
-    営業リードもメンバーへの情報配信も<br class="br-d">
-    レポート生成も、全部自動で動き続ける。
+    データの蛇口を開けるのは簡単。<br>
+    <strong>そこから先を設計して、組んで、<br class="br-d">
+    毎日自動で回し続ける。</strong><br>
+    その仕組みが出来上がれば、<br class="br-d">
+    あとは勝手に動き続ける。
   </p>
 </div>
 
