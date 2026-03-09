@@ -222,12 +222,9 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   <p class="hero-sub">
     X APIを使うと、<br class="br-d">
     <strong>「昨日Xで何がバズったか」</strong>が毎日データで取れる。<br><br>
-    しかもPRタグ付きの投稿も検出できるから、<br>
-    <strong>「どのブランドが今インフルエンサー施策を<br class="br-d">
-    やっているか」</strong>まで見える。<br><br>
-    ただし、X APIはあくまで「生データの蛇口」。<br>
-    <strong>蛇口をひねるだけでは使い物にならない。</strong><br>
-    そこから先の仕組みが、全てを決める。
+    しかもPRタグ付きの投稿も検出できるので、<br>
+    <strong>「どのブランドが今インフルエンサーに<br class="br-d">
+    お金を使っているか」</strong>まで見える。
   </p>
   <div class="hero-scroll" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})">SCROLL<span>↓</span></div>
 </div>
@@ -237,9 +234,13 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   <div class="section-label r">01 — Daily Intelligence</div>
   <div class="section-title r">毎朝、<em>こんなデータが届く。</em></div>
   <div class="section-sub r">
-    朝起きてLINEを開くと、<br class="br-d">
-    昨日のXのコスメ市場がまとまっている。<br>
-    具体的に何が届くのか、見てほしい。
+    X APIはX（旧Twitter）の<strong>公式API</strong>。<br>
+    いいね数・リポスト数・インプレッション数は<br class="br-d">
+    Xのサーバーから直接取得するので<strong>数字は正確</strong>。<br><br>
+    コスメバズが「楽天・@cosmeの市場データ」なら、<br>
+    X APIは<strong>「SNS上のリアルタイムの動き」</strong>。<br>
+    市場データでは拾えない<br class="br-d">
+    「今この瞬間、Xで何が話題か」が見える。
   </div>
 
   <div class="feat-row r">
@@ -455,10 +456,14 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   <div class="section-label r">04 — How It Works</div>
   <div class="section-title r">X APIだけでは、<em>何もできない。</em></div>
   <div class="section-sub r">
-    X APIはあくまで「生データの蛇口」。<br>
-    契約しただけでは、JSONという機械用の<br class="br-d">
-    データが返ってくるだけ。<br>
-    <strong>それを「使えるもの」に変える仕組み</strong>が必要。
+    X APIを契約しても、<br>
+    返ってくるのは<strong>大量のデータの塊</strong>。<br>
+    そのままでは誰にも読めないし、使えない。<br><br>
+    「美容に関係ある投稿だけ抜き出す」<br>
+    「ブランド名を特定する」<br>
+    「Fの過去案件と照合する」<br>
+    「毎朝LINEで届くようにする」<br>
+    ——<strong>この仕組み全部が必要になる。</strong>
   </div>
 
   <div class="r">
@@ -469,75 +474,76 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
     <div class="pipe-step">
       <div class="pipe-num">STEP 1</div>
       <div class="pipe-title">X API取得</div>
-      <div class="pipe-desc">美容関連キーワードで<br>前日の投稿を検索取得</div>
+      <div class="pipe-desc">美容関連のキーワードで<br>前日の投稿を全部取得</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">STEP 2</div>
-      <div class="pipe-title">フィルタリング</div>
-      <div class="pipe-desc">コスメに関係ない投稿を<br>AI判定で除外</div>
+      <div class="pipe-title">選別</div>
+      <div class="pipe-desc">コスメに関係ない投稿を<br>自動で除外</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">STEP 3</div>
       <div class="pipe-title">PR検出</div>
-      <div class="pipe-desc">#PR タグ投稿を抽出<br>ブランド名を自動特定</div>
+      <div class="pipe-desc">#PR タグの投稿を抽出<br>ブランド名を自動特定</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">STEP 4</div>
       <div class="pipe-title">案件照合</div>
-      <div class="pipe-desc">F の過去案件DBと照合<br>未取引ブランドを特定</div>
+      <div class="pipe-desc">Fの過去案件リストと照合<br>未取引ブランドを特定</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">STEP 5</div>
-      <div class="pipe-title">整形 & 配信</div>
-      <div class="pipe-desc">LINEカード形式に整形<br>毎朝自動で配信</div>
+      <div class="pipe-title">配信</div>
+      <div class="pipe-desc">見やすいカード形式にして<br>毎朝LINEに自動配信</div>
     </div>
   </div>
 
-  <div class="raw-vs r">
-    <div class="raw-box">
-      <div class="raw-box-label api">X APIから返ってくる生データ</div>
-      <div class="raw-code">{
-  <span class="hl">"data"</span>: [{
-    <span class="str">"text"</span>: <span class="str">"NAMING.のリップバーム
-    めちゃくちゃ良い...
-    #PR #コスメレビュー"</span>,
-    <span class="str">"public_metrics"</span>: {
-      <span class="str">"like_count"</span>: <span class="num">3842</span>,
-      <span class="str">"retweet_count"</span>: <span class="num">891</span>,
-      <span class="str">"impression_count"</span>: <span class="num">284019</span>
-    },
-    <span class="str">"created_at"</span>: <span class="str">"2026-03-08T14:23:11Z"</span>,
-    <span class="str">"author_id"</span>: <span class="str">"9382749102"</span>
-  }, ... <span class="hl">// 数百〜数千件</span>
-  ]
-}</div>
-    </div>
-    <div class="raw-box">
-      <div class="raw-box-label out">加工後に届くアウトプット</div>
-      <div class="output-card">
-        <div class="out-tag biz">営業リード</div>
-        <h5 style="color:var(--text)">NAMING. カラーリップバーム</h5>
-        <p>PR投稿 3件検出（他事務所2名 / 個人1名）<br>Fとの取引実績: なし<br>→ インフルエンサー予算あり。先手を打てる可能性</p>
-      </div>
-      <div class="output-card">
-        <div class="out-tag trend">バズ検出</div>
-        <h5 style="color:var(--text)">rom&nd メルティングバーム</h5>
-        <p>いいね計 18K / リポスト 4.2K / 前日比 320%<br>一般ユーザー起点の自然バズ</p>
-      </div>
-    </div>
-  </div>
-
-  <p class="r" style="text-align:center;margin-top:28px;font-size:13px;color:var(--sub);line-height:1.9;max-width:560px;margin-left:auto;margin-right:auto">
-    左が、X APIを契約しただけで返ってくるもの。<br>
-    右が、仕組みを通した後のアウトプット。<br><br>
-    この間を埋めるのが、<br class="br-d">
-    <strong style="color:var(--text)">美容市場のデータ分析基盤と<br class="br-d">
-    自動化のシステム。</strong><br>
-    検索クエリの設計、AI判定、案件DBとの照合、<br class="br-d">
-    配信フォーマットの整形——<br>
-    <strong style="color:var(--text)">ここが一番手間がかかるところで、<br class="br-d">
-    ここがないとX APIはただのデータの山になる。</strong>
+  <p class="r" style="text-align:center;margin-top:28px;font-size:13px;color:var(--sub);line-height:1.9;max-width:600px;margin-left:auto;margin-right:auto">
+    X APIを契約しただけでは、<br>
+    STEP 1までしかできない。<br>
+    <strong style="color:var(--text)">STEP 2〜5の仕組みを作って、<br class="br-d">
+    毎日自動で回るようにする。</strong><br>
+    ここが一番手間がかかるところ。
   </p>
+
+  <div class="r" style="margin-top:52px">
+    <div style="font-size:12px;color:var(--dim);letter-spacing:2px;margin-bottom:16px;font-weight:600">すでに動いている仕組み — コスメバズ</div>
+  </div>
+
+  <div class="r" style="background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:32px;margin-top:8px">
+    <p style="font-size:14px;color:var(--sub);line-height:2;margin-bottom:24px">
+      実は、上の仕組みの<strong style="color:var(--text)">大部分はもう出来ている</strong>。<br><br>
+      今お送りしているコスメバズは、<br>
+      毎日こんなことを自動でやっています：
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
+      <div style="padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:6px;letter-spacing:1px">楽天API</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7">美容カテゴリの<br>売れ筋データを毎日取得</div>
+      </div>
+      <div style="padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:6px;letter-spacing:1px">@cosme</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7">ランキング・口コミデータを<br>毎日自動収集</div>
+      </div>
+      <div style="padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:6px;letter-spacing:1px">Google Trends</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7">美容ワードの<br>検索トレンドを自動追跡</div>
+      </div>
+      <div style="padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:6px;letter-spacing:1px">LINE自動配信</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7">収集→分析→整形→配信を<br>毎日全自動で実行</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--sub);line-height:2">
+      データを集めて、選別して、<br class="br-d">
+      見やすく整形して、LINEで届ける——<br>
+      <strong style="color:var(--text)">この流れはコスメバズで<br class="br-d">
+      すでに毎日動いている仕組みそのもの。</strong><br><br>
+      ここにX APIのデータを加えることで、<br>
+      <strong style="color:var(--text)">「市場データ」+「SNSのリアルタイムの動き」</strong>の<br class="br-d">
+      両方が毎朝届くようになる。
+    </p>
+  </div>
 </div>
 
 <div class="section-divider"></div>
@@ -546,18 +552,17 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 <div class="closing">
   <div class="section-label r" style="text-align:center">SUMMARY</div>
   <p class="r closing-headline">
-    X APIは<em>$200/月の蛇口。</em><br>
-    蛇口から出るデータを<br>
-    <em>毎日使える武器に変える仕組み。</em><br>
-    その両方が揃ったとき、<br>
-    営業もレポートも自動で回り始める。
+    X API <em>$200/月</em> ＋<br>
+    すでに動いている<em>データ基盤</em>。<br>
+    この組み合わせで、<br>
+    毎朝の情報が変わる。
   </p>
   <p class="r closing-sub">
-    データの蛇口を開けるのは簡単。<br>
-    <strong>そこから先を設計して、組んで、<br class="br-d">
-    毎日自動で回し続ける。</strong><br>
-    その仕組みが出来上がれば、<br class="br-d">
-    あとは勝手に動き続ける。
+    バズ検出、営業リード、キャンペーン集計。<br>
+    <strong>全部、毎日自動で届く仕組み。</strong><br><br>
+    データの収集から配信まで<br class="br-d">
+    一気通貫で回せる体制は、<br class="br-d">
+    コスメバズですでにできている。
   </p>
 </div>
 
