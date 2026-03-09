@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C-MATCH</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --gold: #c8a45e;
+  --gold-l: #dcc88a;
+  --gold-d: #9e7e3a;
+  --bg: #0e0e0e;
+  --card: #161616;
+  --card2: #1c1c1c;
+  --subtle: #131313;
+  --text: #f0efe9;
+  --sub: #9a9a9a;
+  --dim: #555;
+  --bdr: rgba(255,255,255,0.05);
+  --bdr-h: rgba(200,164,94,0.25);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Noto Sans JP','Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ===== NOISE OVERLAY ===== */
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ===== BACKGROUND CANVAS ===== */
+.bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden}
+
+/* Animated mesh gradient blobs */
+.bg-blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:0;animation:blobPulse 12s ease-in-out infinite}
+.bg-blob.b1{width:600px;height:600px;top:-10%;left:-5%;background:radial-gradient(circle,rgba(200,164,94,.12),transparent 70%);animation-delay:0s;opacity:.6}
+.bg-blob.b2{width:500px;height:500px;top:25%;right:-8%;background:radial-gradient(circle,rgba(140,120,80,.08),transparent 70%);animation-delay:-4s;opacity:.5}
+.bg-blob.b3{width:700px;height:700px;top:50%;left:10%;background:radial-gradient(circle,rgba(100,80,50,.06),transparent 70%);animation-delay:-8s;opacity:.4}
+.bg-blob.b4{width:550px;height:550px;top:75%;right:5%;background:radial-gradient(circle,rgba(200,164,94,.07),transparent 70%);animation-delay:-2s;opacity:.5}
+.bg-blob.b5{width:400px;height:400px;bottom:-5%;left:30%;background:radial-gradient(circle,rgba(160,130,70,.09),transparent 70%);animation-delay:-6s;opacity:.4}
+
+@keyframes blobPulse{
+  0%,100%{transform:translate(0,0) scale(1);opacity:.4}
+  25%{transform:translate(30px,-20px) scale(1.05);opacity:.6}
+  50%{transform:translate(-20px,30px) scale(.95);opacity:.5}
+  75%{transform:translate(15px,15px) scale(1.08);opacity:.55}
+}
+
+/* Section-specific radial glows */
+.section-glow{position:absolute;pointer-events:none;z-index:0}
+.section-glow.top-left{width:500px;height:500px;top:-100px;left:-100px;background:radial-gradient(circle,rgba(200,164,94,.04),transparent 70%)}
+.section-glow.top-right{width:400px;height:400px;top:-80px;right:-80px;background:radial-gradient(circle,rgba(200,164,94,.03),transparent 70%)}
+.section-glow.center{width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(200,164,94,.03),transparent 70%)}
+.section-glow.bottom{width:500px;height:300px;bottom:-60px;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(200,164,94,.04),transparent 70%)}
+
+/* Gradient dividers between sections */
+.section-divider{width:100%;height:1px;max-width:600px;margin:0 auto;background:linear-gradient(90deg,transparent,rgba(200,164,94,.15),transparent);position:relative}
+.section-divider::before{content:'';position:absolute;top:-20px;left:0;right:0;height:40px;background:linear-gradient(180deg,transparent,rgba(200,164,94,.01),transparent)}
+
+/* Floating particles */
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.particle{position:absolute;width:2px;height:2px;background:rgba(200,164,94,.2);border-radius:50%;animation:float linear infinite}
+@keyframes float{
+  0%{transform:translateY(100vh) scale(0);opacity:0}
+  10%{opacity:1}
+  90%{opacity:1}
+  100%{transform:translateY(-10vh) scale(1);opacity:0}
+}
+
+/* Desktop-only line break */
+.br-d::after{content:'\A';white-space:pre}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  section{padding:60px 20px!important;min-height:auto!important}
+  .s-title{font-size:22px!important;line-height:1.5!important}
+  .s-lead{font-size:13px!important;line-height:1.8!important;margin-bottom:36px!important}
+  .hero-headline{font-size:28px!important;line-height:1.6!important}
+  .hero-sub{font-size:14px!important;line-height:1.8!important}
+  .market-layout{grid-template-columns:1fr!important}
+  .big-nums{flex-direction:column!important;gap:30px!important}
+  .big-n{font-size:64px!important}
+  .str-grid{grid-template-columns:1fr!important}
+  .m-row{grid-template-columns:1fr!important}
+  .opt-grid{grid-template-columns:1fr!important}
+  .timeline{flex-direction:column!important}
+  .timeline::before{display:none!important}
+  .cl-logos{grid-template-columns:repeat(3,1fr)!important}
+  .contact-row{grid-template-columns:1fr!important}
+  .plan-card{padding:36px 20px!important}
+  .plan-num{font-size:56px!important}
+  .plan-outcomes{grid-template-columns:1fr!important}
+  .closing-headline{font-size:24px!important}
+  .br-d::after{content:none!important}
+}
+@media(min-width:769px)and(max-width:1024px){
+  .m-row{grid-template-columns:1fr 1fr!important}
+  .big-n{font-size:72px!important}
+}
+
+/* ===== ANIMATIONS ===== */
+.r{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.r.v{opacity:1;transform:translateY(0)}
+.rl{opacity:0;transform:translateX(-36px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.rl.v{opacity:1;transform:translateX(0)}
+.rr{opacity:0;transform:translateX(36px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.rr.v{opacity:1;transform:translateX(0)}
+.rs{opacity:0;transform:scale(.92);transition:opacity .6s ease,transform .6s ease}
+.rs.v{opacity:1;transform:scale(1)}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-l));z-index:10000;transition:width .1s;width:0}
+
+/* ===== NAV ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(12px);background:rgba(14,14,14,0.7);border-bottom:1px solid var(--bdr);opacity:0;transform:translateY(-20px);transition:opacity .4s,transform .4s}
+.nav.show{opacity:1;transform:translateY(0)}
+.nav-logo{height:28px;opacity:.7}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--sub);font-size:11px;letter-spacing:2px;text-decoration:none;text-transform:uppercase;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+@media(max-width:768px){.nav-links{display:none!important}.nav{padding:12px 20px}}
+
+/* ===== SECTIONS ===== */
+section{min-height:100vh;padding:120px 80px;position:relative;max-width:1200px;margin:0 auto}
+section.fw{max-width:none}
+
+.s-label{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:14px}
+.s-title{font-size:36px;font-weight:900;margin-bottom:14px;line-height:1.4;letter-spacing:-0.5px}
+.s-title em{font-style:normal;color:var(--gold)}
+.s-lead{font-size:15px;color:var(--sub);font-weight:300;margin-bottom:56px;line-height:1.9;max-width:620px}
+
+/* ===== HERO ===== */
+#hero{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:100vh;max-width:none;position:relative}
+
+.hero-glow{position:absolute;border-radius:50%;filter:blur(140px);pointer-events:none;animation:heroGlow 8s ease-in-out infinite alternate}
+.hero-glow.a{width:600px;height:600px;top:10%;left:20%;background:rgba(200,164,94,.08)}
+.hero-glow.b{width:450px;height:450px;bottom:15%;right:15%;background:rgba(120,100,60,.06);animation-delay:-4s}
+@keyframes heroGlow{0%{opacity:.5;transform:scale(1)}100%{opacity:.8;transform:scale(1.15)}}
+
+.hero-content{position:relative;z-index:1}
+
+.hero-logo{width:160px;margin-bottom:52px;animation:hfloat 5s ease-in-out infinite}
+@keyframes hfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+.hero-eyebrow{font-family:'Inter',sans-serif;font-size:12px;letter-spacing:8px;color:var(--dim);margin-bottom:24px;text-transform:uppercase}
+
+.hero-headline{font-size:48px;font-weight:900;line-height:1.5;margin-bottom:24px;letter-spacing:-1px}
+.hero-headline em{font-style:normal;background:linear-gradient(135deg,var(--gold),var(--gold-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.hero-sub{font-size:17px;color:var(--sub);font-weight:300;max-width:520px;margin:0 auto 56px;line-height:1.8}
+
+.hero-cta{margin-top:8px}
+.hero-btn{display:inline-block;padding:14px 40px;border:1px solid rgba(200,164,94,.3);border-radius:6px;color:var(--gold);font-size:13px;font-weight:600;letter-spacing:2px;text-decoration:none;transition:all .3s}
+.hero-btn:hover{background:rgba(200,164,94,.08);border-color:rgba(200,164,94,.5);transform:translateY(-2px)}
+
+.scroll-cue{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);color:var(--dim);font-size:10px;letter-spacing:3px;cursor:pointer;text-align:center;animation:cue 2.5s ease-in-out infinite}
+.scroll-cue span{display:block;margin-top:6px;font-size:16px}
+@keyframes cue{0%,100%{opacity:.4;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(5px)}}
+
+/* ===== MARKET ===== */
+.market-layout{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+.chart-wrap{background:var(--card);border-radius:14px;padding:28px;border:1px solid var(--bdr)}
+.ins-list{display:flex;flex-direction:column;gap:16px}
+.ins{display:flex;align-items:center;gap:18px;padding:22px;border-radius:10px;background:var(--card);border:1px solid var(--bdr);transition:all .3s}
+.ins:hover{border-color:var(--bdr-h);transform:translateX(5px)}
+.ins-n{font-family:'Inter',sans-serif;font-size:32px;font-weight:900;color:var(--gold);min-width:80px;line-height:1}
+.ins-n small{font-size:14px;font-weight:400}
+.ins-t h4{font-size:13px;font-weight:700;margin-bottom:3px}
+.ins-t p{font-size:11px;color:var(--sub);line-height:1.5}
+
+/* ===== NETWORK ===== */
+#network{text-align:center}
+.big-nums{display:flex;justify-content:center;gap:72px;margin:52px 0}
+.big-n{font-family:'Inter',sans-serif;font-size:96px;font-weight:900;color:var(--gold);line-height:1}
+.big-u{font-size:24px;font-weight:300;color:var(--gold-d)}
+.big-l{font-size:13px;color:var(--sub);margin-top:6px;letter-spacing:2px}
+.net-msg{max-width:600px;margin:0 auto;font-size:15px;color:var(--sub);line-height:2;padding:32px 40px;border-radius:12px;background:var(--card);border:1px solid var(--bdr)}
+.net-msg strong{color:var(--gold)}
+
+/* ===== STRENGTHS ===== */
+.str-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.str{padding:36px 28px;background:var(--card);border:1px solid var(--bdr);border-radius:14px;transition:all .4s;position:relative;overflow:hidden}
+.str::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.str:hover{border-color:var(--bdr-h);transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.25)}
+.str:hover::after{transform:scaleX(1)}
+.str-ic{width:44px;height:44px;margin-bottom:18px;color:var(--gold)}
+.str-h{font-size:18px;font-weight:800;margin-bottom:12px;color:var(--gold)}
+.str-d{font-size:13px;color:var(--sub);line-height:1.8;margin-bottom:18px}
+.str-r{padding:12px 16px;background:rgba(200,164,94,.05);border-radius:6px;font-size:13px;color:var(--gold);font-weight:600;text-align:center;border:1px solid rgba(200,164,94,.08)}
+
+/* ===== MEMBERS ===== */
+.tier{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:20px}
+.tier.t{background:rgba(200,164,94,.08);color:var(--gold);border:1px solid rgba(200,164,94,.15)}
+.tier.m{background:rgba(140,140,180,.06);color:#aab;border:1px solid rgba(140,140,180,.1)}
+.tier.g{background:rgba(120,170,120,.06);color:#9b9;border:1px solid rgba(120,170,120,.1)}
+.m-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:44px}
+.mc{background:var(--card);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;transition:all .3s}
+.mc:hover{border-color:var(--bdr-h);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.mc-img{width:100%;height:240px;object-fit:cover;object-position:top}
+.mc-b{padding:18px}
+.mc-nm{font-size:16px;font-weight:800;margin-bottom:1px}
+.mc-hd{font-size:11px;color:var(--dim);margin-bottom:12px}
+.mc-st{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.mc-s{padding:9px;background:var(--subtle);border-radius:6px}
+.mc-sl{font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.mc-sv{font-family:'Inter',sans-serif;font-size:15px;font-weight:700}
+.mc-sv.gd{color:var(--gold)}
+.mc-str{padding:8px 12px;background:rgba(200,164,94,.04);border-radius:6px;font-size:11px;color:var(--gold);margin-bottom:8px;border:1px solid rgba(200,164,94,.08);line-height:1.5}
+.mc-pr{display:flex;gap:4px;flex-wrap:wrap}
+.mc-p{font-size:9px;padding:3px 7px;background:rgba(255,255,255,.02);border:1px solid var(--bdr);border-radius:3px;color:var(--sub)}
+
+/* ===== PLAN ===== */
+#plan{text-align:center}
+.plan-card{max-width:740px;margin:0 auto;padding:52px;background:var(--card);border:1px solid var(--bdr-h);border-radius:18px;position:relative;overflow:hidden}
+.plan-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.plan-ey{font-family:'Inter',sans-serif;font-size:11px;color:var(--dim);letter-spacing:4px;margin-bottom:10px}
+.plan-h{font-size:24px;font-weight:800;margin-bottom:24px}
+.plan-num{font-family:'Inter',sans-serif;font-size:72px;font-weight:900;color:var(--gold);line-height:1}
+.plan-num small{font-size:24px;font-weight:400}
+.plan-tax{font-size:11px;color:var(--dim);margin-top:4px;margin-bottom:32px}
+.plan-outcomes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px}
+.plan-o{padding:18px;background:var(--subtle);border-radius:8px;text-align:center}
+.plan-o-ic{width:36px;height:36px;color:var(--gold);margin:0 auto 10px;display:block}
+.plan-ot{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:4px}
+.plan-od{font-size:11px;color:var(--sub);line-height:1.5}
+.plan-list{list-style:none;text-align:left;max-width:480px;margin:0 auto}
+.plan-list li{padding:11px 0;border-bottom:1px solid var(--bdr);font-size:13px;color:var(--sub);display:flex;gap:10px;align-items:center}
+.plan-list .ck{width:18px;height:18px;background:rgba(200,164,94,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--gold);flex-shrink:0}
+
+/* ===== OPTIONS ===== */
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.opt{padding:40px 32px;background:var(--card);border:1px solid var(--bdr);border-radius:14px;transition:all .3s}
+.opt:hover{border-color:var(--bdr-h);transform:translateY(-3px)}
+.opt-ic{width:40px;height:40px;color:var(--gold);margin-bottom:14px}
+.opt-h{font-size:20px;font-weight:800;margin-bottom:6px}
+.opt-p{font-family:'Inter',sans-serif;font-size:36px;font-weight:900;color:var(--gold);margin-bottom:2px}
+.opt-p small{font-size:14px;font-weight:400}
+.opt-tx{font-size:10px;color:var(--dim);margin-bottom:20px}
+.opt-ul{list-style:none}
+.opt-ul li{padding:9px 0 9px 18px;font-size:12px;color:var(--sub);border-bottom:1px solid var(--bdr);position:relative}
+.opt-ul li::before{content:'→';position:absolute;left:0;color:var(--gold);font-size:11px}
+.opt-use{margin-top:18px;padding:10px 14px;background:rgba(200,164,94,.03);border-radius:6px;font-size:11px;color:var(--gold);text-align:center}
+
+/* ===== FLOW ===== */
+.timeline{display:flex;gap:0;margin-top:52px;position:relative}
+.timeline::before{content:'';position:absolute;top:40px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,var(--gold),rgba(200,164,94,.1))}
+.tl-step{flex:1;text-align:center;position:relative;padding:0 10px}
+.tl-dot{width:32px;height:32px;background:var(--gold);border-radius:50%;margin:24px auto 18px;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-weight:900;font-size:13px;color:var(--bg);position:relative;z-index:1;box-shadow:0 0 14px rgba(200,164,94,.2);transition:transform .3s}
+.tl-step:hover .tl-dot{transform:scale(1.12);box-shadow:0 0 24px rgba(200,164,94,.35)}
+.tl-step h4{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:7px}
+.tl-step p{font-size:11px;color:var(--sub);line-height:1.6}
+.flow-note{max-width:540px;margin:44px auto 0;text-align:center;padding:22px 32px;background:var(--card);border:1px solid var(--bdr);border-radius:8px;font-size:13px;color:var(--sub);line-height:1.8}
+.flow-note strong{color:var(--gold)}
+
+/* ===== CLIENTS ===== */
+.cl-logos{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:36px 0}
+.cl{height:88px;background:var(--card);border:1px solid var(--bdr);border-radius:8px;display:flex;align-items:center;justify-content:center;padding:14px;transition:all .3s;position:relative;overflow:hidden}
+.cl:hover{border-color:var(--bdr-h);background:var(--card2);transform:scale(1.03)}
+.cl img{max-width:90px;max-height:40px;object-fit:contain;filter:brightness(0) invert(.8);opacity:.55;transition:opacity .3s}
+.cl:hover img{opacity:1}
+.cl .cn{position:absolute;bottom:5px;font-size:8px;color:var(--gold);opacity:0;transition:opacity .3s}
+.cl:hover .cn{opacity:1}
+.cl-msg{text-align:center;font-size:14px;color:var(--sub);max-width:520px;margin:16px auto 0;line-height:1.8}
+.cl-msg strong{color:var(--gold)}
+
+/* ===== CLOSING ===== */
+#closing{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:none}
+.closing-headline{font-size:32px;font-weight:900;line-height:2;max-width:640px}
+.closing-headline em{font-style:normal;color:var(--gold)}
+.closing-logo{width:90px;margin-top:44px;opacity:.4}
+
+/* ===== CONTACT ===== */
+#contact{text-align:center;max-width:none;min-height:auto!important;padding:80px!important}
+.contact-row{display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:640px;margin:36px auto 0}
+.ct{padding:32px;background:var(--card);border:1px solid var(--bdr);border-radius:12px;transition:border-color .3s}
+.ct:hover{border-color:var(--bdr-h)}
+.ct-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;margin-bottom:14px;border:2px solid rgba(200,164,94,.15)}
+.ct-nm{font-size:18px;font-weight:800;margin-bottom:3px}
+.ct-rl{font-size:11px;color:var(--sub);margin-bottom:18px}
+.ct-inf{font-size:12px;color:var(--sub);padding:5px 0;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px}
+.ct-inf:last-child{border:none}
+.ct-inf svg{width:14px;height:14px;color:var(--gold);flex-shrink:0}
+
+/* ===== COMPARISON / DIFFERENTATION ===== */
+.cmp-table{width:100%;border-collapse:separate;border-spacing:0;margin-top:40px;border-radius:12px;overflow:hidden;border:1px solid var(--bdr)}
+.cmp-table th,.cmp-table td{padding:18px 20px;text-align:left;font-size:13px;border-bottom:1px solid var(--bdr)}
+.cmp-table thead th{background:rgba(200,164,94,.06);color:var(--gold);font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.cmp-table thead th:first-child{color:var(--sub)}
+.cmp-table tbody td{background:var(--card);color:var(--sub);vertical-align:top;line-height:1.7}
+.cmp-table tbody td:last-child{background:rgba(200,164,94,.03);color:var(--text);font-weight:500}
+.cmp-table tbody tr:last-child td{border-bottom:none}
+.cmp-table .cmp-label{font-weight:700;color:var(--text);font-size:12px;white-space:nowrap}
+.cmp-check{color:var(--gold);font-weight:700}
+.cmp-x{color:#555}
+.cmp-note{text-align:center;margin-top:28px;font-size:13px;color:var(--sub);line-height:1.8;max-width:560px;margin-left:auto;margin-right:auto}
+.cmp-note strong{color:var(--gold)}
+/* Mobile: comparison as cards */
+@media(max-width:768px){
+  .cmp-table{display:none!important}
+  .cmp-mobile{display:flex!important}
+}
+.cmp-mobile{display:none;flex-direction:column;gap:16px;margin-top:40px}
+.cmp-item{background:var(--card);border:1px solid var(--bdr);border-radius:12px;overflow:hidden}
+.cmp-item-h{padding:14px 18px;font-size:13px;font-weight:700;color:var(--text);border-bottom:1px solid var(--bdr);background:rgba(200,164,94,.03)}
+.cmp-item-rows{display:flex;flex-direction:column}
+.cmp-item-row{display:flex;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--bdr);font-size:12px;gap:12px}
+.cmp-item-row:last-child{border-bottom:none}
+.cmp-item-row .cmp-who{color:var(--dim);flex-shrink:0;width:90px}
+.cmp-item-row .cmp-val{color:var(--sub);text-align:right;flex:1}
+.cmp-item-row .cmp-val.win{color:var(--gold);font-weight:600}
+
+/* ===== CASE STUDY ===== */
+.cs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+@media(max-width:768px){.cs-grid{grid-template-columns:1fr!important}}
+.cs-card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:32px 24px;position:relative;overflow:hidden;transition:all .3s}
+.cs-card:hover{border-color:var(--bdr-h);transform:translateY(-3px)}
+.cs-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),transparent)}
+.cs-brand{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.cs-title{font-size:16px;font-weight:800;margin-bottom:20px;line-height:1.5}
+.cs-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.cs-m{padding:12px;background:var(--subtle);border-radius:8px;text-align:center}
+.cs-mv{font-family:'Inter',sans-serif;font-size:20px;font-weight:900;color:var(--gold)}
+.cs-ml{font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:1px}
+.cs-outcome{font-size:12px;color:var(--sub);line-height:1.7;padding:12px;background:rgba(200,164,94,.03);border-radius:6px;border:1px solid rgba(200,164,94,.06)}
+.cs-placeholder{display:flex;align-items:center;justify-content:center;min-height:180px;color:var(--dim);font-size:13px;font-style:italic;border:2px dashed rgba(200,164,94,.1);border-radius:12px;flex-direction:column;gap:8px}
+.cs-placeholder svg{width:32px;height:32px;color:rgba(200,164,94,.2)}
+
+/* ===== COMPANY ===== */
+.co-table{max-width:600px;margin:40px auto 0;border-collapse:separate;border-spacing:0;width:100%;border-radius:12px;overflow:hidden;border:1px solid var(--bdr)}
+.co-table tr{border-bottom:1px solid var(--bdr)}
+.co-table tr:last-child{border-bottom:none}
+.co-table th{padding:14px 20px;text-align:left;font-size:12px;font-weight:600;color:var(--gold);background:rgba(200,164,94,.03);width:130px;vertical-align:top;white-space:nowrap}
+.co-table td{padding:14px 20px;font-size:13px;color:var(--sub);background:var(--card)}
+@media(max-width:768px){.co-table th{width:100px;padding:10px 14px;font-size:11px}.co-table td{padding:10px 14px;font-size:12px}}
+
+.footer{text-align:center;padding:20px;font-size:10px;color:var(--dim);letter-spacing:1px;border-top:1px solid var(--bdr)}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div class="bg-canvas">
+  <div class="bg-blob b1"></div>
+  <div class="bg-blob b2"></div>
+  <div class="bg-blob b3"></div>
+  <div class="bg-blob b4"></div>
+  <div class="bg-blob b5"></div>
+</div>
+<div class="particles" id="particles"></div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <img src="assets/page1_img1.png" alt="C-MATCH" class="nav-logo">
+  <div class="nav-links">
+    <a href="#market">Market</a>
+    <a href="#network">Network</a>
+    <a href="#strengths">Strengths</a>
+    <a href="#why">Why Us</a>
+    <a href="#members">Members</a>
+    <a href="#plan">Plan</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero" class="fw">
+  <div class="hero-glow a"></div>
+  <div class="hero-glow b"></div>
+  <div class="hero-content">
+    <img src="assets/page1_img1.png" alt="C-MATCH" class="hero-logo">
+    <div class="hero-eyebrow">X Beauty Media Network</div>
+    <h1 class="hero-headline">
+      貴社の商品を、<span class="br-d"></span><em>明日のトレンド</em>にする。
+    </h1>
+    <p class="hero-sub">
+      9つの美容メディアが連動する、国内最大級のX美容ネットワーク。「バズ」を偶然に任せない時代へ。
+    </p>
+    <div class="hero-cta">
+      <a href="#market" class="hero-btn">詳しく見る</a>
+    </div>
+  </div>
+  <div class="scroll-cue" onclick="document.getElementById('market').scrollIntoView({behavior:'smooth'})">SCROLL<span>↓</span></div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== MARKET ===== -->
+<section id="market" style="position:relative">
+  <div class="section-glow top-right"></div>
+  <div class="s-label r">01 — MARKET</div>
+  <div class="s-title r">美容ユーザーは、<em>Xで商品を見つけて買う。</em></div>
+  <div class="s-lead r">
+    「なんとなくInstagramで見た」では、もう商品は売れません。美容ユーザーの購買行動は、いまXに集中しています。
+  </div>
+
+  <div class="market-layout">
+    <div class="chart-wrap rl">
+      <canvas id="snsChart" height="340"></canvas>
+    </div>
+    <div class="ins-list rr">
+      <div class="ins">
+        <div class="ins-n">6,800<small>万</small></div>
+        <div class="ins-t">
+          <h4>X 国内利用者数</h4>
+          <p>美容ジャンルでは拡散力・即時性ともにNo.1のプラットフォーム。</p>
+        </div>
+      </div>
+      <div class="ins">
+        <div class="ins-n">53<small>%</small></div>
+        <div class="ins-t">
+          <h4>「Xで見て買った」が過半数</h4>
+          <p>美容ユーザーの半数以上が、Xの投稿をきっかけに商品を購入。</p>
+        </div>
+      </div>
+      <div class="ins">
+        <div class="ins-n">2.4<small>×</small></div>
+        <div class="ins-t">
+          <h4>他SNSの2.4倍、買われる</h4>
+          <p>Instagram・TikTok比較。Xの購買転換率が圧倒的に高い。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== NETWORK ===== -->
+<section id="network" style="position:relative">
+  <div class="section-glow center"></div>
+  <div class="s-label r">02 — NETWORK</div>
+  <div class="s-title r" style="text-align:center">この規模で、<em>同時に動かせる。</em></div>
+  <p class="s-lead r" style="text-align:center;margin-left:auto;margin-right:auto">
+    単発のインフルエンサー施策では、タイムラインに「一瞬」映って消える。C-MATCHは9アカウントが同時に動くことで、<strong style="color:var(--gold)">「今みんなが話題にしている」</strong>を作ります。
+  </p>
+
+  <div class="big-nums">
+    <div class="rs">
+      <div class="big-n"><span class="counter" data-target="106">0</span><span class="big-u">万人</span></div>
+      <div class="big-l">TOTAL FOLLOWERS</div>
+    </div>
+    <div class="rs" style="transition-delay:.12s">
+      <div class="big-n"><span class="counter" data-target="1">0</span><span class="big-u">億回</span></div>
+      <div class="big-l">MONTHLY IMPRESSIONS</div>
+    </div>
+    <div class="rs" style="transition-delay:.24s">
+      <div class="big-n"><span class="counter" data-target="9">0</span><span class="big-u">メディア</span></div>
+      <div class="big-l">BEAUTY ACCOUNTS</div>
+    </div>
+  </div>
+
+  <div class="net-msg r">
+    1人のインフルエンサーが叫んでも、それは「個人の感想」。<strong>9人が同時に語れば、それは「トレンド」になる。</strong>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== STRENGTHS ===== -->
+<section id="strengths" style="position:relative">
+  <div class="section-glow top-left"></div>
+  <div class="s-label r">03 — STRENGTHS</div>
+  <div class="s-title r">バズは、<em>設計できる。</em></div>
+  <div class="s-lead r">
+    C-MATCHは「拡散されたらいいな」ではなく、トレンドを構造的に生み出す仕組みを持っています。
+  </div>
+
+  <div class="str-grid">
+    <div class="str r">
+      <svg class="str-ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="3"/><circle cx="24" cy="9" r="2.5"/><circle cx="37" cy="15" r="2.5"/><circle cx="33" cy="33" r="2.5"/><circle cx="15" cy="33" r="2.5"/><circle cx="11" cy="15" r="2.5"/><line x1="24" y1="21" x2="24" y2="11.5"/><line x1="26.5" y1="22" x2="34.5" y2="17"/><line x1="26" y1="26.5" x2="31" y2="31"/><line x1="22" y1="26.5" x2="17" y2="31"/><line x1="21.5" y1="22" x2="13.5" y2="17"/><circle cx="24" cy="24" r="13" opacity=".3" stroke-dasharray="3 3"/><circle cx="24" cy="24" r="20" opacity=".15" stroke-dasharray="2 4"/></svg>
+      <div class="str-h">ネットワーク拡散</div>
+      <div class="str-d">
+        9アカウントが一斉にリポスト。タイムラインに同時多発的に露出し、ユーザーが「あ、これ今みんな話してる」と感じる空気を意図的に作ります。
+      </div>
+      <div class="str-r">一斉投稿でUGC誘発率 3〜5倍</div>
+    </div>
+    <div class="str r" style="transition-delay:.1s">
+      <svg class="str-ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="2"/><line x1="24" y1="10" x2="24" y2="14"/><line x1="24" y1="34" x2="24" y2="38"/><line x1="10" y1="24" x2="14" y2="24"/><line x1="34" y1="24" x2="38" y2="24"/><line x1="24" y1="24" x2="24" y2="16"/><line x1="24" y1="24" x2="30" y2="28"/></svg>
+      <div class="str-h">タイミング制御</div>
+      <div class="str-d">
+        メガ割初日、新商品発売日、セール開始直後。「買いたい」気持ちが最も高まる瞬間に、全アカウントが同時に投稿。衝動買いの背中を押します。
+      </div>
+      <div class="str-r">販促カレンダーと完全連動</div>
+    </div>
+    <div class="str r" style="transition-delay:.2s">
+      <svg class="str-ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="38" r="2"/><path d="M 20 33 Q 24 27 28 33"/><path d="M 15 27 Q 24 18 33 27"/><path d="M 10 21 Q 24 8 38 21"/><line x1="24" y1="8" x2="24" y2="4"/><line x1="20" y1="6" x2="24" y2="4"/><line x1="28" y1="6" x2="24" y2="4"/></svg>
+      <div class="str-h">広告効果の増幅</div>
+      <div class="str-d">
+        バズった投稿をそのままプロモートに転用。「リアルな使用感」が最強の広告クリエイティブになる。企業広告の2〜3倍クリックされます。
+      </div>
+      <div class="str-r">UGC広告のCTR、業界平均の2〜3倍</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== WHY C-MATCH ===== -->
+<section id="why" style="position:relative">
+  <div class="section-glow center"></div>
+  <div class="s-label r">04 — WHY C-MATCH</div>
+  <div class="s-title r">他の施策では、<em>この結果は出ない。</em></div>
+  <div class="s-lead r">
+    インフルエンサーマーケティングは手段が溢れています。だからこそ「何が違うのか」が重要です。
+  </div>
+
+  <table class="cmp-table r">
+    <thead>
+      <tr>
+        <th></th>
+        <th>単発インフルエンサー</th>
+        <th>インフルエンサー事務所</th>
+        <th>広告代理店</th>
+        <th style="background:rgba(200,164,94,.12)">C-MATCH</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cmp-label">同時多発の拡散力</td>
+        <td class="cmp-x">1アカウントのみ</td>
+        <td class="cmp-x">ジャンルがバラバラ</td>
+        <td class="cmp-x">広告枠のみ</td>
+        <td class="cmp-check">9アカウント同時投稿で「トレンド」を生成</td>
+      </tr>
+      <tr>
+        <td class="cmp-label">美容ジャンル専門性</td>
+        <td>人による</td>
+        <td class="cmp-x">多ジャンル混在</td>
+        <td class="cmp-x">メディア知見が薄い</td>
+        <td class="cmp-check">全員が美容特化。フォロワーも美容ユーザー</td>
+      </tr>
+      <tr>
+        <td class="cmp-label">タイミング制御</td>
+        <td class="cmp-x">個人に依存</td>
+        <td>一部可能</td>
+        <td>広告のみ</td>
+        <td class="cmp-check">セール・発売日に全員が同時に投稿</td>
+      </tr>
+      <tr>
+        <td class="cmp-label">UGC誘発力</td>
+        <td>限定的</td>
+        <td>限定的</td>
+        <td class="cmp-x">広告感が強い</td>
+        <td class="cmp-check">複数の「リアルな声」が自然にUGCを連鎖</td>
+      </tr>
+      <tr>
+        <td class="cmp-label">コストパフォーマンス</td>
+        <td>安いが効果薄</td>
+        <td>中間マージン大</td>
+        <td>高額・最低出稿あり</td>
+        <td class="cmp-check">100万円で106万フォロワーに一斉リーチ</td>
+      </tr>
+      <tr>
+        <td class="cmp-label">スピード</td>
+        <td>速い</td>
+        <td>2〜3週間</td>
+        <td class="cmp-x">1ヶ月以上</td>
+        <td class="cmp-check">最短1週間で投稿完了</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Mobile card layout -->
+  <div class="cmp-mobile r">
+    <div class="cmp-item">
+      <div class="cmp-item-h">同時多発の拡散力</div>
+      <div class="cmp-item-rows">
+        <div class="cmp-item-row"><span class="cmp-who">C-MATCH</span><span class="cmp-val win">9アカウント同時投稿で「トレンド」を生成</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">単発</span><span class="cmp-val">1アカウントのみ</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">事務所</span><span class="cmp-val">ジャンルがバラバラ</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">代理店</span><span class="cmp-val">広告枠のみ</span></div>
+      </div>
+    </div>
+    <div class="cmp-item">
+      <div class="cmp-item-h">美容ジャンル専門性</div>
+      <div class="cmp-item-rows">
+        <div class="cmp-item-row"><span class="cmp-who">C-MATCH</span><span class="cmp-val win">全員が美容特化。フォロワーも美容ユーザー</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">単発</span><span class="cmp-val">人による</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">事務所</span><span class="cmp-val">多ジャンル混在</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">代理店</span><span class="cmp-val">メディア知見が薄い</span></div>
+      </div>
+    </div>
+    <div class="cmp-item">
+      <div class="cmp-item-h">タイミング制御</div>
+      <div class="cmp-item-rows">
+        <div class="cmp-item-row"><span class="cmp-who">C-MATCH</span><span class="cmp-val win">セール・発売日に全員が同時に投稿</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">単発</span><span class="cmp-val">個人に依存</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">事務所</span><span class="cmp-val">一部可能</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">代理店</span><span class="cmp-val">広告のみ</span></div>
+      </div>
+    </div>
+    <div class="cmp-item">
+      <div class="cmp-item-h">UGC誘発力</div>
+      <div class="cmp-item-rows">
+        <div class="cmp-item-row"><span class="cmp-who">C-MATCH</span><span class="cmp-val win">複数の「リアルな声」が自然にUGCを連鎖</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">単発</span><span class="cmp-val">限定的</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">事務所</span><span class="cmp-val">限定的</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">代理店</span><span class="cmp-val">広告感が強い</span></div>
+      </div>
+    </div>
+    <div class="cmp-item">
+      <div class="cmp-item-h">コストパフォーマンス</div>
+      <div class="cmp-item-rows">
+        <div class="cmp-item-row"><span class="cmp-who">C-MATCH</span><span class="cmp-val win">100万円で106万フォロワーに一斉リーチ</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">単発</span><span class="cmp-val">安いが効果薄</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">事務所</span><span class="cmp-val">中間マージン大</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">代理店</span><span class="cmp-val">高額・最低出稿あり</span></div>
+      </div>
+    </div>
+    <div class="cmp-item">
+      <div class="cmp-item-h">スピード</div>
+      <div class="cmp-item-rows">
+        <div class="cmp-item-row"><span class="cmp-who">C-MATCH</span><span class="cmp-val win">最短1週間で投稿完了</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">単発</span><span class="cmp-val">速い</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">事務所</span><span class="cmp-val">2〜3週間</span></div>
+        <div class="cmp-item-row"><span class="cmp-who">代理店</span><span class="cmp-val">1ヶ月以上</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cmp-note r">
+    C-MATCHが選ばれる理由はシンプルです。<strong>「同じジャンルの9人が、同じタイミングで、本気で語る」</strong>――この仕組みを持っているのは、C-MATCHだけです。
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== MEMBERS ===== -->
+<section id="members" style="position:relative">
+  <div class="section-glow top-right"></div>
+  <div class="s-label r">05 — MEMBERS</div>
+  <div class="s-title r"><em>9人の影響力</em>を、貴社のために。</div>
+  <div class="s-lead r">全員が美容ジャンル特化。それぞれ異なるフォロワー層を持ち、どんなブランド・商品にも最適な組み合わせを提案します。</div>
+
+  <div class="tier t r">★ TOP TIER</div>
+  <div class="m-row">
+    <div class="mc r">
+      <img src="assets/page6_img2.png" alt="ちょこまる" class="mc-img">
+      <div class="mc-b">
+        <div class="mc-nm">ちょこまる</div><div class="mc-hd">@chocomaru06</div>
+        <div class="mc-st">
+          <div class="mc-s"><div class="mc-sl">Followers</div><div class="mc-sv">225,753</div></div>
+          <div class="mc-s"><div class="mc-sl">Monthly Imp</div><div class="mc-sv gd">16.5M</div></div>
+        </div>
+        <div class="mc-str">ネットワーク最大フォロワー。韓国コスメといえばこの人</div>
+        <div class="mc-pr"><span class="mc-p">投稿 ¥220,000</span><span class="mc-p">広告 ¥150,000</span><span class="mc-p">二次利用 ¥250,000</span></div>
+      </div>
+    </div>
+    <div class="mc r" style="transition-delay:.07s">
+      <img src="assets/page5_img1.png" alt="Mちゃん" class="mc-img">
+      <div class="mc-b">
+        <div class="mc-nm">Mちゃん</div><div class="mc-hd">@mchan_0727</div>
+        <div class="mc-st">
+          <div class="mc-s"><div class="mc-sl">Followers</div><div class="mc-sv">183,835</div></div>
+          <div class="mc-s"><div class="mc-sl">Monthly Imp</div><div class="mc-sv gd">24M</div></div>
+        </div>
+        <div class="mc-str">月間2,400万imp。何を投稿してもバズる絶対的エース</div>
+        <div class="mc-pr"><span class="mc-p">投稿 ¥183,000</span><span class="mc-p">広告 ¥180,000</span><span class="mc-p">二次利用 ¥350,000</span></div>
+      </div>
+    </div>
+    <div class="mc r" style="transition-delay:.14s">
+      <img src="assets/page5_img2.png" alt="LALA" class="mc-img">
+      <div class="mc-b">
+        <div class="mc-nm">LALA</div><div class="mc-hd">@LALA_beauty7</div>
+        <div class="mc-st">
+          <div class="mc-s"><div class="mc-sl">Followers</div><div class="mc-sv">131,085</div></div>
+          <div class="mc-s"><div class="mc-sl">Monthly Imp</div><div class="mc-sv gd">19M</div></div>
+        </div>
+        <div class="mc-str">フォロワー比imp率No.1。投稿の一言一句が刺さる精度</div>
+        <div class="mc-pr"><span class="mc-p">投稿 ¥131,000</span><span class="mc-p">広告 ¥130,000</span><span class="mc-p">二次利用 ¥250,000</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier m r">MAIN TIER</div>
+  <div class="m-row">
+    <div class="mc r">
+      <img src="assets/page7_img2.png" alt="りり" class="mc-img">
+      <div class="mc-b">
+        <div class="mc-nm">りり</div><div class="mc-hd">@riirii_beauty</div>
+        <div class="mc-st">
+          <div class="mc-s"><div class="mc-sl">Followers</div><div class="mc-sv">125,910</div></div>
+          <div class="mc-s"><div class="mc-sl">Monthly Imp</div><div class="mc-sv gd">7M</div></div>
+        </div>
+        <div class="mc-str">敏感肌・スキンケア特化。フォロワーの信頼度が段違い</div>
+        <div class="mc-pr"><span class="mc-p">投稿 ¥125,000</span><span class="mc-p">広告 ¥120,000</span><span class="mc-p">二次利用 ¥180,000</span></div>
+      </div>
+    </div>
+    <div class="mc r" style="transition-delay:.07s">
+      <img src="assets/page5_img3.png" alt="ゆーちゃん" class="mc-img">
+      <div class="mc-b">
+        <div class="mc-nm">ゆーちゃん</div><div class="mc-hd">@yuipi_beauty7</div>
+        <div class="mc-st">
+          <div class="mc-s"><div class="mc-sl">Followers</div><div class="mc-sv">113,875</div></div>
+          <div class="mc-s"><div class="mc-sl">Monthly Imp</div><div class="mc-sv gd">10M</div></div>
+        </div>
+        <div class="mc-str">プチプラからデパコスまで。幅広い価格帯の案件に対応</div>
+        <div class="mc-pr"><span class="mc-p">投稿 ¥113,000</span><span class="mc-p">広告 ¥110,000</span><span class="mc-p">二次利用 ¥200,000</span></div>
+      </div>
+    </div>
+    <div class="mc r" style="transition-delay:.14s">
+      <img src="assets/page6_img1.png" alt="Sちゃん" class="mc-img">
+      <div class="mc-b">
+        <div class="mc-nm">Sちゃん</div><div class="mc-hd">@trtk_531</div>
+        <div class="mc-st">
+          <div class="mc-s"><div class="mc-sl">Followers</div><div class="mc-sv">96,183</div></div>
+          <div class="mc-s"><div class="mc-sl">Monthly Imp</div><div class="mc-sv gd">8.5M</div></div>
+        </div>
+        <div class="mc-str">ビジュアル訴求力がずば抜けている。写真映えする商品に</div>
+        <div class="mc-pr"><span class="mc-p">投稿 ¥96,000</span><span class="mc-p">広告 ¥100,000</span><span class="mc-p">二次利用 ¥350,000</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier g r">GROWTH TIER</div>
+  <div class="m-row">
+    <div class="mc r">
+      <img src="assets/page6_img3.png" alt="Yちゃん" class="mc-img">
+      <div class="mc-b">
+        <div class="mc-nm">Yちゃん</div><div class="mc-hd">@yuuchan_0130</div>
+        <div class="mc-st">
+          <div class="mc-s"><div class="mc-sl">Followers</div><div class="mc-sv">96,225</div></div>
+          <div class="mc-s"><div class="mc-sl">Monthly Imp</div><div class="mc-sv gd">6M</div></div>
+        </div>
+        <div class="mc-str">Z世代直撃。20代前半のトレンド感度No.1</div>
+        <div class="mc-pr"><span class="mc-p">投稿 ¥96,000</span><span class="mc-p">広告 ¥90,000</span><span class="mc-p">二次利用 ¥150,000</span></div>
+      </div>
+    </div>
+    <div class="mc r" style="transition-delay:.07s">
+      <img src="assets/page7_img1.png" alt="Yuiちゃん" class="mc-img">
+      <div class="mc-b">
+        <div class="mc-nm">Yuiちゃん</div><div class="mc-hd">@yuichan___27</div>
+        <div class="mc-st">
+          <div class="mc-s"><div class="mc-sl">Followers</div><div class="mc-sv">70,039</div></div>
+          <div class="mc-s"><div class="mc-sl">Monthly Imp</div><div class="mc-sv gd">8.8M</div></div>
+        </div>
+        <div class="mc-str">フォロワー7万でimp 880万。拡散力のコスパが最強</div>
+        <div class="mc-pr"><span class="mc-p">投稿 ¥69,000</span><span class="mc-p">広告 ¥100,000</span><span class="mc-p">二次利用 ¥150,000</span></div>
+      </div>
+    </div>
+    <div class="mc r" style="transition-delay:.14s">
+      <img src="assets/page7_img3.png" alt="kotochan" class="mc-img">
+      <div class="mc-b">
+        <div class="mc-nm">kotochan</div><div class="mc-hd">@726_ktm</div>
+        <div class="mc-st">
+          <div class="mc-s"><div class="mc-sl">Followers</div><div class="mc-sv">23,271</div></div>
+          <div class="mc-s"><div class="mc-sl">Monthly Imp</div><div class="mc-sv gd">3.2M</div></div>
+        </div>
+        <div class="mc-str">ニッチ層への深いリーチ。テスト起用・追加施策に最適</div>
+        <div class="mc-pr"><span class="mc-p">投稿 ¥25,000</span><span class="mc-p">広告 ¥50,000</span><span class="mc-p">二次利用 ¥80,000</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== PLAN ===== -->
+<section id="plan" style="position:relative">
+  <div class="section-glow center"></div>
+  <div class="s-label r">06 — PLAN</div>
+  <div class="s-title r" style="text-align:center">明日、貴社の商品が<em>Xを席巻する。</em></div>
+  <div class="s-lead r" style="text-align:center;margin-left:auto;margin-right:auto">
+    9つのアカウントが同時に動くとき、タイムラインの空気が変わります。
+  </div>
+
+  <div class="plan-card rs">
+    <div class="plan-ey">ALL 9 ACCOUNTS SIMULTANEOUS POST</div>
+    <div class="plan-h">全9アカウント一斉投稿</div>
+    <div class="plan-num">100<small>万円</small></div>
+    <div class="plan-tax">（税抜）</div>
+
+    <div class="plan-outcomes">
+      <div class="plan-o">
+        <svg class="plan-o-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="20" r="8"/><circle cx="20" cy="20" r="14" stroke-dasharray="3 3" opacity=".4"/><line x1="20" y1="6" x2="20" y2="2"/><line x1="20" y1="38" x2="20" y2="34"/><line x1="6" y1="20" x2="2" y2="20"/><line x1="38" y1="20" x2="34" y2="20"/><line x1="10" y1="10" x2="7" y2="7"/><line x1="33" y1="33" x2="30" y2="30"/><line x1="30" y1="10" x2="33" y2="7"/><line x1="7" y1="33" x2="10" y2="30"/></svg>
+        <div class="plan-ot">数千万 imp</div>
+        <div class="plan-od">面での露出で爆発的な認知獲得</div>
+      </div>
+      <div class="plan-o">
+        <svg class="plan-o-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="4"/><circle cx="28" cy="12" r="3"/><circle cx="20" cy="26" r="3.5"/><circle cx="8" cy="28" r="2.5"/><circle cx="32" cy="28" r="2.5"/><line x1="17" y1="16" x2="18" y2="23"/><line x1="25" y1="14" x2="22" y2="23"/><line x1="11" y1="16" x2="9" y2="26"/><line x1="23" y1="28" x2="30" y2="28"/></svg>
+        <div class="plan-ot">UGC連鎖</div>
+        <div class="plan-od">「みんなが使ってる」の空気を自動生成</div>
+      </div>
+      <div class="plan-o">
+        <svg class="plan-o-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,32 12,22 20,26 28,14 36,8"/><circle cx="36" cy="8" r="2"/><line x1="34" y1="8" x2="30" y2="8"/><line x1="36" y1="10" x2="36" y2="14"/><line x1="4" y1="36" x2="36" y2="36" opacity=".3"/><line x1="4" y1="8" x2="4" y2="36" opacity=".3"/></svg>
+        <div class="plan-ot">トレンド創出</div>
+        <div class="plan-od">偶然のバズではなく設計されたトレンド</div>
+      </div>
+    </div>
+
+    <ul class="plan-list">
+      <li><span class="ck">✓</span>全9アカウントがオリジナル投稿を同時公開</li>
+      <li><span class="ck">✓</span>各投稿を全アカウントで相互リポスト</li>
+      <li><span class="ck">✓</span>月間1億impのネットワーク全体で一斉露出</li>
+      <li><span class="ck">✓</span>ユーザー投稿（UGC）の連鎖的誘発</li>
+    </ul>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== OPTIONS ===== -->
+<section id="options" style="position:relative">
+  <div class="section-glow top-left"></div>
+  <div class="s-label r">07 — OPTIONS</div>
+  <div class="s-title r">火をつけたら、<em>さらに燃やす。</em></div>
+  <div class="s-lead r">オーガニックで火がついた投稿を、広告と二次利用でさらに加速させるオプションです。</div>
+
+  <div class="opt-grid">
+    <div class="opt rl">
+      <svg class="opt-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="32" height="24" rx="3"/><circle cx="20" cy="20" r="6"/><polyline points="18,20 20,22 23,18"/><line x1="10" y1="12" x2="14" y2="12" opacity=".4"/></svg>
+      <div class="opt-h">広告配信プラン</div>
+      <div class="opt-p">80<small>万円〜</small></div>
+      <div class="opt-tx">（税抜）</div>
+      <ul class="opt-ul">
+        <li>インプレッション保証で確実なリーチ</li>
+        <li>年代・性別・エリアのターゲティング</li>
+        <li>バズった投稿をそのまま広告に転用</li>
+        <li>UGCベースで「広告感ゼロ」のCR</li>
+      </ul>
+      <div class="opt-use">「狙った層」に確実に届けたいときに</div>
+    </div>
+    <div class="opt rr">
+      <svg class="opt-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="20" height="20" rx="2"/><rect x="14" y="14" width="20" height="20" rx="2"/><line x1="20" y1="20" x2="28" y2="20" opacity=".5"/><line x1="24" y1="16" x2="24" y2="24" opacity=".5"/></svg>
+      <div class="opt-h">二次利用プラン</div>
+      <div class="opt-p">150<small>万円〜</small></div>
+      <div class="opt-tx">（税抜）</div>
+      <ul class="opt-ul">
+        <li>投稿素材を自社LP・広告に転用可能</li>
+        <li>Instagram / TikTok への他媒体展開</li>
+        <li>リアルな使用感を公式クリエイティブに</li>
+        <li>撮影コストゼロで良質CRを量産</li>
+      </ul>
+      <div class="opt-use">バズったUGCを「資産」として長期活用するために</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== FLOW ===== -->
+<section id="flow" style="position:relative">
+  <div class="section-glow bottom"></div>
+  <div class="s-label r">08 — FLOW</div>
+  <div class="s-title r">最短1週間。<em>スピードも武器。</em></div>
+  <div class="s-lead r">「来週のメガ割に間に合わせたい」にも応えます。</div>
+
+  <div class="timeline r">
+    <div class="tl-step">
+      <div class="tl-dot"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M10 3v14M6 7l4-4 4 4" opacity=".5"/><circle cx="10" cy="14" r="2"/></svg></div>
+      <h4>ヒアリング</h4><p>商品特徴・ターゲット・訴求ポイント・時期</p>
+    </div>
+    <div class="tl-step">
+      <div class="tl-dot"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="7" cy="8" r="3"/><circle cx="13" cy="8" r="3"/><path d="M4 16c0-2 2-3 3-3h6c1 0 3 1 3 3"/></svg></div>
+      <h4>メンバー選定</h4><p>商品との相性で最適な布陣をご提案</p>
+    </div>
+    <div class="tl-step">
+      <div class="tl-dot"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><rect x="4" y="4" width="12" height="12" rx="2"/><polyline points="7,10 9,12 13,8"/></svg></div>
+      <h4>商品試用</h4><p>実際に使ってリアルな体験を撮影</p>
+    </div>
+    <div class="tl-step">
+      <div class="tl-dot"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M3 10l7-7 7 7"/><path d="M6 10l4-4 4 4" opacity=".5"/><path d="M9 10l1-1 1 1" opacity=".3"/></svg></div>
+      <h4>投稿・拡散</h4><p>ベストタイミングで公開、全アカウント一斉リポスト</p>
+    </div>
+    <div class="tl-step">
+      <div class="tl-dot"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><rect x="3" y="5" width="14" height="10" rx="1"/><polyline points="6,12 8,9 11,11 14,8"/></svg></div>
+      <h4>レポート</h4><p>インプレッション・エンゲージメントを報告</p>
+    </div>
+  </div>
+
+  <div class="flow-note r">
+    最短<strong>1週間</strong>で投稿まで完了。貴社の販促スケジュールに<strong>完全に合わせます。</strong>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== CLIENTS ===== -->
+<section id="clients" style="position:relative">
+  <div class="section-glow top-right"></div>
+  <div class="s-label r">09 — CLIENTS</div>
+  <div class="s-title r">選ばれ続ける理由は、<em>結果</em>です。</div>
+  <div class="s-lead r">リピート率の高さが、施策の効果を証明しています。ブランド様同士のご紹介で、新規案件が増え続けています。</div>
+
+  <div class="cl-logos r">
+    <div class="cl"><img src="assets/page10_img1.jpeg" alt="Anua"><span class="cn">複数回リピート</span></div>
+    <div class="cl"><img src="assets/page10_img2.png" alt="medicube"><span class="cn">継続タイアップ中</span></div>
+    <div class="cl"><img src="assets/page10_img3.png" alt="TIRTIR"><span class="cn">全アカウント一斉</span></div>
+    <div class="cl"><img src="assets/page10_img5.jpeg" alt="Torriden"><span class="cn">複数回リピート</span></div>
+    <div class="cl"><img src="assets/page10_img6.png" alt="BOH"><span class="cn">継続タイアップ中</span></div>
+    <div class="cl"><img src="assets/page10_img8.png" alt="LuLuLun"><span class="cn">日本ブランド</span></div>
+    <div class="cl"><img src="assets/page10_img9.jpeg" alt="ettusais"><span class="cn">日本ブランド</span></div>
+    <div class="cl"><img src="assets/page10_img10.png" alt="hince"><span class="cn">継続タイアップ中</span></div>
+    <div class="cl"><img src="assets/page10_img4.png" alt="24h cosme"><span class="cn">日本ブランド</span></div>
+    <div class="cl" style="border-style:dashed;border-color:rgba(200,164,94,.15)"><span style="color:var(--gold);font-size:12px;font-weight:600">+ more</span><span class="cn">他多数</span></div>
+  </div>
+
+  <div class="cl-msg r">
+    <strong>一度使ったブランドが、何度もリピートする。</strong>それがC-MATCHの最大の実績です。
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== CASE STUDY ===== -->
+<section id="casestudy" style="position:relative">
+  <div class="section-glow top-left"></div>
+  <div class="s-label r">10 — CASE STUDY</div>
+  <div class="s-title r">数字が、<em>すべてを語る。</em></div>
+  <div class="s-lead r">実際のタイアップ施策の成果をご紹介します。</div>
+
+  <div class="cs-grid">
+    <!-- Placeholder 1 -->
+    <div class="cs-card r">
+      <div class="cs-brand">BRAND A</div>
+      <div class="cs-title">ケーススタディ準備中</div>
+      <div class="cs-metrics">
+        <div class="cs-m"><div class="cs-mv">---</div><div class="cs-ml">IMPRESSIONS</div></div>
+        <div class="cs-m"><div class="cs-mv">---</div><div class="cs-ml">ENGAGEMENTS</div></div>
+      </div>
+      <div class="cs-outcome">実績データを追加予定。具体的なインプレッション数、エンゲージメント率、売上への影響等を掲載します。</div>
+    </div>
+
+    <!-- Placeholder 2 -->
+    <div class="cs-card r" style="transition-delay:.1s">
+      <div class="cs-brand">BRAND B</div>
+      <div class="cs-title">ケーススタディ準備中</div>
+      <div class="cs-metrics">
+        <div class="cs-m"><div class="cs-mv">---</div><div class="cs-ml">IMPRESSIONS</div></div>
+        <div class="cs-m"><div class="cs-mv">---</div><div class="cs-ml">ENGAGEMENTS</div></div>
+      </div>
+      <div class="cs-outcome">実績データを追加予定。具体的なインプレッション数、エンゲージメント率、売上への影響等を掲載します。</div>
+    </div>
+
+    <!-- Placeholder 3 -->
+    <div class="cs-card r" style="transition-delay:.2s">
+      <div class="cs-brand">BRAND C</div>
+      <div class="cs-title">ケーススタディ準備中</div>
+      <div class="cs-metrics">
+        <div class="cs-m"><div class="cs-mv">---</div><div class="cs-ml">IMPRESSIONS</div></div>
+        <div class="cs-m"><div class="cs-mv">---</div><div class="cs-ml">ENGAGEMENTS</div></div>
+      </div>
+      <div class="cs-outcome">実績データを追加予定。具体的なインプレッション数、エンゲージメント率、売上への影響等を掲載します。</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== COMPANY ===== -->
+<section id="company" style="position:relative;text-align:center">
+  <div class="section-glow center"></div>
+  <div class="s-label r">11 — COMPANY</div>
+  <div class="s-title r"><em>運営会社</em></div>
+
+  <table class="co-table r">
+    <tr><th>会社名</th><td>株式会社エフブランド</td></tr>
+    <tr><th>代表取締役</th><td>中野 翔平</td></tr>
+    <tr><th>事業内容</th><td>インフルエンサーマーケティング事業（C-MATCH）、芸能事業</td></tr>
+    <tr><th>所属メンバー</th><td>X美容メディア 9アカウント（総フォロワー106万人）</td></tr>
+    <tr><th>主要取引先</th><td>Anua / TIRTIR / medicube / Torriden / LuLuLun / ettusais 他</td></tr>
+  </table>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== CLOSING ===== -->
+<section id="closing" class="fw">
+  <div class="closing-headline r">
+    貴社の商品を<em>「次のトレンド」</em>にする準備は、すでに整っています。
+  </div>
+  <img src="assets/page12_img2.png" alt="C-MATCH" class="closing-logo r">
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact" class="fw">
+  <div class="s-label r" style="text-align:center">CONTACT</div>
+  <div class="s-title r" style="text-align:center"><em>お問い合わせ</em></div>
+
+  <div class="contact-row r">
+    <div class="ct">
+      <img src="assets/page12_img1.png" alt="中野翔平" class="ct-photo">
+      <div class="ct-nm">中野 翔平</div>
+      <div class="ct-rl">株式会社エフブランド 代表取締役</div>
+      <div class="ct-inf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>090-1190-3278</div>
+      <div class="ct-inf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>fgroup.0602@gmail.com</div>
+    </div>
+    <div class="ct">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-d));margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:var(--bg)">丸</div>
+      <div class="ct-nm">丸山 忠寛</div>
+      <div class="ct-rl">芸能事業C-MATCH 代表</div>
+      <div class="ct-inf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>080-2994-7230</div>
+      <div class="ct-inf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>tadahiro.maruyama06@gmail.com</div>
+    </div>
+  </div>
+</section>
+
+<div class="footer">株式会社エフブランド ｜ C-MATCH事業部 ｜ 本資料は社外秘です</div>
+
+<script>
+// Observer
+const ob=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('v');if(x.target.querySelector('.counter')){x.target.querySelectorAll('.counter').forEach(c=>{if(c.dataset.d)return;c.dataset.d='1';const t=+c.dataset.target,s=performance.now();const run=n=>{const p=Math.min((n-s)/1600,1);c.textContent=Math.floor((1-Math.pow(1-p,3))*t);p<1?requestAnimationFrame(run):c.textContent=t};requestAnimationFrame(run)})}}})},{threshold:.12});
+document.querySelectorAll('.r,.rl,.rr,.rs').forEach(e=>ob.observe(e));
+
+// Progress bar
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const p=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
+  document.getElementById('progressBar').style.width=p+'%';
+  document.getElementById('nav').classList.toggle('show',window.scrollY>300);
+});
+
+// Chart
+new Chart(document.getElementById('snsChart'),{
+  type:'bar',
+  data:{
+    labels:['LINE','YouTube','X','Instagram','TikTok'],
+    datasets:[{
+      data:[9600,7120,6800,6600,2800],
+      backgroundColor:['rgba(255,255,255,.06)','rgba(255,255,255,.06)','rgba(200,164,94,.65)','rgba(255,255,255,.06)','rgba(255,255,255,.06)'],
+      borderColor:['rgba(255,255,255,.08)','rgba(255,255,255,.08)','rgba(200,164,94,1)','rgba(255,255,255,.08)','rgba(255,255,255,.08)'],
+      borderWidth:1,borderRadius:3
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},title:{display:true,text:'主要SNS 国内利用者数（万人）',color:'#666',font:{size:12,family:"'Noto Sans JP'",weight:'400'},padding:{bottom:14}}},
+    scales:{
+      y:{beginAtZero:true,max:10000,ticks:{color:'#444',callback:v=>(v/1000)+'千万',font:{size:10}},grid:{color:'rgba(255,255,255,.02)'}},
+      x:{ticks:{color:'#888',font:{size:11,family:"'Noto Sans JP'"}},grid:{display:false}}
+    },
+    animation:{duration:1000,easing:'easeOutQuart'}
+  }
+});
+
+// Particles
+(function(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDuration=(15+Math.random()*25)+'s';
+    p.style.animationDelay=Math.random()*20+'s';
+    p.style.width=p.style.height=(1+Math.random()*2)+'px';
+    p.style.opacity=.1+Math.random()*.2;
+    c.appendChild(p);
+  }
+})();
+
+// Parallax blobs on scroll
+window.addEventListener('scroll',function(){
+  const y=window.scrollY;
+  document.querySelectorAll('.bg-blob').forEach((b,i)=>{
+    const speed=[0.03,-0.02,0.025,-0.015,0.02][i]||0.02;
+    b.style.transform='translateY('+y*speed+'px)';
+  });
+},{passive:true});
+
+// Hero stagger
+document.querySelectorAll('#hero .hero-content > *').forEach((el,i)=>{
+  el.style.opacity='0';el.style.transform='translateY(14px)';
+  el.style.transition=`opacity .7s ease ${.15+i*.1}s, transform .7s ease ${.15+i*.1}s`;
+  requestAnimationFrame(()=>{el.style.opacity='1';el.style.transform='translateY(0)'});
+});
+</script>
+</body>
+</html>
