@@ -179,6 +179,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 
 @media(max-width:768px){
   .section{padding:60px 20px!important}
@@ -200,6 +201,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   .pipe-step:not(:last-child){margin-bottom:12px}
   .raw-vs{grid-template-columns:1fr!important}
   .g2,.g3{grid-template-columns:1fr!important}
+  .g4{grid-template-columns:1fr 1fr!important}
 }
 </style>
 </head>
@@ -253,6 +255,51 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
     <strong>バズる確度が高い。</strong>
   </div>
 
+  <!-- バズ予兆ロジック図解 -->
+  <div class="r" style="margin-bottom:52px">
+    <div style="font-size:12px;color:var(--dim);letter-spacing:2px;margin-bottom:20px;font-weight:600;text-align:center">どうやって「バズの初動」を見つけるのか</div>
+
+    <div style="max-width:720px;margin:0 auto">
+      <div class="g4" style="margin-bottom:16px">
+        <div style="padding:14px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;text-align:center">
+          <div style="font-size:16px;margin-bottom:6px;color:var(--cyan)">𝕏</div>
+          <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:4px">X 言及数</div>
+          <div style="font-size:11px;color:var(--sub);line-height:1.5">まだ82件だが<br>前日比 <strong style="color:var(--orange)">+320%</strong></div>
+        </div>
+        <div style="padding:14px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;text-align:center">
+          <div style="font-size:16px;margin-bottom:6px">🛒</div>
+          <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:4px">楽天 売上</div>
+          <div style="font-size:11px;color:var(--sub);line-height:1.5">カテゴリ順位<br><strong style="color:var(--orange)">156位→48位</strong></div>
+        </div>
+        <div style="padding:14px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;text-align:center">
+          <div style="font-size:16px;margin-bottom:6px">💬</div>
+          <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:4px">@cosme 口コミ</div>
+          <div style="font-size:11px;color:var(--sub);line-height:1.5">口コミ数<br>前週比 <strong style="color:var(--orange)">2.1倍</strong></div>
+        </div>
+        <div style="padding:14px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;text-align:center">
+          <div style="font-size:16px;margin-bottom:6px">🔍</div>
+          <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:4px">Google 検索</div>
+          <div style="font-size:11px;color:var(--sub);line-height:1.5">検索スコア<br><strong style="color:var(--orange)">8→64</strong></div>
+        </div>
+      </div>
+
+      <div style="text-align:center;color:var(--cyan);font-size:14px;margin:12px 0;letter-spacing:2px">↓ 4つのデータを掛け合わせる ↓</div>
+
+      <div style="padding:24px;background:rgba(34,211,238,.05);border:1px solid var(--cyan-bdr);border-radius:12px;text-align:center">
+        <div style="font-size:10px;color:var(--cyan);font-weight:700;letter-spacing:2px;margin-bottom:8px">バズ予兆スコア</div>
+        <div style="font-family:'Inter';font-size:42px;font-weight:900;color:var(--text)">87</div>
+        <div style="font-size:12px;color:var(--sub);margin-top:10px;line-height:1.8">
+          4つの指標のうち<strong style="color:var(--text)">3つ以上が同時に動き始めている</strong><br>
+          = まだ話題になる前だが、<strong style="color:var(--text)">バズる確度が高い</strong>
+        </div>
+        <div style="margin-top:16px;font-size:11px;color:var(--dim);line-height:1.8">
+          ※ 1つだけ動いても偶然の可能性がある。<br>
+          複数のデータが同時に動いているから「初動」と判断できる。
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- X Analytics vs X API 比較 -->
   <div class="r g2" style="margin-bottom:52px">
     <div style="padding:22px;background:var(--card);border-radius:12px;border:1px solid var(--bdr)">
@@ -275,6 +322,10 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
         ✓ <strong style="color:var(--text)">X全体の投稿を検索できる</strong><br>
         ✓ データ取得→加工→配信まで全自動<br>
         ✓ #PR検出・バズ予測が可能
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:var(--dim);line-height:1.8">
+        取得できる指標：インプレッション / いいね / RT /<br>
+        リプライ / 引用RT / ブックマーク（保存）
       </div>
       <div style="margin-top:14px;padding:10px;background:rgba(34,211,238,.05);border-radius:6px;border:1px solid var(--cyan-bdr);font-size:11px;color:var(--sub);line-height:1.7;text-align:center">
         Analyticsとの最大の違いは<br>
@@ -533,7 +584,8 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
         <em>一画面で管理する。</em>
       </div>
       <div class="feat-desc">
-        キャンペーンの投稿IDを登録するだけで、<br>
+        案件の投稿が上がったら<br>
+        ポストのURLを登録するだけで、<br>
         <strong>全アカウントの数字が<br class="br-d">
         自動で集まってくる。</strong><br><br>
         「今日時点で合計リーチどれくらい？」<br>
