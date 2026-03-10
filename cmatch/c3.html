@@ -177,6 +177,9 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 
 .footer{text-align:center;padding:20px;font-size:10px;color:var(--dim);letter-spacing:1px;border-top:1px solid var(--bdr)}
 
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
 @media(max-width:768px){
   .section{padding:60px 20px!important}
   .section-title{font-size:22px!important;line-height:1.5!important}
@@ -196,6 +199,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   .pipe-step:not(:last-child)::after{content:'↓';right:50%;top:auto;bottom:-14px;transform:translateX(50%)}
   .pipe-step:not(:last-child){margin-bottom:12px}
   .raw-vs{grid-template-columns:1fr!important}
+  .g2,.g3{grid-template-columns:1fr!important}
 }
 </style>
 </head>
@@ -250,7 +254,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   </div>
 
   <!-- X Analytics vs X API 比較 -->
-  <div class="r" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:52px">
+  <div class="r g2" style="margin-bottom:52px">
     <div style="padding:22px;background:var(--card);border-radius:12px;border:1px solid var(--bdr)">
       <div style="font-size:11px;font-weight:700;color:var(--dim);letter-spacing:2px;margin-bottom:14px">X ANALYTICS（無料）</div>
       <div style="font-size:12px;color:var(--sub);line-height:2">
@@ -436,7 +440,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   <div class="r" style="margin-top:56px;background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:32px">
     <div style="font-size:12px;color:var(--cyan);font-weight:700;letter-spacing:2px;margin-bottom:20px">なぜこれが営業フックになるのか</div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px">
+    <div class="g3" style="margin-bottom:24px">
       <div style="padding:18px;background:var(--bg2);border-radius:10px;border:1px solid var(--bdr)">
         <div style="font-size:24px;margin-bottom:8px">1</div>
         <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--text)">予算の証拠がある</div>
@@ -725,7 +729,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
       今お送りしているコスメバズは、<br>
       毎日こんなことを自動でやっています：
     </p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
+    <div class="g2" style="gap:12px;margin-bottom:24px">
       <div style="padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--bdr)">
         <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:6px;letter-spacing:1px">楽天API</div>
         <div style="font-size:12px;color:var(--sub);line-height:1.7">美容カテゴリの<br>売れ筋データを毎日取得</div>
