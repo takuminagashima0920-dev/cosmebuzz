@@ -1,300 +1,288 @@
 #!/usr/bin/env python3
-"""Generate LINE Rich Menu image for CosmeBuzz (コスメバズ)."""
+"""Generate LINE Rich Menu image for CosmeBuzz - Pro Design v3 (大胆レイアウト)."""
 from __future__ import annotations
 
 from PIL import Image, ImageDraw, ImageFont
 import math
 
-# --- Canvas ---
 W, H = 2500, 1686
-BG = "#1C1C24"
-CARD_BG = "#282830"
-ACCENT = "#DC8C9E"  # rose gold divider
-WHITE = "#FFFFFF"
-GRAY = "#AAAAAA"
-DIVIDER_W = 3
+HALF_W, HALF_H = W // 2, H // 2
 
-# --- Fonts ---
-FONT_BOLD_PATH = "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc"
-FONT_REGULAR_PATH = "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc"
-FONT_HEAVY_PATH = "/System/Library/Fonts/ヒラギノ角ゴシック W8.ttc"
+# --- Colors ---
+BG_DARK = (18, 18, 26)
+ACCENT_ROSE = (220, 140, 158)
+ACCENT_TEAL = (78, 205, 196)
+ACCENT_PINK = (236, 120, 160)
+ACCENT_AMBER = (255, 193, 100)
+ACCENT_BLUE = (100, 160, 255)
+WHITE = (255, 255, 255)
+GRAY = (130, 130, 150)
 
-def load_font(path: str, size: int) -> ImageFont.FreeTypeFont:
+FONT_BOLD = "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc"
+FONT_REGULAR = "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc"
+FONT_HEAVY = "/System/Library/Fonts/ヒラギノ角ゴシック W8.ttc"
+
+
+def load_font(path, size):
     try:
         return ImageFont.truetype(path, size)
     except Exception:
         return ImageFont.load_default()
 
-font_main = load_font(FONT_BOLD_PATH, 56)
-font_sub = load_font(FONT_REGULAR_PATH, 32)
-font_icon_text = load_font(FONT_HEAVY_PATH, 44)
 
-# --- Button definitions ---
-buttons = [
-    {
-        "main": "今日の美容トレンド",
-        "sub": "ECセール・成分比較・検索トレンド",
-        "accent": "#4ECDC4",
-        "icon_symbol": "chart",  # geometric placeholder
-        "col": 0, "row": 0,
-    },
-    {
-        "main": "@cosme ランキング",
-        "sub": "総合ランキングをチェック",
-        "accent": "#E1306C",
-        "icon_symbol": "crown",
-        "col": 1, "row": 0,
-    },
-    {
-        "main": "感想・要望",
-        "sub": "サービス改善にご協力ください",
-        "accent": "#FFB800",
-        "icon_symbol": "message",
-        "col": 0, "row": 1,
-    },
-    {
-        "main": "友達に紹介",
-        "sub": "コスメバズをシェア",
-        "accent": "#1DA1F2",
-        "icon_symbol": "share",
-        "col": 1, "row": 1,
-    },
-]
-
-# --- Create canvas ---
-img = Image.new("RGB", (W, H), BG)
-draw = ImageDraw.Draw(img)
-
-# --- Dimensions ---
-col_w = W // 2   # 1250
-row_h = H // 2   # 843
-pad = 30          # padding inside each cell for the card
-card_radius = 24
-
-def draw_rounded_rect(draw_obj, xy, radius, fill):
-    """Draw a rounded rectangle."""
+def draw_gradient_rect(img, xy, color_top, color_bottom):
     x0, y0, x1, y1 = xy
-    r = radius
-    # Fill main body
-    draw_obj.rectangle([x0 + r, y0, x1 - r, y1], fill=fill)
-    draw_obj.rectangle([x0, y0 + r, x1, y1 - r], fill=fill)
-    # Corners
-    draw_obj.pieslice([x0, y0, x0 + 2*r, y0 + 2*r], 180, 270, fill=fill)
-    draw_obj.pieslice([x1 - 2*r, y0, x1, y0 + 2*r], 270, 360, fill=fill)
-    draw_obj.pieslice([x0, y1 - 2*r, x0 + 2*r, y1], 90, 180, fill=fill)
-    draw_obj.pieslice([x1 - 2*r, y1 - 2*r, x1, y1], 0, 90, fill=fill)
+    draw = ImageDraw.Draw(img)
+    for y in range(y0, y1):
+        ratio = (y - y0) / max(y1 - y0, 1)
+        r = int(color_top[0] + (color_bottom[0] - color_top[0]) * ratio)
+        g = int(color_top[1] + (color_bottom[1] - color_top[1]) * ratio)
+        b = int(color_top[2] + (color_bottom[2] - color_top[2]) * ratio)
+        draw.line([(x0, y), (x1, y)], fill=(r, g, b))
 
 
-def draw_icon(draw_obj, cx, cy, radius, accent_color, symbol):
-    """Draw a colored circle with a simple geometric icon inside."""
-    # Outer circle (accent color)
-    draw_obj.ellipse(
-        [cx - radius, cy - radius, cx + radius, cy + radius],
-        fill=accent_color
-    )
-
-    # Inner icon (white geometric shapes)
-    ir = int(radius * 0.5)  # icon inner size
-
-    if symbol == "chart":
-        # Bar chart icon: 3 bars of different heights
-        bar_w = int(ir * 0.4)
-        gap = int(ir * 0.15)
-        # bar heights
-        bars = [ir * 0.5, ir * 0.9, ir * 0.65]
-        total_w = 3 * bar_w + 2 * gap
-        start_x = cx - total_w // 2
-        base_y = cy + ir // 2
-        for i, h in enumerate(bars):
-            bx = start_x + i * (bar_w + gap)
-            draw_obj.rounded_rectangle(
-                [bx, base_y - int(h), bx + bar_w, base_y],
-                radius=3,
-                fill="white"
-            )
-        # Small trend line on top
-        pts = [
-            (start_x + bar_w // 2, base_y - int(bars[0]) - 6),
-            (start_x + bar_w + gap + bar_w // 2, base_y - int(bars[1]) - 6),
-            (start_x + 2 * (bar_w + gap) + bar_w // 2, base_y - int(bars[2]) - 6),
-        ]
-        draw_obj.line(pts, fill="white", width=3)
-
-    elif symbol == "crown":
-        # Crown icon
-        cr = ir
-        top_y = cy - int(cr * 0.5)
-        bot_y = cy + int(cr * 0.45)
-        left_x = cx - int(cr * 0.6)
-        right_x = cx + int(cr * 0.6)
-        mid_x = cx
-        # Crown shape (5-point polygon)
-        points = [
-            (left_x, bot_y),
-            (left_x, top_y + int(cr * 0.3)),
-            (left_x + int(cr * 0.3), top_y + int(cr * 0.55)),
-            (mid_x, top_y),
-            (right_x - int(cr * 0.3), top_y + int(cr * 0.55)),
-            (right_x, top_y + int(cr * 0.3)),
-            (right_x, bot_y),
-        ]
-        draw_obj.polygon(points, fill="white")
-        # Small circles on crown tips
-        for px, py in [(left_x, top_y + int(cr * 0.3)),
-                       (mid_x, top_y),
-                       (right_x, top_y + int(cr * 0.3))]:
-            draw_obj.ellipse([px - 4, py - 4, px + 4, py + 4], fill="white")
-        # Base band
-        draw_obj.rectangle(
-            [left_x + 2, bot_y - 8, right_x - 2, bot_y],
-            fill=accent_color
+def draw_glow(img, cx, cy, radius, color, intensity=0.25):
+    overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    od = ImageDraw.Draw(overlay)
+    for i in range(radius, 0, -3):
+        frac = i / radius
+        alpha = int(255 * intensity * (1 - frac ** 1.2))
+        alpha = max(0, min(255, alpha))
+        od.ellipse(
+            [cx - i, cy - i, cx + i, cy + i],
+            fill=(*color, alpha)
         )
-
-    elif symbol == "message":
-        # Chat bubble icon
-        bw = int(ir * 1.2)
-        bh = int(ir * 0.85)
-        bx0 = cx - bw // 2
-        by0 = cy - bh // 2 - 4
-        bx1 = bx0 + bw
-        by1 = by0 + bh
-        draw_obj.rounded_rectangle([bx0, by0, bx1, by1], radius=10, fill="white")
-        # Tail triangle
-        tail_pts = [
-            (cx - int(ir * 0.15), by1 - 2),
-            (cx - int(ir * 0.35), by1 + int(ir * 0.35)),
-            (cx + int(ir * 0.15), by1 - 2),
-        ]
-        draw_obj.polygon(tail_pts, fill="white")
-        # Three dots inside bubble
-        dot_r = 4
-        dot_y = (by0 + by1) // 2
-        for dx in [-int(ir * 0.3), 0, int(ir * 0.3)]:
-            draw_obj.ellipse(
-                [cx + dx - dot_r, dot_y - dot_r, cx + dx + dot_r, dot_y + dot_r],
-                fill=accent_color
-            )
-
-    elif symbol == "share":
-        # People/share icon: two person silhouettes + arrow
-        # Person 1 (left)
-        p1x = cx - int(ir * 0.3)
-        p1y = cy - int(ir * 0.1)
-        head_r = int(ir * 0.22)
-        draw_obj.ellipse(
-            [p1x - head_r, p1y - head_r - int(ir * 0.25),
-             p1x + head_r, p1y + head_r - int(ir * 0.25)],
-            fill="white"
-        )
-        # Body
-        body_w = int(ir * 0.35)
-        draw_obj.pieslice(
-            [p1x - body_w, p1y + int(ir * 0.05),
-             p1x + body_w, p1y + int(ir * 0.7)],
-            180, 360, fill="white"
-        )
-
-        # Person 2 (right, slightly behind)
-        p2x = cx + int(ir * 0.3)
-        p2y = cy - int(ir * 0.1)
-        draw_obj.ellipse(
-            [p2x - head_r, p2y - head_r - int(ir * 0.25),
-             p2x + head_r, p2y + head_r - int(ir * 0.25)],
-            fill="white"
-        )
-        draw_obj.pieslice(
-            [p2x - body_w, p2y + int(ir * 0.05),
-             p2x + body_w, p2y + int(ir * 0.7)],
-            180, 360, fill="white"
-        )
-
-        # Small share arrow at bottom right
-        ax = cx + int(ir * 0.55)
-        ay = cy + int(ir * 0.35)
-        arrow_size = int(ir * 0.25)
-        draw_obj.polygon([
-            (ax, ay - arrow_size),
-            (ax + arrow_size, ay),
-            (ax, ay + arrow_size),
-        ], fill="white")
-        draw_obj.rectangle(
-            [ax - int(ir * 0.3), ay - 3, ax, ay + 3],
-            fill="white"
-        )
+    img.paste(Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB"), (0, 0))
+    return img
 
 
-def text_center_x(draw_obj, text, font, area_cx):
-    """Get x position to center text at area_cx."""
-    bbox = draw_obj.textbbox((0, 0), text, font=font)
-    tw = bbox[2] - bbox[0]
-    return area_cx - tw // 2
+def draw_icon_chart_big(draw, cx, cy, color, scale=1.0):
+    """大きなチャートアイコン"""
+    s = scale
+    bar_data = [
+        (-70, 40, 30, 90),
+        (-25, -10, 30, 140),
+        (20, 20, 30, 110),
+        (65, -40, 30, 170),
+    ]
+    for bx, by, bw, bh in bar_data:
+        x0 = int(cx + bx * s)
+        y0 = int(cy + by * s)
+        x1 = int(cx + (bx + bw) * s)
+        y1 = int(cy + (by + bh) * s)
+        draw.rounded_rectangle((x0, y0, x1, y1), radius=int(8 * s), fill=color)
+
+    # 上向きトレンド矢印
+    ax = int(cx + 95 * s)
+    ay = int(cy - 60 * s)
+    arrow_size = int(22 * s)
+    draw.polygon([
+        (ax, ay - arrow_size),
+        (ax - arrow_size, ay + int(5 * s)),
+        (ax + arrow_size, ay + int(5 * s))
+    ], fill=WHITE)
+    shaft_w = int(8 * s)
+    draw.rectangle((ax - shaft_w // 2, ay + int(5 * s), ax + shaft_w // 2, ay + int(40 * s)), fill=WHITE)
 
 
-# --- Draw each button ---
-for btn in buttons:
-    col, row = btn["col"], btn["row"]
-    # Cell bounding box
-    cell_x0 = col * col_w
-    cell_y0 = row * row_h
-    cell_x1 = cell_x0 + col_w
-    cell_y1 = cell_y0 + row_h
-
-    # Card area (with padding)
-    card_x0 = cell_x0 + pad
-    card_y0 = cell_y0 + pad
-    card_x1 = cell_x1 - pad
-    card_y1 = cell_y1 - pad
-
-    # Draw card background
-    draw_rounded_rect(draw, (card_x0, card_y0, card_x1, card_y1), card_radius, CARD_BG)
-
-    # Center of the card
-    card_cx = (card_x0 + card_x1) // 2
-    card_cy = (card_y0 + card_y1) // 2
-
-    # --- Icon circle ---
-    icon_radius = 52
-    icon_cy = card_cy - 130
-    draw_icon(draw, card_cx, icon_cy, icon_radius, btn["accent"], btn["icon_symbol"])
-
-    # --- Main text ---
-    main_y = card_cy - 30
-    main_x = text_center_x(draw, btn["main"], font_main, card_cx)
-    draw.text((main_x, main_y), btn["main"], fill=WHITE, font=font_main)
-
-    # --- Subtitle ---
-    sub_y = main_y + 80
-    sub_x = text_center_x(draw, btn["sub"], font_sub, card_cx)
-    draw.text((sub_x, sub_y), btn["sub"], fill=GRAY, font=font_sub)
-
-    # --- Subtle bottom accent line ---
-    line_w = 80
-    line_y = sub_y + 60
+def draw_icon_crown_big(draw, cx, cy, color, scale=1.0):
+    """大きな王冠アイコン"""
+    s = scale
+    points = [
+        (cx - int(90 * s), cy + int(50 * s)),
+        (cx - int(100 * s), cy - int(30 * s)),
+        (cx - int(40 * s), cy + int(10 * s)),
+        (cx, cy - int(60 * s)),
+        (cx + int(40 * s), cy + int(10 * s)),
+        (cx + int(100 * s), cy - int(30 * s)),
+        (cx + int(90 * s), cy + int(50 * s)),
+    ]
+    draw.polygon(points, fill=color)
+    # 土台
     draw.rounded_rectangle(
-        [card_cx - line_w, line_y, card_cx + line_w, line_y + 4],
-        radius=2,
-        fill=btn["accent"]
+        (cx - int(90 * s), cy + int(52 * s), cx + int(90 * s), cy + int(72 * s)),
+        radius=int(6 * s), fill=color
+    )
+    # 宝石
+    gem_r = int(10 * s)
+    for dx_s in [-60, 0, 60]:
+        dx = int(dx_s * s)
+        gy = cy - int(20 * s)
+        draw.ellipse((cx + dx - gem_r, gy - gem_r, cx + dx + gem_r, gy + gem_r), fill=WHITE)
+    # 頂点の星
+    star_y = cy - int(65 * s)
+    sr = int(8 * s)
+    draw.ellipse((cx - sr, star_y - sr, cx + sr, star_y + sr), fill=WHITE)
+
+
+def draw_icon_chat_big(draw, cx, cy, color, scale=1.0):
+    """大きな吹き出しアイコン"""
+    s = scale
+    # メイン吹き出し
+    bx0 = cx - int(90 * s)
+    by0 = cy - int(55 * s)
+    bx1 = cx + int(90 * s)
+    by1 = cy + int(40 * s)
+    draw.rounded_rectangle((bx0, by0, bx1, by1), radius=int(25 * s), fill=color)
+    # しっぽ
+    draw.polygon([
+        (cx - int(30 * s), by1 - int(5 * s)),
+        (cx - int(55 * s), cy + int(75 * s)),
+        (cx + int(5 * s), by1 - int(5 * s))
+    ], fill=color)
+    # ドット3つ（会話中）
+    dot_r = int(9 * s)
+    dot_y = cy - int(8 * s)
+    for dx_s in [-35, 0, 35]:
+        dx = int(dx_s * s)
+        draw.ellipse((cx + dx - dot_r, dot_y - dot_r, cx + dx + dot_r, dot_y + dot_r), fill=WHITE)
+
+
+def draw_icon_share_big(draw, cx, cy, color, scale=1.0):
+    """大きなシェアアイコン（人+矢印）"""
+    s = scale
+    # メインの人
+    head_r = int(28 * s)
+    head_cy = cy - int(30 * s)
+    draw.ellipse((cx - head_r, head_cy - head_r, cx + head_r, head_cy + head_r), fill=color)
+    body_w = int(50 * s)
+    body_top = cy + int(5 * s)
+    body_bot = cy + int(60 * s)
+    draw.rounded_rectangle(
+        (cx - body_w, body_top, cx + body_w, body_bot),
+        radius=int(25 * s), fill=color
+    )
+    # 右上に共有矢印
+    ax = cx + int(65 * s)
+    ay = cy - int(45 * s)
+    arrow_len = int(40 * s)
+    arrow_head = int(18 * s)
+    # 矢印の軸（斜め右上）
+    draw.line(
+        [(ax, ay + arrow_len), (ax + arrow_len, ay)],
+        fill=WHITE, width=int(6 * s)
+    )
+    # 矢印の先端
+    draw.polygon([
+        (ax + arrow_len + int(5 * s), ay - int(5 * s)),
+        (ax + arrow_len - arrow_head, ay - int(2 * s)),
+        (ax + arrow_len - int(2 * s), ay + arrow_head)
+    ], fill=WHITE)
+    # プラスマーク
+    px = cx + int(80 * s)
+    py = cy + int(25 * s)
+    pw = int(5 * s)
+    ph = int(18 * s)
+    draw.rectangle((px - pw, py - ph, px + pw, py + ph), fill=WHITE)
+    draw.rectangle((px - ph, py - pw, px + ph, py + pw), fill=WHITE)
+
+
+def draw_accent_line(draw, x0, y0, x1, y1, color, width=3):
+    """フェード付き仕切り線"""
+    is_vertical = (x0 == x1)
+    length = (y1 - y0) if is_vertical else (x1 - x0)
+    mid = length // 2
+
+    for i in range(length):
+        dist = abs(i - mid) / max(mid, 1)
+        alpha = max(0, 1 - dist ** 0.7)
+        c = tuple(int(color[j] * alpha + BG_DARK[j] * (1 - alpha)) for j in range(3))
+        if is_vertical:
+            draw.line([(x0 - width // 2, y0 + i), (x0 + width // 2, y0 + i)], fill=c)
+        else:
+            draw.line([(x0 + i, y0 - width // 2), (x0 + i, y0 + width // 2)], fill=c)
+
+
+def main():
+    img = Image.new("RGB", (W, H), BG_DARK)
+    draw = ImageDraw.Draw(img)
+
+    gap = 8  # セル間の隙間
+
+    cells = [
+        {
+            "bounds": (0, 0, HALF_W - gap // 2, HALF_H - gap // 2),
+            "bg_top": (22, 38, 52), "bg_bottom": (18, 26, 36),
+            "icon_func": draw_icon_chart_big, "icon_color": ACCENT_TEAL,
+            "title": "今日の美容トレンド",
+            "subtitle": "ECセール・成分比較・検索トレンド",
+            "glow_color": ACCENT_TEAL,
+        },
+        {
+            "bounds": (HALF_W + gap // 2, 0, W, HALF_H - gap // 2),
+            "bg_top": (42, 22, 38), "bg_bottom": (30, 18, 26),
+            "icon_func": draw_icon_crown_big, "icon_color": ACCENT_PINK,
+            "title": "@cosme ランキング",
+            "subtitle": "総合ランキングをチェック",
+            "glow_color": ACCENT_PINK,
+        },
+        {
+            "bounds": (0, HALF_H + gap // 2, HALF_W - gap // 2, H),
+            "bg_top": (36, 30, 20), "bg_bottom": (24, 22, 16),
+            "icon_func": draw_icon_chat_big, "icon_color": ACCENT_AMBER,
+            "title": "感想・要望",
+            "subtitle": "サービス改善にご協力ください",
+            "glow_color": ACCENT_AMBER,
+        },
+        {
+            "bounds": (HALF_W + gap // 2, HALF_H + gap // 2, W, H),
+            "bg_top": (22, 30, 50), "bg_bottom": (16, 22, 36),
+            "icon_func": draw_icon_share_big, "icon_color": ACCENT_BLUE,
+            "title": "友達に紹介",
+            "subtitle": "コスメバズをシェア",
+            "glow_color": ACCENT_BLUE,
+        },
+    ]
+
+    font_title = load_font(FONT_HEAVY, 72)
+    font_sub = load_font(FONT_REGULAR, 36)
+
+    for cell in cells:
+        x0, y0, x1, y1 = cell["bounds"]
+        cx = (x0 + x1) // 2
+        cy = (y0 + y1) // 2
+        cell_w = x1 - x0
+        cell_h = y1 - y0
+
+        # グラデーション背景
+        draw_gradient_rect(img, (x0, y0, x1, y1), cell["bg_top"], cell["bg_bottom"])
+
+        # 大きなグロー
+        glow_cy = cy - int(cell_h * 0.08)
+        img = draw_glow(img, cx, glow_cy, int(cell_w * 0.4), cell["glow_color"], intensity=0.18)
+        draw = ImageDraw.Draw(img)
+
+        # アイコン（大きく、セル上部寄り）
+        icon_cy = cy - int(cell_h * 0.15)
+        cell["icon_func"](draw, cx, icon_cy, cell["icon_color"], scale=2.2)
+
+        # タイトル（大きくセル下部寄り）
+        title_y = cy + int(cell_h * 0.20)
+        bbox = draw.textbbox((0, 0), cell["title"], font=font_title)
+        tw = bbox[2] - bbox[0]
+        draw.text((cx - tw // 2, title_y), cell["title"], fill=WHITE, font=font_title)
+
+        # サブタイトル
+        sub_y = title_y + 85
+        bbox2 = draw.textbbox((0, 0), cell["subtitle"], font=font_sub)
+        sw = bbox2[2] - bbox2[0]
+        draw.text((cx - sw // 2, sub_y), cell["subtitle"], fill=GRAY, font=font_sub)
+
+    # 仕切り線
+    draw_accent_line(draw, HALF_W, 30, HALF_W, H - 30, ACCENT_ROSE, width=3)
+    draw_accent_line(draw, 30, HALF_H, W - 30, HALF_H, ACCENT_ROSE, width=3)
+
+    # 中央装飾
+    dot_r = 8
+    draw.ellipse(
+        (HALF_W - dot_r, HALF_H - dot_r, HALF_W + dot_r, HALF_H + dot_r),
+        fill=ACCENT_ROSE
     )
 
-# --- Rose gold divider lines ---
-# Vertical center line
-draw.rectangle(
-    [W // 2 - DIVIDER_W // 2, pad, W // 2 + DIVIDER_W // 2 + 1, H - pad],
-    fill=ACCENT
-)
-# Horizontal center line
-draw.rectangle(
-    [pad, H // 2 - DIVIDER_W // 2, W - pad, H // 2 + DIVIDER_W // 2 + 1],
-    fill=ACCENT
-)
+    out = "/Users/nagashimataku/cosmebuzz-site/richmenu.png"
+    img.save(out, "PNG", optimize=True)
+    print(f"✅ {out} ({img.size[0]}x{img.size[1]})")
 
-# --- Small corner decorations (rose gold dots at intersection) ---
-cx, cy = W // 2, H // 2
-dot_r = 8
-draw.ellipse([cx - dot_r, cy - dot_r, cx + dot_r, cy + dot_r], fill=ACCENT)
 
-# --- Save ---
-output_path = "/Users/nagashimataku/cosmebuzz-site/richmenu.png"
-img.save(output_path, "PNG")
-print(f"Rich menu image saved to: {output_path}")
-print(f"Size: {img.size}")
+if __name__ == "__main__":
+    main()
