@@ -245,7 +245,8 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
   <div class="section-title r">「次に来るコスメ」が<br><em>毎朝わかる。</em></div>
   <div class="section-sub r">
     X APIで美容関連の投稿の<br class="br-d">
-    <strong>インプレッション・いいね・RT・保存の動き</strong>を<br class="br-d">
+    <strong>インプレッション（表示回数）</strong>を<br class="br-d">
+    メインに、<strong>いいね・RT・保存の急増率</strong>を<br class="br-d">
     毎日追跡。<br>
     「まだ小さい投稿なのに、<br class="br-d">
     インプレッションが前日比で急増している」——<br>
@@ -266,7 +267,7 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
         <div style="padding:14px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;text-align:center">
           <div style="font-size:16px;margin-bottom:6px;color:var(--cyan)">𝕏</div>
           <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:4px">X インプレッション</div>
-          <div style="font-size:11px;color:var(--sub);line-height:1.5">関連投稿のimp<br>前日比 <strong style="color:var(--orange)">+320%</strong></div>
+          <div style="font-size:11px;color:var(--sub);line-height:1.5">imp急増率（メイン）<br>+ いいね・RT・保存<br>前日比 <strong style="color:var(--orange)">+320%</strong></div>
         </div>
         <div style="padding:14px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;text-align:center">
           <div style="font-size:16px;margin-bottom:6px">🛒</div>
@@ -331,8 +332,8 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
         ✓ #PR検出・バズ予測が可能
       </div>
       <div style="margin-top:10px;font-size:10px;color:var(--dim);line-height:1.8">
-        取得できる指標：インプレッション / いいね / RT /<br>
-        リプライ / 引用RT / ブックマーク（保存）
+        取得できる指標：<strong style="color:var(--cyan)">インプレッション（メイン）</strong>/<br>
+        いいね / RT / リプライ / 引用RT / 保存
       </div>
       <div style="margin-top:14px;padding:10px;background:rgba(34,211,238,.05);border-radius:6px;border:1px solid var(--cyan-bdr);font-size:11px;color:var(--sub);line-height:1.7;text-align:center">
         Analyticsとの最大の違いは<br>
@@ -351,7 +352,8 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
               <div class="line-card-badge" style="background:rgba(251,146,60,.1);color:#f97316">バズ予兆</div>
               <div class="line-card-title">rom&nd グラスティングメルティングバーム</div>
               <div class="line-card-desc">
-                Xインプレッション: 前日比 +320%<br>
+                Xインプ: 前日比 +320%（メイン指標）<br>
+                いいね・RT・保存も急増中<br>
                 楽天: 美容液カテゴリ 156位→48位<br>
                 @cosme: 口コミ数 前週比 2.1倍<br>
                 → 3つのデータが同時に動き始めている
@@ -401,8 +403,8 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
       </div>
       <div class="feat-desc">
         <strong style="color:var(--orange)">① バズ予兆</strong><br>
-        インプレッションが前日比で<br class="br-d">
-        急増している投稿＝バズの初動。<br>
+        インプレッション（表示回数）をメインに、<br class="br-d">
+        いいね・RT・保存の急増率からバズの初動を検知。<br>
         さらに楽天・@cosme・Google検索も<br class="br-d">
         同時に動いていれば<strong>確度が高い。</strong><br>
         他のインフルエンサーが取り上げる前に<br class="br-d">
@@ -413,8 +415,9 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
         <strong>「予算はあるけどFに来ていないブランド」</strong>を<br class="br-d">
         リストアップ。営業リードになる。<br><br>
         <strong style="color:var(--orange)">③ バズ予兆スコアTOP</strong><br>
-        Xインプレッションの急増率 × 楽天売上変動 ×<br class="br-d">
-        @cosme口コミ増 × 検索トレンドを<br class="br-d">
+        Xインプレッション急増率（メイン）<br class="br-d">
+        + いいね・RT・保存の急増率<br class="br-d">
+        × 楽天売上変動 × @cosme口コミ増 × 検索トレンドを<br class="br-d">
         掛け合わせたスコアで自動ランキング。<br>
         今まさに動き始めているものが一覧で見える。
       </div>
