@@ -292,7 +292,12 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
           4つの指標のうち<strong style="color:var(--text)">3つ以上が同時に動き始めている</strong><br>
           = まだ話題になる前だが、<strong style="color:var(--text)">バズる確度が高い</strong>
         </div>
-        <div style="margin-top:16px;font-size:11px;color:var(--dim);line-height:1.8">
+        <div style="margin-top:20px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+          <div style="padding:6px 14px;border-radius:6px;font-size:10px;font-weight:700;background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.2)">80〜 ：確度 高（複数が同時に急上昇）</div>
+          <div style="padding:6px 14px;border-radius:6px;font-size:10px;font-weight:700;background:rgba(251,146,60,.1);color:var(--orange);border:1px solid rgba(251,146,60,.15)">50〜79：注目（動き始めている）</div>
+          <div style="padding:6px 14px;border-radius:6px;font-size:10px;font-weight:700;background:rgba(255,255,255,.04);color:var(--sub);border:1px solid var(--bdr)">〜49 ：通常（大きな動きなし）</div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--dim);line-height:1.8">
           ※ 1つだけ動いても偶然の可能性がある。<br>
           複数のデータが同時に動いているから「初動」と判断できる。
         </div>
